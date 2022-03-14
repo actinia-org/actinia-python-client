@@ -41,10 +41,9 @@ __license__ = "TODO"
 
 
 class TestActiniaAuth(object):
-
     @classmethod
     def setup_class(cls):
-        cls.mock_get_patcher = patch('actinia.actinia.requests.get')
+        cls.mock_get_patcher = patch("actinia.actinia.requests.get")
         cls.mock_get = cls.mock_get_patcher.start()
 
     @classmethod
@@ -97,4 +96,6 @@ class TestActiniaAuth(object):
             testactinia.set_authentication("user", "pw")
 
         assert e.type == Exception
-        assert str(e.value) == "Wrong user or password. Please check your inputs."
+        assert (
+            str(e.value) == "Wrong user or password. Please check your inputs."
+        )

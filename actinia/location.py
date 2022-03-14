@@ -37,8 +37,7 @@ from actinia.mapset import Mapset
 from actinia.job import Job
 
 
-class Location():
-
+class Location:
     def __init__(self, name, actinia, auth):
         self.name = name
         self.projection = None
@@ -105,8 +104,10 @@ class Location():
     #     # TODO
     #     # resp = requests.post(url, auth=(self.__auth))
 
-# * /locations/{location_name}/processing_async_export - POST (ephemeral database)
-# * (/locations/{location_name}/processing_export - POST (ephemeral database))
+    # * /locations/{location_name}/processing_async_export
+    #            - POST (ephemeral database)
+    # * (/locations/{location_name}/processing_export
+    #            - POST (ephemeral database))
     def create_processing_export_job(self, pc, name=None):
         """
         Creates a processing_export job with a given PC.
@@ -120,20 +121,22 @@ class Location():
             orig_name = name
             name += f"_{now.strftime('%Y%d%m_%H%M%S')}"
         # set endpoint in url
-        url = f"{self.__actinia.url}/locations/{self.name}/" \
+        url = (
+            f"{self.__actinia.url}/locations/{self.name}/"
             "processing_async_export"
+        )
         # make POST request
         postkwargs = dict()
-        postkwargs['headers'] = self.__actinia.headers
-        postkwargs['auth'] = self.__auth
+        postkwargs["headers"] = self.__actinia.headers
+        postkwargs["auth"] = self.__auth
         if isinstance(pc, str):
             if os.path.isfile(pc):
                 with open(pc, "r") as pc_file:
-                    postkwargs['data'] = pc_file.read()
+                    postkwargs["data"] = pc_file.read()
             else:
-                postkwargs['data'] = pc
+                postkwargs["data"] = pc
         elif isinstance(pc, dict):
-            postkwargs['data'] = json.dumps(pc)
+            postkwargs["data"] = json.dumps(pc)
         else:
             raise Exception("Given process chain has no valid type.")
 
@@ -147,13 +150,15 @@ class Location():
         self.__actinia.jobs[name] = job
         return job
 
+
 # TODO:
 # * /locations/{location_name} - POST + DELETE
 # * /locations/{location_name}/info - GET
 # * /locations/{location_name}/mapsets - GET
 # * /locations/{location_name}/process_chain_validation_async - POST
 # * /locations/{location_name}/process_chain_validation_sync - POST
-# * /locations/{location_name}/processing_async_export - POST (ephemeral database)
+# * /locations/{location_name}/processing_async_export
+#               - POST (ephemeral database)
 # * (/locations/{location_name}/processing_export - POST (ephemeral database))
 # * (/locations/{location_name}/processing_async_export_gcs - POST)
 # * (/locations/{location_name}/processing_async_export_s3 - POST)

@@ -28,7 +28,6 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-import pytest
 from unittest.mock import Mock, patch
 
 from actinia import Actinia
@@ -46,10 +45,9 @@ __license__ = "TODO"
 
 
 class TestActinia(object):
-
     @classmethod
     def setup_class(cls):
-        cls.mock_get_patcher = patch('actinia.actinia.requests.get')
+        cls.mock_get_patcher = patch("actinia.actinia.requests.get")
         cls.mock_get = cls.mock_get_patcher.start()
 
         cls.mock_get.return_value = Mock()
@@ -65,8 +63,9 @@ class TestActinia(object):
 
     def test_actinia_get_locations(self):
 
-        assert self.testactinia.locations == {}, "Locations are not empty " \
-            "dictionary"
+        assert self.testactinia.locations == {}, (
+            "Locations are not empty " "dictionary"
+        )
 
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
@@ -75,8 +74,10 @@ class TestActinia(object):
         locations = self.testactinia.get_locations()
         assert "nc_spm_08" in locations, "'nc_spm_08' not in locations"
         assert isinstance(locations, dict), "locations not of type dictionary"
-        assert isinstance(locations["nc_spm_08"], Location), \
-            "location not of type Location"
-        assert locations["nc_spm_08"].name == "nc_spm_08", \
-            "location.name is wrong"
+        assert isinstance(
+            locations["nc_spm_08"], Location
+        ), "location not of type Location"
+        assert (
+            locations["nc_spm_08"].name == "nc_spm_08"
+        ), "location.name is wrong"
         assert self.testactinia.locations == locations

@@ -27,14 +27,30 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-class Region():
+
+class Region:
     def __init__(
         self,
-        zone, projection,
-        n, s, e, w, t, b,
-        nsres, ewres, nsres3, ewres3, tbres,
-        rows, cols, rows3, cols3,
-        depths, cells, cells3,
+        zone,
+        projection,
+        n,
+        s,
+        e,
+        w,
+        t,
+        b,
+        nsres,
+        ewres,
+        nsres3,
+        ewres3,
+        tbres,
+        rows,
+        cols,
+        rows3,
+        cols3,
+        depths,
+        cells,
+        cells3,
     ):
         self.zone = zone
         self.projection = projection

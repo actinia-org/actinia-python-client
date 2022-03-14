@@ -1,5 +1,6 @@
 # Temporary and binary files
 __pycache__/*
+**/__pycache__/*
 
 # Package files
 *.egg
@@ -18,4 +19,4 @@ cover/*
 MANIFEST
 
 # Per-project virtualenvs
-.env*/
+env/

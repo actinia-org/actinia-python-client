@@ -27,14 +27,13 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
-import requests
+# import json
+# import requests
+#
+# from actinia.region import Region
 
-from actinia.region import Region
 
-
-class Mapset():
-
+class Mapset:
     def __init__(self, name, actinia, auth):
         self.name = name
         self.projection = None
@@ -45,14 +44,18 @@ class Mapset():
         self.vector_layers = None
         self.strds = None
 
+
 # TODO:
 # * /locations/{location_name}/mapsets/{mapset_name} - DELETE, POST
 # * /locations/{location_name}/mapsets/{mapset_name}/info - GET
 # * (/locations/{location_name}/mapsets/{mapset_name}/lock - GET, DELETE, POST)
 
-# * /locations/{location_name}/mapsets/{mapset_name}/raster_layers - DELETE, GET, PUT
+# * /locations/{location_name}/mapsets/{mapset_name}/raster_layers
+#      - DELETE, GET, PUT
 # * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
 # * "/locations/{location_name}/mapsets/{mapset_name}/vector_layers"
 
-# * (/locations/{location_name}/mapsets/{mapset_name}/processing - POST (persistent, asyncron))
-# * /locations/{location_name}/mapsets/{mapset_name}/processing_async - POST (persistent, asyncron)
+# * (/locations/{location_name}/mapsets/{mapset_name}/processing
+#          - POST (persistent, asyncron))
+# * /locations/{location_name}/mapsets/{mapset_name}/processing_async
+#          - POST (persistent, asyncron)

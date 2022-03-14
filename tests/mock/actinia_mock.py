@@ -42,30 +42,33 @@ version_resp_text = {
         "proj": "7.0.1",
         "revision": "7388b3f",
         "sqlite": "3.32.1",
-        "version": "7.8.6dev"
+        "version": "7.8.6dev",
     },
     "plugin_versions": {
         "actinia_metadata_plugin": "1.0.0",
         "actinia_module_plugin": "2.2.0",
         "actinia_satellite_plugin": "0.0.3",
-        "actinia_statistic_plugin": "0.0.3"
+        "actinia_statistic_plugin": "0.0.3",
     },
-    "plugins": "actinia_statistic_plugin,actinia_satellite_plugin,actinia_metadata_plugin,actinia_module_plugin",
+    "plugins": "actinia_statistic_plugin,actinia_satellite_plugin,"
+               "actinia_metadata_plugin,actinia_module_plugin",
     "python_version": "3.8.5 (default, Jul 20 2020, 23:11:29) - [GCC 9.3.0]",
-    "version": "1.2.1"
+    "version": "1.2.1",
 }
 
 get_locations_resp = {
-    "locations": [
-        "latlong_wgs84",
-        "ECAD",
-        "nc_spm_08"
-    ],
-    "status": "success"
+    "locations": ["latlong_wgs84", "ECAD", "nc_spm_08"],
+    "status": "success",
 }
 
 
-def fill_basic_frame(process_results={}, process_chain=None, process_log=None, progress=False, status="finished"):
+def fill_basic_frame(
+    process_results={},
+    process_chain=None,
+    process_log=None,
+    progress=False,
+    status="finished",
+):
     basic_frame = {
         "accept_datetime": "2022-03-07 13:46:52.249333",
         "accept_timestamp": 1646660812.2493308,
@@ -73,7 +76,8 @@ def fill_basic_frame(process_results={}, process_chain=None, process_log=None, p
             "endpoint": "locationmanagementresourceuser",
             "method": "GET",
             "path": "/api/v1/locations/nc_spm_08/info",
-            "request_url": "http://actinia.mundialis.de/api/v1/locations/nc_spm_08/info"
+            "request_url": "http://actinia.mundialis.de/api/v1/locations/"
+                           "nc_spm_08/info",
         },
         "datetime": "2022-03-07 13:46:54.791928",
         "http_code": 200,
@@ -86,42 +90,40 @@ def fill_basic_frame(process_results={}, process_chain=None, process_log=None, p
         "timestamp": 1646660814.7918556,
         "urls": {
             "resources": [],
-            "status": "https://actinia.mundialis.de/api/v1/resources/demouser/resource_id-573cdb12-2d35-4bf1-8f0b-61443ea07d25"
+            "status": "https://actinia.mundialis.de/api/v1/resources/demouser/"
+                      "resource_id-573cdb12-2d35-4bf1-8f0b-61443ea07d25",
         },
-        "user_id": "demouser"
+        "user_id": "demouser",
     }
     if process_log is not None:
         basic_frame["process_log"] = process_log
     if progress is True:
-        basic_frame["progress"] = {
-            "num_of_steps": 2,
-            "step": 2
-        }
+        basic_frame["progress"] = {"num_of_steps": 2, "step": 2}
     return basic_frame
 
 
 p_result_location_info = {
-    "projection": "\"PROJCRS[\"NAD83(HARN) / North Carolina\",BASEGEOGCRS"
-    "[\"NAD83(HARN)\",DATUM[\"NAD83 (High Accuracy Reference Network)\","
-    "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,LENGTHUNIT"
-    "[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\","
-    "0.0174532925199433]],ID[\"EPSG\",4152]],CONVERSION[\"SPCS83 North "
-    "Carolina zone (meters)\",METHOD[\"Lambert Conic Conformal (2SP)\","
-    "ID[\"EPSG\",9802]],PARAMETER[\"Latitude of false origin\",33.75,"
-    "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8821]],"
-    "PARAMETER[\"Longitude of false origin\",-79,ANGLEUNIT[\"degree\","
-    "0.0174532925199433],ID[\"EPSG\",8822]],PARAMETER[\"Latitude of 1st "
-    "standard parallel\",36.1666666666667,ANGLEUNIT[\"degree\","
-    "0.0174532925199433],ID[\"EPSG\",8823]],PARAMETER[\"Latitude of 2nd "
-    "standard parallel\",34.3333333333333,ANGLEUNIT[\"degree\","
-    "0.0174532925199433],ID[\"EPSG\",8824]],PARAMETER[\"Easting at false "
-    "origin\",609601.22,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8826]],"
-    "PARAMETER[\"Northing at false origin\",0,LENGTHUNIT[\"metre\",1],"
-    "ID[\"EPSG\",8827]]],CS[Cartesian,2],AXIS[\"easting (X)\",east,"
-    "ORDER[1],LENGTHUNIT[\"metre\",1]],AXIS[\"northing (Y)\",north,"
-    "ORDER[2],LENGTHUNIT[\"metre\",1]],USAGE[SCOPE[\"unknown\"],"
-    "AREA[\"USA - North Carolina\"],BBOX[33.83,-84.33,36.59,-75.38]],"
-    "ID[\"EPSG\",3358]]",
+    "projection": '"PROJCRS["NAD83(HARN) / North Carolina",BASEGEOGCRS'
+    '["NAD83(HARN)",DATUM["NAD83 (High Accuracy Reference Network)",'
+    'ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT'
+    '["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",'
+    '0.0174532925199433]],ID["EPSG",4152]],CONVERSION["SPCS83 North '
+    'Carolina zone (meters)",METHOD["Lambert Conic Conformal (2SP)",'
+    'ID["EPSG",9802]],PARAMETER["Latitude of false origin",33.75,'
+    'ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8821]],'
+    'PARAMETER["Longitude of false origin",-79,ANGLEUNIT["degree",'
+    '0.0174532925199433],ID["EPSG",8822]],PARAMETER["Latitude of 1st '
+    'standard parallel",36.1666666666667,ANGLEUNIT["degree",'
+    '0.0174532925199433],ID["EPSG",8823]],PARAMETER["Latitude of 2nd '
+    'standard parallel",34.3333333333333,ANGLEUNIT["degree",'
+    '0.0174532925199433],ID["EPSG",8824]],PARAMETER["Easting at false '
+    'origin",609601.22,LENGTHUNIT["metre",1],ID["EPSG",8826]],'
+    'PARAMETER["Northing at false origin",0,LENGTHUNIT["metre",1],'
+    'ID["EPSG",8827]]],CS[Cartesian,2],AXIS["easting (X)",east,'
+    'ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,'
+    'ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],'
+    'AREA["USA - North Carolina"],BBOX[33.83,-84.33,36.59,-75.38]],'
+    'ID["EPSG",3358]]',
     "region": {
         "b": 0,
         "cells": 29535,
@@ -142,18 +144,13 @@ p_result_location_info = {
         "t": 1,
         "tbres": 1,
         "w": 637740,
-        "zone": 0
-    }
+        "zone": 0,
+    },
 }
 location_get_info_resp = fill_basic_frame(p_result_location_info)
 
 
-p_result_get_mapsets = [
-    "PERMANENT",
-    "True",
-    "landsat",
-    "modis_lst"
-]
+p_result_get_mapsets = ["PERMANENT", "True", "landsat", "modis_lst"]
 location_get_mapset_resp = fill_basic_frame(p_result_get_mapsets)
 
 start_job_resp = fill_basic_frame(process_results={}, status="accepted")

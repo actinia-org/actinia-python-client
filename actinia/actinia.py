@@ -35,8 +35,7 @@ import requests
 from actinia.location import Location
 
 
-class Actinia():
-
+class Actinia:
     def __init__(
         self,
         url="https://actinia.mundialis.de/",
@@ -46,7 +45,7 @@ class Actinia():
     ):
         self.api_prefix = api_version
         self.base_url = url
-        self.headers = {'content-type': 'application/json; charset=utf-8'}
+        self.headers = {"content-type": "application/json; charset=utf-8"}
         self.user = None
         self.__password = None
         self.__auth = None
@@ -83,8 +82,7 @@ class Actinia():
                 if "links" in data[0]:
                     base = self.base_url.split("://")[1]
                     self.api_prefix = re.findall(
-                        rf"{base}/(.*?)/version",
-                        data[0]["links"][0]
+                        rf"{base}/(.*?)/version", data[0]["links"][0]
                     )[0]
                     self.__set_url()
                     logging.warning(f"Using actinia <{self.url}>")
@@ -93,7 +91,8 @@ class Actinia():
                     self.__check_version()
             else:
                 raise Exception(
-                    f"Connection to actinia server <{self.url}> failed!")
+                    f"Connection to actinia server <{self.url}> failed!"
+                )
 
     def get_version(self):
         """
@@ -112,7 +111,9 @@ class Actinia():
         url = f"{self.url}/locations"
         resp = requests.get(url, auth=(self.__auth))
         if resp.status_code == 401:
-            raise Exception("Wrong user or password. Please check your inputs.")
+            raise Exception(
+                "Wrong user or password. Please check your inputs."
+            )
         elif resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
         else:
@@ -158,7 +159,9 @@ class Actinia():
             raise Exception(f"Error {resp.status_code}: {resp.text}")
 
         loc_names = json.loads(resp.text)["locations"]
-        loc = {lname: Location(lname, self, self.__auth) for lname in loc_names}
+        loc = {
+            lname: Location(lname, self, self.__auth) for lname in loc_names
+        }
         self.locations = loc
 
     # def create_location(self, name, epsgcode):
@@ -169,31 +172,9 @@ class Actinia():
     #     :return: The created location
     #     """
 
+
 # # * /locations/{location_name} - POST + DELETE
 
-
-def main():
-    # test = Actinia("https://actinia-dev.mundialis.de")
-    actinia = Actinia()
-    ver = actinia.get_version()
-    actinia.set_authentication("demouser", "gu3st!pa55w0rd")
-    locations = actinia.get_locations()
-    locations["nc_spm_08"].get_info()
-    mapsets = actinia.locations["nc_spm_08"].get_mapsets()
-    job = actinia.locations["nc_spm_08"].create_processing_export_job("/home/aweinmann/repos/actinia/actinia-assets/processing/02_process-chains/pc_grass_simple/pc_r.mapcalc_example.json", "test")
-    # job.poll()
-    job.poll_until_finished()
-
-
-    import pdb; pdb.set_trace()
-
-
-def run():
-    main()
-
-
-if __name__ == "__main__":
-    run()
 
 # TODO:
 # * /resource_storage - GET, DELETE

@@ -32,7 +32,7 @@ import logging
 import requests
 
 
-class Job():
+class Job:
     def __init__(
         self,
         name,
@@ -117,7 +117,8 @@ class Job():
             resp["status"],
             resp["time_delta"],
             resp["timestamp"],
-            resp["urls"])
+            resp["urls"],
+        )
         logging.info(f"Status of {self.name} job is {self.status}.")
 
     def poll_until_finished(self):
@@ -127,10 +128,9 @@ class Job():
         status_accepted_running = True
         while status_accepted_running:
             self.poll()
-            if self.status not in ['accepted', 'running']:
+            if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
                 logging.info(f"Status of {self.name} job is {self.status}.")
-
 
     # def terminate(self):
     #     """

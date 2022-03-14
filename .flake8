@@ -1,0 +1,8 @@
+[flake8]
+
+exclude = .git,__pycache__,env
+
+# F401 'actinia.actinia.Actinia' imported but unused
+
+per-file-ignores =
+    ./actinia/__init__.py: F401

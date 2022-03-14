@@ -28,6 +28,9 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 # TODO:
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name} - GET, DELETE, POST
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/raster_layers - DELETE, GET, PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/render - GET
+# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}
+#                - GET, DELETE, POST
+# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
+#           raster_layers - DELETE, GET, PUT
+# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
+#           render - GET
