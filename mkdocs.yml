@@ -1,0 +1,5 @@
+site_name: actinia-python-client documentation
+site_url:  https://github.com/mundialis/actinia-python-client
+docs_dir:  docs
+theme:     readthedocs
+use_directory_urls: true
