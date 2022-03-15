@@ -18,4 +18,15 @@ Types of changes
 ### Added
 * First classes and method of actinia-python-client
 
-## [X.X.X] - YYYY-MM-DD
+## [0.0.2] - 2022-03-15
+### Fixed
+- Fix deploy workflow version
+### Added
+- docs workflow
+
+## [0.0.1] - 2022-03-15
+### Fixed
+- Test deploy workflow
+
+## [0.0.0] - 2022-03-15
+- First release
