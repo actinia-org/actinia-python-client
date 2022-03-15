@@ -9,7 +9,7 @@ setup(
         "actinia/_version.txt").read_text(encoding="utf-8"),
     author="Anika Weinmann",
     author_email="weinmann@mundialis.de",
-    description="Python library for actinia requests.",
+    description="Python client library for actinia requests.",
     long_description=parent_dir.joinpath("README.md").read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/mundialis/actinia-python-client",
