@@ -26,13 +26,50 @@ Get locations and locaton information of a special location:
 locations = actinia_mundialis.get_locations()
 print(locations.keys())
 locations["nc_spm_08"].get_info()
+# or
+actinia_mundialis.locations["nc_spm_08"].get_info()
 ```
 
-## Mapsets mManagement
+Create a new location
+```
+new_location = actinia_mundialis.create_location("test_location", 25832)
+print(new_location.name)
+print(new_location.region)
+print([loc for loc in actinia_mundialis.locations])
+```
+
+Delete a location
+```
+actinia_mundialis.locations["test_location"].delete()
+print([loc for loc in actinia_mundialis.locations()])
+```
+
+## Mapsets Management
 Get mapsets of the ***nc_spm_08*** location:
 ```
 mapsets = actinia_mundialis.locations["nc_spm_08"].get_mapsets()
 print(mapsets.keys())
+```
+
+## Process Chain Validation
+
+```
+pc = {
+    "list": [
+      {
+          "id": "r_mapcalc",
+          "module": "r.mapcalc",
+          "inputs": [
+              {
+                  "param": "expression",
+                  "value": "baum=5"
+              }
+          ]
+      }
+    ],
+    "version": "1"
+}
+actinia_mundialis.locations["nc_spm_08"].validate_process_chain(pc)
 ```
 
 ## Ephemeral Processing

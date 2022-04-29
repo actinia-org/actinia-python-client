@@ -33,6 +33,7 @@ import re
 import requests
 
 from actinia.location import Location
+from actinia.resources.templating import tplEnv
 
 
 class Actinia:
@@ -164,16 +165,35 @@ class Actinia:
         }
         self.locations = loc
 
-    # def create_location(self, name, epsgcode):
-    #     """
-    #     Creates a new location with given name and epsgcode via post request.
-    #
-    #
-    #     :return: The created location
-    #     """
+    def create_location(self, name, epsgcode):
+        """
+        Creates a new location with given name and epsgcode via post request.
 
+        :return: The created location
+        """
+        tpl = tplEnv.get_template("create_location.json")
+        postbody = tpl.render(epsgcode=epsgcode)
 
-# # * /locations/{location_name} - POST + DELETE
+        url = f"{self.url}/locations/{name}"
+        resp = requests.post(
+            url,
+            auth=(self.__auth),
+            headers=self.headers,
+            data=postbody,
+        )
+        if resp.status_code != 200:
+            try:
+                msg = json.loads(resp.text)["message"]
+            except Exception:
+                msg = resp.text
+            raise Exception(f"Error {resp.status_code}: {msg}")
+
+        location = Location(name, self, self.__auth)
+        if len(self.locations) == 0:
+            self.__request_locations()
+        self.locations[name] = location
+
+        return location
 
 
 # TODO:

@@ -28,6 +28,7 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
+import logging
 import requests
 import os
 from datetime import datetime
@@ -88,6 +89,15 @@ class Location:
         }
         self.mapsets = mapsets
 
+    def delete(self):
+        """Delete a location via delete request.
+        """
+        url = f"{self.__actinia.url}/locations/{self.name}"
+        resp = requests.delete(url, auth=self.__auth)
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        del self.__actinia.locations[self.name]
+
     def get_mapsets(self):
         """
         Return location information
@@ -103,6 +113,46 @@ class Location:
     #     url = f"{self.url}/locations/{name}"
     #     # TODO
     #     # resp = requests.post(url, auth=(self.__auth))
+
+    def __validate_process_chain(self, pc, type):
+        url = f"{self.__actinia.url}/locations/{self.name}/"
+        if type == "async":
+            url += "process_chain_validation_async"
+        elif type == "sync":
+            url += "process_chain_validation_sync"
+        else:
+            raise Exception("Type is not async or sync")
+        resp = requests.post(
+            url,
+            auth=self.__auth,
+            headers=self.__actinia.headers,
+            data=json.dumps(pc),
+        )
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        return resp
+
+    def validate_process_chain_sync(self, pc):
+        """Validate a process chain."""
+        resp = self.__validate_process_chain(pc, "sync")
+
+        mylogs = logging.getLogger()
+        mylogs.setLevel(logging.INFO)
+
+        stream = logging.StreamHandler()
+        streamformat = logging.Formatter("%(message)s")
+        stream.setLevel(logging.INFO)
+        stream.setFormatter(streamformat)
+        mylogs.addHandler(stream)
+
+        import pdb; pdb.set_trace()
+
+        mylogs.info(json.loads(resp.text)["message"])
+
+        # logging.info()
+        # logging.basicConfig(level=logging.DEBUG)
+        # print(json.loads(resp.text)["message"])
+
 
     # * /locations/{location_name}/processing_async_export
     #            - POST (ephemeral database)
@@ -152,9 +202,6 @@ class Location:
 
 
 # TODO:
-# * /locations/{location_name} - POST + DELETE
-# * /locations/{location_name}/info - GET
-# * /locations/{location_name}/mapsets - GET
 # * /locations/{location_name}/process_chain_validation_async - POST
 # * /locations/{location_name}/process_chain_validation_sync - POST
 # * /locations/{location_name}/processing_async_export
