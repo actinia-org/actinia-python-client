@@ -12,3 +12,5 @@ pip3 install actinia_python_client-${VERSION}-py3-none-any.whl
 ```
 
 ## Small Example
+
+See [examples](https://mundialis.github.io/actinia-python-client/quickstart.html)
