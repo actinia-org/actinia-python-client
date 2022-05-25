@@ -28,7 +28,7 @@ print(locations.keys())
 locations["nc_spm_08"].get_info()
 ```
 
-## Mapsets mManagement
+## Mapsets Management
 Get mapsets of the ***nc_spm_08*** location:
 ```
 mapsets = actinia_mundialis.locations["nc_spm_08"].get_mapsets()

@@ -1,5 +1,15 @@
-site_name: actinia-python-client documentation
+site_name: actinia-python-client
 site_url:  https://mundialis.github.io/actinia-python-client
 docs_dir:  docs
-theme:     readthedocs
+theme: readthedocs
+# green layout with extra.css
+extra_css: [extra.css]
 use_directory_urls: true
+github_url: https://github.com/mundialis/openeo-python-client
+# use_directory_urls: false
+# plugins:
+#     - with-pdf
+nav:
+    - 'index.md'
+    - 'installation.md'
+    - 'quickstart.md'
