@@ -9,3 +9,7 @@ Access [**actinia - The GRASS GIS REST API**](https://actinia.mundialis.de/) via
 
 * [Installation](installation.md)
 * [Quickstart](quickstart.md)
+* [Location Management](04_location_management.md)
+* [Mapset Management](05_mapset_managment.md)
+* [Process Chain Validation](06_process_chain_validation.md)
+* [Processing](07_processing.md)
