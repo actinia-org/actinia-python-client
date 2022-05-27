@@ -16,5 +16,9 @@ use_directory_urls: true
 #     - with-pdf
 nav:
     - 'index.md'
-    - 'installation.md'
-    - 'quickstart.md'
+    - '02_installation.md'
+    - '03_quickstart.md'
+    - '04_location_managment.md'
+    - '05_mapset_managment.md'
+    - '06_process_chain_validation.md'
+    - '07_processing.md'

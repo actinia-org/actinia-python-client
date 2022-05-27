@@ -28,9 +28,9 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-import logging
 import requests
 import os
+import sys
 from datetime import datetime
 
 from actinia.region import Region
@@ -128,31 +128,40 @@ class Location:
             headers=self.__actinia.headers,
             data=json.dumps(pc),
         )
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
         return resp
 
+    def __set_job_names(self, name, default_name="unkonwn_job"):
+        now = datetime.now()
+        if name is None:
+            orig_name = default_name
+            name = f"job_{now.strftime('%Y%d%m_%H%M%S')}"
+        else:
+            orig_name = name
+            name += f"_{now.strftime('%Y%d%m_%H%M%S')}"
+        return orig_name, name
+
     def validate_process_chain_sync(self, pc):
-        """Validate a process chain."""
+        """Validate a process chain (sync)."""
         resp = self.__validate_process_chain(pc, "sync")
+        if resp.status_code == 200:
+            print(json.loads(resp.text)["message"], file=sys.stdout)
+        elif resp.status_code == 400:
+            msg = f"Validation error: {json.loads(resp.text)['message']}"
+            print(msg, file=sys.stderr)
+        else:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
 
-        mylogs = logging.getLogger()
-        mylogs.setLevel(logging.INFO)
-
-        stream = logging.StreamHandler()
-        streamformat = logging.Formatter("%(message)s")
-        stream.setLevel(logging.INFO)
-        stream.setFormatter(streamformat)
-        mylogs.addHandler(stream)
-
-        import pdb; pdb.set_trace()
-
-        mylogs.info(json.loads(resp.text)["message"])
-
-        # logging.info()
-        # logging.basicConfig(level=logging.DEBUG)
-        # print(json.loads(resp.text)["message"])
-
+    def validate_process_chain_async(self, pc, name=None):
+        """Validate a process chain (async)."""
+        actiniaResp = self.__validate_process_chain(pc, "async")
+        orig_name, name = self.__set_job_names(name, "unkonwn_validation_job")
+        if actiniaResp.status_code != 200:
+            raise Exception(
+                f"Error {actiniaResp.status_code}: {actiniaResp.text}")
+        resp = json.loads(actiniaResp.text)
+        job = Job(orig_name, self.__actinia, self.__auth, **resp)
+        self.__actinia.jobs[name] = job
+        return job
 
     # * /locations/{location_name}/processing_async_export
     #            - POST (ephemeral database)
@@ -163,13 +172,7 @@ class Location:
         Creates a processing_export job with a given PC.
         """
         # set name
-        now = datetime.now()
-        if name is None:
-            orig_name = "unkonwn_job"
-            name = f"job_{now.strftime('%Y%d%m_%H%M%S')}"
-        else:
-            orig_name = name
-            name += f"_{now.strftime('%Y%d%m_%H%M%S')}"
+        orig_name, name = self.__set_job_names(name)
         # set endpoint in url
         url = (
             f"{self.__actinia.url}/locations/{self.name}/"
