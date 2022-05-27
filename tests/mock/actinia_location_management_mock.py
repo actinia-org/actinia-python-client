@@ -25,9 +25,7 @@
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
-__maintainer__ = "testuser Weinmann"
-
-from copy import deepcopy
+__maintainer__ = "Anika Weinmann"
 
 from .actinia_mock import (
     ACTINIA_BASEURL,

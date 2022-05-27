@@ -25,7 +25,7 @@
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
-__maintainer__ = "testuser Weinmann"
+__maintainer__ = "Anika Weinmann"
 
 from copy import deepcopy
 
@@ -66,12 +66,12 @@ process_chain_validation_sync = {
     'status': 'finished',
     'time_delta': 0.4600515365600586,
     'timestamp': 1653480136.7116203,
-    'urls':
-    {
+    'urls': {
         'resources': [],
-        'status': f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/testuser'
-                  '/resource_id-63f35ae0-797c-436c-a9ac-28a457b011a3'
-    },
+        'status':
+            f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/testuser'
+            '/resource_id-63f35ae0-797c-436c-a9ac-28a457b011a3'
+            },
     'user_id': 'testuser'
 }
 
