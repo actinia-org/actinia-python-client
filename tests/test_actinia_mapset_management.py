@@ -31,24 +31,39 @@ import json
 from unittest.mock import Mock, patch
 
 from actinia import Actinia
-from actinia.location import Location
+from actinia.mapset import Mapset
 
 from .mock.actinia_mock import (
     ACTINIA_BASEURL,
     version_resp_text,
-    get_locations_resp,
+    location_get_mapset_resp,
 )
+from .mock.actinia_location_management_mock import get_locations_resp
 
+__license__ = "GPLv3"
 __author__ = "Anika Weinmann"
-__copyright__ = "mundialis"
-__license__ = "TODO"
+__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
+
+LOCATION_NAME = "nc_spm_08"
+PC = {
+    "list": [
+        {
+            "id": "r_mapcalc",
+            "module": "r.mapcalc",
+            "inputs": [{"param": "expression", "value": "baum=5"}],
+        }
+    ],
+    "version": "1",
+}
 
 
-class TestActinia(object):
+class TestActiniaLocation(object):
     @classmethod
     def setup_class(cls):
         cls.mock_get_patcher = patch("actinia.actinia.requests.get")
+        cls.mock_post_patcher = patch("actinia.actinia.requests.post")
         cls.mock_get = cls.mock_get_patcher.start()
+        cls.mock_post = cls.mock_post_patcher.start()
 
         cls.mock_get.return_value = Mock()
         cls.mock_get.return_value.status_code = 200
@@ -56,28 +71,27 @@ class TestActinia(object):
         cls.testactinia = Actinia(ACTINIA_BASEURL)
         assert isinstance(cls.testactinia, Actinia)
         cls.testactinia.set_authentication("user", "pw")
+        # get locations
+        cls.mock_get.return_value = Mock()
+        cls.mock_get.return_value.status_code = 200
+        cls.mock_get.return_value.text = json.dumps(get_locations_resp)
+        cls.testactinia.get_locations()
 
     @classmethod
     def teardown_class(cls):
         cls.mock_get_patcher.stop()
+        cls.mock_post_patcher.stop()
 
-    def test_actinia_get_locations(self):
-
-        assert self.testactinia.locations == {}, (
-            "Locations are not empty " "dictionary"
-        )
-
+    def test_location_get_mapsets(self):
+        """Test location get_mapsets method."""
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(get_locations_resp)
+        self.mock_get.return_value.text = json.dumps(location_get_mapset_resp)
+        resp = self.testactinia.locations[LOCATION_NAME].get_mapsets()
 
-        locations = self.testactinia.get_locations()
-        assert "nc_spm_08" in locations, "'nc_spm_08' not in locations"
-        assert isinstance(locations, dict), "locations not of type dictionary"
+        assert isinstance(resp, dict), "response is not a dictionary"
+        assert "PERMANENT" in resp, "'PERMANENT' mapset not in response"
         assert isinstance(
-            locations["nc_spm_08"], Location
-        ), "location not of type Location"
-        assert (
-            locations["nc_spm_08"].name == "nc_spm_08"
-        ), "location.name is wrong"
-        assert self.testactinia.locations == locations
+            resp["PERMANENT"], Mapset
+        ), "Mapsets not of type Mapset"
+        assert resp == self.testactinia.locations[LOCATION_NAME].mapsets

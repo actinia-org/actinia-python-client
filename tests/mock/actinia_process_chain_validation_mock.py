@@ -23,11 +23,13 @@
 #######
 
 __license__ = "GPLv3"
-__author__ = "testuser Weinmann"
+__author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "testuser Weinmann"
 
 from copy import deepcopy
+
+from .actinia_mock import ACTINIA_BASEURL, ACTINIA_VERSION
 
 
 process_chain_validation_sync = {
@@ -37,10 +39,10 @@ process_chain_validation_sync = {
         {
             'endpoint': 'syncprocessvalidationresource',
             'method': 'POST',
-            'path': '/api/v3/locations/nc_spm_08/process_chain_validation_'
-                    'sync',
-            'request_url': 'http://actinia.mundialis.de/api/v3/locations/'
-                           'nc_spm_08/process_chain_validation_sync'
+            'path': f'/api/{ACTINIA_VERSION}/locations/nc_spm_08/'
+                    'process_chain_validation_sync',
+            'request_url': f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/locations'
+                           '/nc_spm_08/process_chain_validation_sync'
         },
     'datetime': '2022-05-25 12:02:16.711651',
     'http_code': 200,
@@ -67,8 +69,8 @@ process_chain_validation_sync = {
     'urls':
     {
         'resources': [],
-        'status': 'https://actinia.mundialis.de/api/v3/resources/testuser/'
-                  'resource_id-63f35ae0-797c-436c-a9ac-28a457b011a3'
+        'status': f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/testuser'
+                  '/resource_id-63f35ae0-797c-436c-a9ac-28a457b011a3'
     },
     'user_id': 'testuser'
 }
@@ -80,9 +82,10 @@ process_chain_validation_sync_err = {
     'api_info': {
         'endpoint': 'syncprocessvalidationresource',
         'method': 'POST',
-        'path': '/api/v3/locations/nc_spm_08/process_chain_validation_sync',
-        'request_url': 'http://actinia.mundialis.de/api/v3/locations/nc_spm_08'
-                       '/process_chain_validation_sync'
+        'path': f'/api/{ACTINIA_VERSION}/locations/nc_spm_08/'
+                'process_chain_validation_sync',
+        'request_url': f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/locations/'
+                       'nc_spm_08/process_chain_validation_sync'
     },
     'datetime': '2022-05-25 13:08:17.024130',
     'exception': {
@@ -131,8 +134,8 @@ process_chain_validation_sync_err = {
     'timestamp': 1653484097.0240579,
     'urls': {
         'resources': [],
-        'status': 'https://actinia.mundialis.de/api/v3/resources/testuser/'
-                  'resource_id-1afc7cf3-e01a-4d93-82ce-288aa01bbaed'
+        'status': f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/testuser'
+                  '/resource_id-1afc7cf3-e01a-4d93-82ce-288aa01bbaed'
     },
     'user_id': 'testuser'
 }
@@ -143,9 +146,10 @@ process_chain_validation_async = {
     'api_info': {
         'endpoint': 'asyncprocessvalidationresource',
         'method': 'POST',
-        'path': '/api/v3/locations/nc_spm_08/process_chain_validation_async',
-        'request_url': 'http://actinia.mundialis.de/api/v3/locations/nc_spm_08'
-                       '/process_chain_validation_async'
+        'path': f'/api/{ACTINIA_VERSION}/locations/nc_spm_08/'
+                'process_chain_validation_async',
+        'request_url': f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/locations/'
+                       'nc_spm_08/process_chain_validation_async'
     },
     'datetime': '2022-05-25 14:06:38.935917',
     'http_code': 200,
@@ -158,8 +162,8 @@ process_chain_validation_async = {
     'timestamp': 1653487598.9359155,
     'urls': {
         'resources': [],
-        'status': 'https://actinia.mundialis.de/api/v3/resources/testuser/'
-                  'resource_id-031d34cf-f601-448b-81e9-1c50ff9532e2'
+        'status': f'{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/testuser'
+                  '/resource_id-031d34cf-f601-448b-81e9-1c50ff9532e2'
     },
     'user_id': 'testuser'
 }
@@ -168,11 +172,11 @@ process_chain_validation_async_poll = deepcopy(process_chain_validation_sync)
 process_chain_validation_async_poll["api_info"]["endpoint"] = \
     "asyncprocessvalidationresource"
 process_chain_validation_async_poll["api_info"]["path"] = \
-    "/api/v3/locations/nc_spm_08/process_chain_" \
+    f"/api/{ACTINIA_VERSION}/locations/nc_spm_08/process_chain_" \
     "validation_async"
 process_chain_validation_async_poll["api_info"]["request_url"] = \
-    "http://actinia.mundialis.de/api/v3/locations/nc_spm_08/process_chain_" \
-    "validation_async"
+    f"{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/locations/nc_spm_08/process_" \
+    "chain_validation_async"
 process_chain_validation_async_poll["resource_id"] = \
     process_chain_validation_async["resource_id"]
 process_chain_validation_async_poll["urls"]["status"] = \
@@ -183,10 +187,10 @@ process_chain_validation_async_err_poll = deepcopy(
 process_chain_validation_async_err_poll["api_info"]["endpoint"] = \
     "asyncprocessvalidationresource"
 process_chain_validation_async_err_poll["api_info"]["path"] = \
-    "api/v3/locations/nc_spm_08/process_chain_" \
+    f"/api/{ACTINIA_VERSION}/locations/nc_spm_08/process_chain_" \
     "validation_async"
 process_chain_validation_async_err_poll["api_info"]["request_url"] = \
-    "http://actinia.mundialis.de/api/v3/locations/nc_spm_08/process_chain_" \
-    "validation_async"
+    f"{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/locations/nc_spm_08/" \
+    "process_chain_validation_async"
 process_chain_validation_async_err_poll["resource_id"] = \
     process_chain_validation_async["resource_id"]

@@ -31,24 +31,20 @@ import json
 from unittest.mock import Mock, patch
 
 from actinia import Actinia
-from actinia.region import Region
-from actinia.mapset import Mapset
 
 from .mock.actinia_mock import (
     ACTINIA_BASEURL,
     version_resp_text,
-    get_locations_resp,
-    location_get_info_resp,
-    location_get_mapset_resp,
     start_job_resp,
     job_poll_resp,
 )
+from .mock.actinia_location_management_mock import get_locations_resp
 
+__license__ = "GPLv3"
 __author__ = "Anika Weinmann"
-__copyright__ = "mundialis"
-__license__ = "TODO"
+__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 
-location_name = "nc_spm_08"
+LOCATION_NAME = "nc_spm_08"
 PC = {
     "list": [
         {
@@ -86,39 +82,6 @@ class TestActiniaLocation(object):
         cls.mock_get_patcher.stop()
         cls.mock_post_patcher.stop()
 
-    def test_location_get_info(self):
-        """Test location get_info method."""
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(location_get_info_resp)
-        resp = self.testactinia.locations[location_name].get_info()
-
-        assert "region" in resp, "'region' not in location info"
-        assert "projection" in resp, "'projection' not in location info"
-        assert isinstance(resp["projection"], str), "'projection' wrong type"
-        assert isinstance(resp["region"], Region), "'region' wrong type"
-        region = resp["region"]
-        assert hasattr(region, "n"), "Region has not the attribute 'n'"
-        assert region == self.testactinia.locations[location_name].region
-        assert (
-            resp["projection"]
-            == self.testactinia.locations[location_name].projection
-        )
-
-    def test_location_get_mapsets(self):
-        """Test location get_mapsets method."""
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(location_get_mapset_resp)
-        resp = self.testactinia.locations[location_name].get_mapsets()
-
-        assert isinstance(resp, dict), "response is not a dictionary"
-        assert "PERMANENT" in resp, "'PERMANENT' mapset not in response"
-        assert isinstance(
-            resp["PERMANENT"], Mapset
-        ), "Mapsets not of type Mapset"
-        assert resp == self.testactinia.locations[location_name].mapsets
-
     def test_location_create_job_pcdict(self):
         """Test location get_mapsets method with a simple PC dict."""
         assert len(self.testactinia.jobs) == 0
@@ -129,7 +92,7 @@ class TestActiniaLocation(object):
         self.mock_get.return_value.text = json.dumps(job_poll_resp)
 
         testjob = self.testactinia.locations[
-            location_name
+            LOCATION_NAME
         ].create_processing_export_job(PC)
 
         assert testjob.name == "unkonwn_job"

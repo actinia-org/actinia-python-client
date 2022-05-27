@@ -28,7 +28,6 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-# import sys
 from unittest.mock import Mock, patch
 from io import StringIO
 
@@ -38,8 +37,8 @@ from actinia.job import Job
 from .mock.actinia_mock import (
     ACTINIA_BASEURL,
     version_resp_text,
-    get_locations_resp,
 )
+from .mock.actinia_location_management_mock import get_locations_resp
 from .mock.actinia_process_chain_validation_mock import (
     process_chain_validation_sync,
     process_chain_validation_sync_err,
@@ -52,7 +51,7 @@ __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 
-location_name = "nc_spm_08"
+LOCATION_NAME = "nc_spm_08"
 PC = {
     "list": [
         {
@@ -110,7 +109,7 @@ class TestActiniaLocation(object):
         self.mock_post.return_value.text = json.dumps(
             process_chain_validation_sync)
         self.testactinia.locations[
-            location_name].validate_process_chain_sync(PC)
+            LOCATION_NAME].validate_process_chain_sync(PC)
         assert stdout.getvalue() == "Validation successful\n", \
             "Validation stdout not correct"
 
@@ -122,7 +121,7 @@ class TestActiniaLocation(object):
         self.mock_post.return_value.text = json.dumps(
             process_chain_validation_sync_err)
         self.testactinia.locations[
-            location_name].validate_process_chain_sync(PC_error)
+            LOCATION_NAME].validate_process_chain_sync(PC_error)
         assert "Validation error:" in stderr.getvalue(), \
             "Validation stderr not correct by validation error"
 
@@ -133,7 +132,7 @@ class TestActiniaLocation(object):
         self.mock_post.return_value.text = json.dumps(
             process_chain_validation_async)
         val_job = self.testactinia.locations[
-            location_name].validate_process_chain_async(PC)
+            LOCATION_NAME].validate_process_chain_async(PC)
         assert isinstance(val_job, Job), "No job returned!"
         # mock polling and poll job
         self.mock_get.return_value = Mock()
@@ -152,7 +151,7 @@ class TestActiniaLocation(object):
         self.mock_post.return_value.text = json.dumps(
             process_chain_validation_async)
         val_job = self.testactinia.locations[
-            location_name].validate_process_chain_async(PC)
+            LOCATION_NAME].validate_process_chain_async(PC)
         assert isinstance(val_job, Job), "No job returned!"
         # mock polling and poll job
         self.mock_get.return_value = Mock()

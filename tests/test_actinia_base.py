@@ -35,9 +35,9 @@ from actinia import Actinia
 
 from .mock.actinia_mock import ACTINIA_BASEURL, version_resp_text
 
+__license__ = "GPLv3"
 __author__ = "Anika Weinmann"
-__copyright__ = "mundialis"
-__license__ = "TODO"
+__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 
 
 class TestActiniaAuth(object):
