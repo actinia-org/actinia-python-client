@@ -3,7 +3,8 @@
 With the location management the locations can be requested as well as
 information of each location. Also a location can be created and deleted if the user is permitted.
 
-First connecting actinia Python library with [actinia](https://actinia.mundialis.de/) and set authentication (Attention: The demouser is not permitted to create or delete a location!)
+First connecting actinia Python library with [actinia](https://actinia.mundialis.de/) and
+set authentication (Attention: The demouser is not permitted to create or delete a location!)
 ```
 from actinia import Actinia
 

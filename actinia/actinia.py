@@ -167,7 +167,7 @@ class Actinia:
 
     def create_location(self, name, epsgcode):
         """
-        Creates a new location with given name and epsgcode via post request.
+        Creates a new location with given name and EPSG code via post request.
 
         :return: The created location
         """

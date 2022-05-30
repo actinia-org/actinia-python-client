@@ -14,7 +14,7 @@ actinia_mundialis.set_authentication("demouser", "gu3st!pa55w0rd")
 locations = actinia_mundialis.get_locations()
 ```
 
-## Synchron process chain valitaion
+## Synchronous process chain validation
 ```
 pc = {
     "list": [
@@ -24,18 +24,18 @@ pc = {
           "inputs": [
               {
                   "param": "expression",
-                  "value": "baum=5"
+                  "value": "elevation=42"
               }
           ]
       }
     ],
     "version": "1"
 }
-pc = {"list": [{"id": "r_mapcalc","module": "r.mapcalc","inputs": [{"param": "expression","value": "baum=5"}]}],"version": "1"}
+pc = {"list": [{"id": "r_mapcalc","module": "r.mapcalc","inputs": [{"param": "expression","value": "elevation=42"}]}],"version": "1"}
 actinia_mundialis.locations["nc_spm_08"].validate_process_chain_sync(pc)
 ```
 
-## A-synchron process chain valitaion:
+## Asynchronous process chain validation:
 ```
 pc = {
     "list": [
@@ -45,14 +45,14 @@ pc = {
           "inputs": [
               {
                   "param": "expression",
-                  "value": "baum=5"
+                  "value": "elevation=42"
               }
           ]
       }
     ],
     "version": "1"
 }
-pc = {"list": [{"id": "r_mapcalc","module": "r.mapcalc","inputs": [{"param": "expression","value": "baum=5"}]}],"version": "1"}
+pc = {"list": [{"id": "r_mapcalc","module": "r.mapcalc","inputs": [{"param": "expression","value": "elevation=42"}]}],"version": "1"}
 val_job = actinia_mundialis.locations["nc_spm_08"].validate_process_chain_async(pc)
 val_job.poll_until_finished()
 print(val_job.status)

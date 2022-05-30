@@ -95,7 +95,7 @@ class TestActiniaLocation(object):
             LOCATION_NAME
         ].create_processing_export_job(PC)
 
-        assert testjob.name == "unkonwn_job"
+        assert testjob.name == "unknown_job"
         assert testjob.status == "accepted"
         assert len(self.testactinia.jobs) == 1
 

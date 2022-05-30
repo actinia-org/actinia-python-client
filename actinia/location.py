@@ -130,7 +130,7 @@ class Location:
         )
         return resp
 
-    def __set_job_names(self, name, default_name="unkonwn_job"):
+    def __set_job_names(self, name, default_name="unknown_job"):
         now = datetime.now()
         if name is None:
             orig_name = default_name
@@ -154,7 +154,7 @@ class Location:
     def validate_process_chain_async(self, pc, name=None):
         """Validate a process chain (async)."""
         actiniaResp = self.__validate_process_chain(pc, "async")
-        orig_name, name = self.__set_job_names(name, "unkonwn_validation_job")
+        orig_name, name = self.__set_job_names(name, "unknown_validation_job")
         if actiniaResp.status_code != 200:
             raise Exception(
                 f"Error {actiniaResp.status_code}: {actiniaResp.text}")

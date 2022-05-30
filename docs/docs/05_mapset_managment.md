@@ -1,10 +1,11 @@
-# Mapsets Management
+# Mapset Management
 
 With the mapset management the mapsets of a specified location can be
 requested as well as information of each mapset.
 Also a mapsest can be created and deleted if the user is permitted.
 
-First connecting actinia Python library with [actinia](https://actinia.mundialis.de/) and set authentication (Attention: The demouser is not permitted to create or delete a mapset!)
+First connecting actinia Python library with [actinia](https://actinia.mundialis.de/) and
+set authentication (Attention: The demouser is not permitted to create or delete a mapset!)
 ```
 from actinia import Actinia
 

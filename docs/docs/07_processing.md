@@ -2,7 +2,7 @@
 
 Start a process chain with a valid process chain.
 
-First connecting actinia Python library with [actinia](https://actinia.mundialis.de/) and set authentication:
+First connect actinia Python library with [actinia](https://actinia.mundialis.de/) and set authentication:
 ```
 from actinia import Actinia
 
