@@ -27,7 +27,8 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-ACTINIA_BASEURL = "localhost/test"
+ACTINIA_BASEURL = "http://localhost:8088"
+ACTINIA_VERSION = "v3"
 
 version_resp_text = {
     "grass_version": {
@@ -56,11 +57,6 @@ version_resp_text = {
     "version": "1.2.1",
 }
 
-get_locations_resp = {
-    "locations": ["latlong_wgs84", "ECAD", "nc_spm_08"],
-    "status": "success",
-}
-
 
 def fill_basic_frame(
     process_results={},
@@ -75,9 +71,9 @@ def fill_basic_frame(
         "api_info": {
             "endpoint": "locationmanagementresourceuser",
             "method": "GET",
-            "path": "/api/v1/locations/nc_spm_08/info",
-            "request_url": "http://actinia.mundialis.de/api/v1/locations/"
-                           "nc_spm_08/info",
+            "path": f"/api/{ACTINIA_VERSION}/locations/nc_spm_08/info",
+            "request_url": f"{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/locations"
+                           "/nc_spm_08/info",
         },
         "datetime": "2022-03-07 13:46:54.791928",
         "http_code": 200,
@@ -90,8 +86,9 @@ def fill_basic_frame(
         "timestamp": 1646660814.7918556,
         "urls": {
             "resources": [],
-            "status": "https://actinia.mundialis.de/api/v1/resources/demouser/"
-                      "resource_id-573cdb12-2d35-4bf1-8f0b-61443ea07d25",
+            "status": f"{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/"
+                      "demouser/resource_id-573cdb12-2d35-4bf1-8f0b-"
+                      "61443ea07d25",
         },
         "user_id": "demouser",
     }
@@ -102,52 +99,52 @@ def fill_basic_frame(
     return basic_frame
 
 
-p_result_location_info = {
-    "projection": '"PROJCRS["NAD83(HARN) / North Carolina",BASEGEOGCRS'
-    '["NAD83(HARN)",DATUM["NAD83 (High Accuracy Reference Network)",'
-    'ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT'
-    '["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",'
-    '0.0174532925199433]],ID["EPSG",4152]],CONVERSION["SPCS83 North '
-    'Carolina zone (meters)",METHOD["Lambert Conic Conformal (2SP)",'
-    'ID["EPSG",9802]],PARAMETER["Latitude of false origin",33.75,'
-    'ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8821]],'
-    'PARAMETER["Longitude of false origin",-79,ANGLEUNIT["degree",'
-    '0.0174532925199433],ID["EPSG",8822]],PARAMETER["Latitude of 1st '
-    'standard parallel",36.1666666666667,ANGLEUNIT["degree",'
-    '0.0174532925199433],ID["EPSG",8823]],PARAMETER["Latitude of 2nd '
-    'standard parallel",34.3333333333333,ANGLEUNIT["degree",'
-    '0.0174532925199433],ID["EPSG",8824]],PARAMETER["Easting at false '
-    'origin",609601.22,LENGTHUNIT["metre",1],ID["EPSG",8826]],'
-    'PARAMETER["Northing at false origin",0,LENGTHUNIT["metre",1],'
-    'ID["EPSG",8827]]],CS[Cartesian,2],AXIS["easting (X)",east,'
-    'ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,'
-    'ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],'
-    'AREA["USA - North Carolina"],BBOX[33.83,-84.33,36.59,-75.38]],'
-    'ID["EPSG",3358]]',
-    "region": {
-        "b": 0,
-        "cells": 29535,
-        "cells3": 29535,
-        "cols": 179,
-        "cols3": 179,
-        "depths": 1,
-        "e": 639530,
-        "ewres": 10,
-        "ewres3": 10,
-        "n": 221230,
-        "nsres": 10,
-        "nsres3": 10,
-        "projection": 99,
-        "rows": 165,
-        "rows3": 165,
-        "s": 219580,
-        "t": 1,
-        "tbres": 1,
-        "w": 637740,
-        "zone": 0,
-    },
-}
-location_get_info_resp = fill_basic_frame(p_result_location_info)
+# p_result_location_info = {
+#     "projection": '"PROJCRS["NAD83(HARN) / North Carolina",BASEGEOGCRS'
+#     '["NAD83(HARN)",DATUM["NAD83 (High Accuracy Reference Network)",'
+#     'ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT'
+#     '["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",'
+#     '0.0174532925199433]],ID["EPSG",4152]],CONVERSION["SPCS83 North '
+#     'Carolina zone (meters)",METHOD["Lambert Conic Conformal (2SP)",'
+#     'ID["EPSG",9802]],PARAMETER["Latitude of false origin",33.75,'
+#     'ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8821]],'
+#     'PARAMETER["Longitude of false origin",-79,ANGLEUNIT["degree",'
+#     '0.0174532925199433],ID["EPSG",8822]],PARAMETER["Latitude of 1st '
+#     'standard parallel",36.1666666666667,ANGLEUNIT["degree",'
+#     '0.0174532925199433],ID["EPSG",8823]],PARAMETER["Latitude of 2nd '
+#     'standard parallel",34.3333333333333,ANGLEUNIT["degree",'
+#     '0.0174532925199433],ID["EPSG",8824]],PARAMETER["Easting at false '
+#     'origin",609601.22,LENGTHUNIT["metre",1],ID["EPSG",8826]],'
+#     'PARAMETER["Northing at false origin",0,LENGTHUNIT["metre",1],'
+#     'ID["EPSG",8827]]],CS[Cartesian,2],AXIS["easting (X)",east,'
+#     'ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,'
+#     'ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],'
+#     'AREA["USA - North Carolina"],BBOX[33.83,-84.33,36.59,-75.38]],'
+#     'ID["EPSG",3358]]',
+#     "region": {
+#         "b": 0,
+#         "cells": 29535,
+#         "cells3": 29535,
+#         "cols": 179,
+#         "cols3": 179,
+#         "depths": 1,
+#         "e": 639530,
+#         "ewres": 10,
+#         "ewres3": 10,
+#         "n": 221230,
+#         "nsres": 10,
+#         "nsres3": 10,
+#         "projection": 99,
+#         "rows": 165,
+#         "rows3": 165,
+#         "s": 219580,
+#         "t": 1,
+#         "tbres": 1,
+#         "w": 637740,
+#         "zone": 0,
+#     },
+# }
+# location_get_info_resp = fill_basic_frame(p_result_location_info)
 
 
 p_result_get_mapsets = ["PERMANENT", "True", "landsat", "modis_lst"]

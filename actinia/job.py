@@ -30,6 +30,7 @@ __maintainer__ = "Anika Weinmann"
 import json
 import logging
 import requests
+import sys
 
 
 class Job:
@@ -119,7 +120,7 @@ class Job:
             resp["timestamp"],
             resp["urls"],
         )
-        logging.info(f"Status of {self.name} job is {self.status}.")
+        print(f"Status of {self.name} job is {self.status}.", file=sys.stdout)
 
     def poll_until_finished(self):
         """
@@ -130,7 +131,9 @@ class Job:
             self.poll()
             if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
-                logging.info(f"Status of {self.name} job is {self.status}.")
+                msg = f"Status of {self.name} job is {self.status}: " \
+                    f"{self.message}"
+                print(msg, file=sys.stderr)
 
     # def terminate(self):
     #     """
