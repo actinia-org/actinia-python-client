@@ -92,7 +92,7 @@ class TestActinia(object):
         """Test get locations."""
 
         assert self.testactinia.locations == {}, (
-            "Locations are not empty dictionary"
+            "Locations may not be an empty dictionary"
         )
 
         self.mock_get.return_value = Mock()

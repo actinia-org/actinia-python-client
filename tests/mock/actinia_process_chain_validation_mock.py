@@ -53,13 +53,13 @@ process_chain_validation_sync = {
         [{
             'id': 'r_mapcalc',
             'inputs':
-                [{'param': 'expression', 'value': 'baum=5'}],
+                [{'param': 'expression', 'value': 'elevation=42'}],
             'module': 'r.mapcalc'
         }],
         'version': '1'
     }],
     'process_log': [],
-    'process_results': ["grass r.mapcalc ['expression=baum=5']"],
+    'process_results': ["grass r.mapcalc ['expression=elevation=42']"],
     'progress':
     {'num_of_steps': 1, 'step': 0},
     'resource_id': 'resource_id-63f35ae0-797c-436c-a9ac-28a457b011a3',

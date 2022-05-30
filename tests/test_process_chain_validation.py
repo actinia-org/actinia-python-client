@@ -57,7 +57,7 @@ PC = {
         {
             "id": "r_mapcalc",
             "module": "r.mapcalc",
-            "inputs": [{"param": "expression", "value": "baum=5"}],
+            "inputs": [{"param": "expression", "value": "elevation=42"}],
         }
     ],
     "version": "1",
