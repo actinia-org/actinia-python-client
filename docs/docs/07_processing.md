@@ -1,6 +1,6 @@
 # Processing
 
-Start a process chain with a valid process chain.
+Start a processing job with a valid process chain.
 
 First connect actinia Python library with [actinia](https://actinia.mundialis.de/) and set authentication:
 ```
