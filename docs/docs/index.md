@@ -7,8 +7,8 @@ Access [**actinia - The GRASS GIS REST API**](https://actinia.mundialis.de/) via
 
 **actinia-python-client** is a Python library to access an actinia server easily via python.
 
-* [Installation](installation.md)
-* [Quickstart](quickstart.md)
+* [Installation](02_installation.md)
+* [Quickstart](03_quickstart.md)
 * [Location Management](04_location_management.md)
 * [Mapset Management](05_mapset_managment.md)
 * [Process Chain Validation](06_process_chain_validation.md)
