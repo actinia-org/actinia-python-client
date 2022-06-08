@@ -23,31 +23,202 @@
 #######
 
 __license__ = "GPLv3"
-__author__ = "Anika Weinmann"
+__author__ = "Anika Weinmann and Corey White"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-# import json
-# import requests
-#
-# from actinia.region import Region
+from inspect import _void
+import json
+import requests
+from actinia.region import Region
+from enum import Enum, unique
 
+@unique
+class MAPSET_TASK(Enum):
+    INFO = "info"
+    LOCK = "lock"
+    RASTER_LAYER = "raster_layer"
+    STRDS = "strds"
+    VECTOR_LAYERS = "vector_layers"
+    PROCESSING = "processing"
+    PROCESSING_ASYNC = "processing_async"
 
 class Mapset:
-    def __init__(self, name, actinia, auth):
+    def __init__(self, name, location_name, actinia):
         self.name = name
         self.projection = None
         self.region = None
+        self.__location_name = location_name
         self.__actinia = actinia
-        self.__auth = auth
         self.raster_layers = None
         self.vector_layers = None
         self.strds = None
 
+    def __request_url(
+        actinia_url,
+        location_name,
+        mapset_name,
+        task = None
+    ):
+        """
+        Provides the url to an Actinia mapset resource.
+
+        Parameters
+        ----------
+        actinia_url : str
+            The base url to actinia server
+        location_name : str
+            The GRASS location name
+            route: /locations/{location_name}/mapsets
+        mapset_name : str
+            The mapset name
+            route: /locations/{location_name}/mapsets/{mapset_name}
+        task : Enum(MAPSET_TASK)
+            The requested task 
+            (info) route: 
+                /locations/{location_name}/mapsets/{mapset_name}/info - GET
+            (lock) route: 
+                /locations/{location_name}/mapsets/{mapset_name}/raster_layers - DELETE, GET, PUT
+            (raster_layers) route: 
+                /locations/{location_name}/mapsets/{mapset_name}/raster_layers - DELETE, GET, PUT
+            (vector_layers) route: 
+                /locations/{location_name}/mapsets/{mapset_name}/vector_layers - DELETE, GET, PUT
+            (strds) route:
+                /locations/{location_name}/mapsets/{mapset_name}/strds - GET
+            (processing) route:
+                /locations/{location_name}/mapsets/{mapset_name}/processing - POST (persistent, asyncron)
+            (processing_async) route:
+                /locations/{location_name}/mapsets/{mapset_name}/processing_async - POST (persistent, asyncron)
+
+        raster_layers : bool
+        Returns
+        -------
+        base_url : str 
+            Return the url scheme for the mapset request
+        """
+        base_url =  f"{actinia_url}/locations/{location_name}/mapsets"
+        if mapset_name is not None:
+            base_url = f"{base_url}/{mapset_name}"
+            if isinstance(task, MAPSET_TASK):
+                base_url = f"{base_url}/{mapset_name}{task.value}"
+
+        return base_url
+
+    def info(self):
+        """Get mapset info"""
+        if self.projection is None or self.region is None:
+            proc_res = self.request_info(self.name, self.__location_name, self.__actinia)
+            self.projection = proc_res["projection"]
+            self.region = Region(**proc_res["region"])
+        return {"projection": self.projection, "region": self.region}
+       
+
+    def delete(self):
+        """Deletes the mapset"""
+        self.delete_mapset_request(self.name, self.__location_name, self.__actinia)
+
+
+    @classmethod 
+    def list_mapsets_request(cls, location_name, actinia):
+        """
+        Creates a mapset within a location.
+
+        Parameters
+        ----------
+        mapset_name : str
+            The name of the created mapset.
+        location_name : str
+            The name of the location where the mapset is created
+        actinia : Actinia
+            An Actinia instance containing the url and authentication details
+        
+        Returns
+        -------
+        Mapset
+            A new mapset instance for the created mapset
+        """
+        url = cls.__request_url(actinia.url, location_name)
+        resp = requests.get(url, auth=actinia.auth)
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+
+        mapset_names = json.loads(resp.text)["process_results"]
+        mapsets = {
+            mname: Mapset(mname, actinia)
+            for mname in mapset_names
+        }
+        return mapsets
+
+
+    @classmethod 
+    def create_mapset_request(cls, mapset_name, location_name, actinia):
+        """
+        Creates a mapset within a location.
+
+        Parameters
+        ----------
+        mapset_name : str
+            The name of the created mapset.
+        location_name : str
+            The name of the location where the mapset is created
+        actinia : Actinia
+            An Actinia instance containing the url and authentication details
+        
+        Returns
+        -------
+        Mapset
+            A new mapset instance for the created mapset
+        """
+        url =  cls.__request_url(actinia.url, location_name, mapset_name)
+        resp = requests.post(url, auth=(actinia.auth))
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        return Mapset(mapset_name, actinia, actinia.auth)
+
+
+    @classmethod 
+    def delete_mapset_request(cls, mapset_name, location_name, actinia):
+        """
+        Delete a mapset within a location.
+
+        Parameters
+        ----------
+        mapset_name : str
+            The name of the created mapset.
+        location_name : str
+            The name of the location where the mapset is created
+        actinia : Actinia
+            An Actinia instance containing the url and authentication details
+        """
+        url =  cls.__request_url(actinia.url, location_name, mapset_name)
+        resp = requests.delete(url, auth=(actinia.auth))
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        return None
+
+
+    @classmethod 
+    def request_info(cls, mapset_name, location_name, actinia):
+        """
+        Delete a mapset within a location.
+
+        Parameters
+        ----------
+        mapset_name : str
+            The name of the created mapset.
+        location_name : str
+            The name of the location where the mapset is created
+        actinia : Actinia
+            An Actinia instance containing the url and authentication details
+        """
+        url =  cls.__request_url(actinia.url, location_name, mapset_name, MAPSET_TASK.INFO)
+        resp = requests.get(url, auth=(actinia.auth))
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        proc_res = json.loads(resp.text)["process_results"]
+        return proc_res
 
 # TODO:
-# * /locations/{location_name}/mapsets/{mapset_name} - DELETE, POST
-# * /locations/{location_name}/mapsets/{mapset_name}/info - GET
 # * (/locations/{location_name}/mapsets/{mapset_name}/lock - GET, DELETE, POST)
 
 # * /locations/{location_name}/mapsets/{mapset_name}/raster_layers

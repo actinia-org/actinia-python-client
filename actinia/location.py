@@ -77,17 +77,8 @@ class Location:
 
         :return: A list of the mapset names
         """
-        url = f"{self.__actinia.url}/locations/{self.name}/mapsets"
-        resp = requests.get(url, auth=self.__auth)
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-
-        mapset_names = json.loads(resp.text)["process_results"]
-        mapsets = {
-            mname: Mapset(mname, self.__actinia, self.__auth)
-            for mname in mapset_names
-        }
-        self.mapsets = mapsets
+        self.mapsets = Mapset.list_mapsets_request(self.name, self.__actinia)
+        return self.mapsets
 
     def delete(self):
         """Delete a location via delete request.
@@ -106,13 +97,24 @@ class Location:
             self.__request_mapsets()
         return self.mapsets
 
-    # def create_mapset(self, name, epsgcode):
-    #     """
-    #     Creates a location with a specified projection.
-    #     """
-    #     url = f"{self.url}/locations/{name}"
-    #     # TODO
-    #     # resp = requests.post(url, auth=(self.__auth))
+    def create_mapset(self, name):
+        """
+        Creates a mapset with in the location.
+        """
+        mapset = Mapset.create_mapset_request(name, self.name, self.__actinia, self.__auth)
+        mapset.location = self
+        return mapset
+
+    
+    def delete_mapset(self, name):
+        """
+        Deletes a mapset and return update mapseet list for the location.
+        """
+        Mapset.delete_mapset_request(name, self.name, self.__actinia, self.__auth)
+        # Refresh location mapsets from the server to make sure data isn't stale
+        self.__request_mapsets()
+        return self.mapsets
+
 
     def __validate_process_chain(self, pc, type):
         url = f"{self.__actinia.url}/locations/{self.name}/"
