@@ -147,7 +147,7 @@ def fill_basic_frame(
 # location_get_info_resp = fill_basic_frame(p_result_location_info)
 
 
-p_result_get_mapsets = ["PERMANENT", "True", "landsat", "modis_lst"]
+p_result_get_mapsets = ["PERMANENT", "True", "landsat", "modis_lst", "test_mapset"]
 location_get_mapset_resp = fill_basic_frame(p_result_get_mapsets)
 
 start_job_resp = fill_basic_frame(process_results={}, status="accepted")

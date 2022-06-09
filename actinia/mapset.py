@@ -44,12 +44,13 @@ class MAPSET_TASK(Enum):
     PROCESSING_ASYNC = "processing_async"
 
 class Mapset:
-    def __init__(self, name, location_name, actinia):
+    def __init__(self, name, location_name, actinia, auth):
         self.name = name
         self.projection = None
         self.region = None
         self.__location_name = location_name
         self.__actinia = actinia
+        self.__auth = auth
         self.raster_layers = None
         self.vector_layers = None
         self.strds = None
@@ -57,7 +58,7 @@ class Mapset:
     def __request_url(
         actinia_url,
         location_name,
-        mapset_name,
+        mapset_name = None,
         task = None
     ):
         """
@@ -70,10 +71,10 @@ class Mapset:
         location_name : str
             The GRASS location name
             route: /locations/{location_name}/mapsets
-        mapset_name : str
+        mapset_name : str, default=None
             The mapset name
             route: /locations/{location_name}/mapsets/{mapset_name}
-        task : Enum(MAPSET_TASK)
+        task : Enum(MAPSET_TASK), default=None
             The requested task 
             (info) route: 
                 /locations/{location_name}/mapsets/{mapset_name}/info - GET
@@ -107,7 +108,7 @@ class Mapset:
     def info(self):
         """Get mapset info"""
         if self.projection is None or self.region is None:
-            proc_res = self.request_info(self.name, self.__location_name, self.__actinia)
+            proc_res = self.request_info(self.name, self.__location_name, self.__actinia, self.__auth)
             self.projection = proc_res["projection"]
             self.region = Region(**proc_res["region"])
         return {"projection": self.projection, "region": self.region}
@@ -119,7 +120,7 @@ class Mapset:
 
 
     @classmethod 
-    def list_mapsets_request(cls, location_name, actinia):
+    def list_mapsets_request(cls, location_name, actinia, auth):
         """
         Creates a mapset within a location.
 
@@ -131,27 +132,28 @@ class Mapset:
             The name of the location where the mapset is created
         actinia : Actinia
             An Actinia instance containing the url and authentication details
-        
+        auth : 
+            Actinia authentication
         Returns
         -------
         Mapset
             A new mapset instance for the created mapset
         """
         url = cls.__request_url(actinia.url, location_name)
-        resp = requests.get(url, auth=actinia.auth)
+        resp = requests.get(url, auth=auth)
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
 
         mapset_names = json.loads(resp.text)["process_results"]
         mapsets = {
-            mname: Mapset(mname, actinia)
+            mname: Mapset(mname, location_name, actinia, auth)
             for mname in mapset_names
         }
         return mapsets
 
 
     @classmethod 
-    def create_mapset_request(cls, mapset_name, location_name, actinia):
+    def create_mapset_request(cls, mapset_name, location_name, actinia, auth):
         """
         Creates a mapset within a location.
 
@@ -163,21 +165,22 @@ class Mapset:
             The name of the location where the mapset is created
         actinia : Actinia
             An Actinia instance containing the url and authentication details
-        
+        auth : 
+            Actinia authentication
         Returns
         -------
         Mapset
             A new mapset instance for the created mapset
         """
         url =  cls.__request_url(actinia.url, location_name, mapset_name)
-        resp = requests.post(url, auth=(actinia.auth))
+        resp = requests.post(url, auth=(auth))
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        return Mapset(mapset_name, actinia, actinia.auth)
+        return Mapset(mapset_name, actinia, auth)
 
 
     @classmethod 
-    def delete_mapset_request(cls, mapset_name, location_name, actinia):
+    def delete_mapset_request(cls, mapset_name, location_name, actinia, auth):
         """
         Delete a mapset within a location.
 
@@ -189,16 +192,18 @@ class Mapset:
             The name of the location where the mapset is created
         actinia : Actinia
             An Actinia instance containing the url and authentication details
+        auth : 
+            Actinia authentication
         """
         url =  cls.__request_url(actinia.url, location_name, mapset_name)
-        resp = requests.delete(url, auth=(actinia.auth))
+        resp = requests.delete(url, auth=(auth))
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
         return None
 
 
     @classmethod 
-    def request_info(cls, mapset_name, location_name, actinia):
+    def request_info(cls, mapset_name, location_name, actinia, auth):
         """
         Delete a mapset within a location.
 
@@ -210,9 +215,11 @@ class Mapset:
             The name of the location where the mapset is created
         actinia : Actinia
             An Actinia instance containing the url and authentication details
+        auth : 
+            Actinia authentication
         """
         url =  cls.__request_url(actinia.url, location_name, mapset_name, MAPSET_TASK.INFO)
-        resp = requests.get(url, auth=(actinia.auth))
+        resp = requests.get(url, auth=(auth))
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
         proc_res = json.loads(resp.text)["process_results"]

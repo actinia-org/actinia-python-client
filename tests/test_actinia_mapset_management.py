@@ -32,12 +32,14 @@ from unittest.mock import Mock, patch
 
 from actinia import Actinia
 from actinia.mapset import Mapset
+from actinia.region import Region
 
 from .mock.actinia_mock import (
     ACTINIA_BASEURL,
     version_resp_text,
     location_get_mapset_resp,
 )
+from .mock.actinia_mapset_management_mock import mapset_get_info_resp
 from .mock.actinia_location_management_mock import get_locations_resp
 
 __license__ = "GPLv3"
@@ -45,6 +47,7 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 
 LOCATION_NAME = "nc_spm_08"
+MAPSET_NAME = "test_mapset"
 PC = {
     "list": [
         {
@@ -95,3 +98,22 @@ class TestActiniaLocation(object):
             resp["PERMANENT"], Mapset
         ), "Mapsets not of type Mapset"
         assert resp == self.testactinia.locations[LOCATION_NAME].mapsets
+
+    def test_mapset_get_info(self):
+        """Test mapset get_info method."""
+        self.mock_get.return_value = Mock()
+        self.mock_get.return_value.status_code = 200
+        self.mock_get.return_value.text = json.dumps(mapset_get_info_resp)
+        resp = self.testactinia.locations[LOCATION_NAME].mapsets[MAPSET_NAME].info()
+
+        assert "region" in resp, "'region' not in location info"
+        assert "projection" in resp, "'projection' not in location info"
+        assert isinstance(resp["projection"], str), "'projection' wrong type"
+        assert isinstance(resp["region"], Region), "'region' wrong type"
+        region = resp["region"]
+        assert hasattr(region, "n"), "Region has not the attribute 'n'"
+        assert region == self.testactinia.locations[LOCATION_NAME].mapsets[MAPSET_NAME].region
+        assert (
+            resp["projection"]
+            == self.testactinia.locations[LOCATION_NAME].mapsets[MAPSET_NAME].projection
+        )
