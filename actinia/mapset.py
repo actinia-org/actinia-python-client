@@ -176,7 +176,7 @@ class Mapset:
         resp = requests.post(url, auth=(auth))
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        return Mapset(mapset_name, actinia, auth)
+        return Mapset(mapset_name, location_name, actinia, auth)
 
 
     @classmethod 

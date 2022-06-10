@@ -102,7 +102,10 @@ class Location:
         Creates a mapset with in the location.
         """
         mapset = Mapset.create_mapset_request(name, self.name, self.__actinia, self.__auth)
-        mapset.location = self
+        mapset.location = self.name
+        # We could also fetch data from the server again 
+        # with self.__request_mapsets() to ensure data is stale
+        self.mapsets[name] = mapset
         return mapset
 
     
