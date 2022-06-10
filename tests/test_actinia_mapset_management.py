@@ -48,8 +48,6 @@ from .mock.actinia_mapset_management_mock import (
     delete_mapset_resp
 )
 
-
-
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
@@ -101,8 +99,10 @@ class TestActiniaLocation(object):
         cls.mock_delete_patcher.stop()
         if NEW_LOCATION_NAME in cls.testactinia.locations:
             cls.mock_delete_mapset()
-            cls.testactinia.locations[NEW_LOCATION_NAME].delete_mapset(NEW_MAPSET_NAME)
-    
+            cls.testactinia.locations[NEW_LOCATION_NAME].delete_mapset(
+                NEW_MAPSET_NAME
+            )
+
     @classmethod
     def mock_delete_mapset(cls):
         cls.mock_delete.return_value = Mock()
@@ -134,7 +134,9 @@ class TestActiniaLocation(object):
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
         self.mock_get.return_value.text = json.dumps(mapset_get_info_resp)
-        resp = self.testactinia.locations[LOCATION_NAME].mapsets[MAPSET_NAME].info()
+        resp = self.testactinia.locations[
+            LOCATION_NAME
+        ].mapsets[MAPSET_NAME].info()
 
         assert "region" in resp, "'region' not in location info"
         assert "projection" in resp, "'projection' not in location info"
@@ -142,12 +144,15 @@ class TestActiniaLocation(object):
         assert isinstance(resp["region"], Region), "'region' wrong type"
         region = resp["region"]
         assert hasattr(region, "n"), "Region has not the attribute 'n'"
-        assert region == self.testactinia.locations[LOCATION_NAME].mapsets[MAPSET_NAME].region
+        assert region == self.testactinia.locations[
+            LOCATION_NAME
+        ].mapsets[MAPSET_NAME].region
         assert (
             resp["projection"]
-            == self.testactinia.locations[LOCATION_NAME].mapsets[MAPSET_NAME].projection
+            == self.testactinia.locations[
+                LOCATION_NAME
+            ].mapsets[MAPSET_NAME].projection
         )
-
 
     def test_actinia_create_and_delete_mapsets(self):
         """Test location creation and deletion"""
@@ -167,13 +172,19 @@ class TestActiniaLocation(object):
             "Created mapset is not of type Mapset"
         assert mapset.name == NEW_MAPSET_NAME, \
             "Created location name is wrong"
-        assert NEW_MAPSET_NAME in self.testactinia.locations[LOCATION_NAME].mapsets, \
+        assert NEW_MAPSET_NAME in self.testactinia.locations[
+            LOCATION_NAME
+        ].mapsets, \
             "Created mapset is not added to location's mapsets"
 
-        #Delete mapset with Location method
+        # Delete mapset with Location method
         self.mock_delete_mapset()
-        self.testactinia.locations[LOCATION_NAME].delete_mapset(NEW_MAPSET_NAME)
-        assert NEW_MAPSET_NAME not in self.testactinia.locations[LOCATION_NAME].mapsets, \
+        self.testactinia.locations[LOCATION_NAME].delete_mapset(
+            NEW_MAPSET_NAME
+        )
+        assert NEW_MAPSET_NAME not in self.testactinia.locations[
+            LOCATION_NAME
+        ].mapsets, \
             "Mapset not deleted"
 
         # Recreate mapset and delete with Mapset method
@@ -182,5 +193,7 @@ class TestActiniaLocation(object):
         )
         self.mock_delete()
         mapset.delete()
-        assert NEW_MAPSET_NAME not in self.testactinia.locations[LOCATION_NAME].mapsets, \
+        assert NEW_MAPSET_NAME not in self.testactinia.locations[
+            LOCATION_NAME
+        ].mapsets, \
             "Mapset not deleted"

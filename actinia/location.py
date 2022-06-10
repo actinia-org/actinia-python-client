@@ -77,7 +77,11 @@ class Location:
 
         :return: A list of the mapset names
         """
-        self.mapsets = Mapset.list_mapsets_request(self.name, self.__actinia, self.__auth)
+        self.mapsets = Mapset.list_mapsets_request(
+            self.name,
+            self.__actinia,
+            self.__auth
+        )
         return self.mapsets
 
     def delete(self):
@@ -101,22 +105,30 @@ class Location:
         """
         Creates a mapset with in the location.
         """
-        mapset = Mapset.create_mapset_request(name, self.name, self.__actinia, self.__auth)
+        mapset = Mapset.create_mapset_request(
+            name,
+            self.name,
+            self.__actinia,
+            self.__auth
+        )
         mapset.location = self.name
-        # We could also fetch data from the server again 
+        # We could also fetch data from the server again
         # with self.__request_mapsets() to ensure data is stale
         self.mapsets[name] = mapset
         return mapset
 
-    
     def delete_mapset(self, name):
         """
         Deletes a mapset and return update mapseet list for the location.
         """
-        Mapset.delete_mapset_request(name, self.name, self.__actinia, self.__auth)
+        Mapset.delete_mapset_request(
+            name,
+            self.name,
+            self.__actinia,
+            self.__auth
+        )
         del self.mapsets[name]
         return self.mapsets
-
 
     def __validate_process_chain(self, pc, type):
         url = f"{self.__actinia.url}/locations/{self.name}/"
