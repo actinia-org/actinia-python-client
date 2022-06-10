@@ -126,12 +126,10 @@ class Mapset:
 
         Parameters
         ----------
-        mapset_name : str
-            The name of the created mapset.
         location_name : str
-            The name of the location where the mapset is created
+            The name of the location where the mapsets are located.
         actinia : Actinia
-            An Actinia instance containing the url and authentication details
+            An Actinia instance containing the url
         auth : 
             Actinia authentication
         Returns
@@ -164,7 +162,7 @@ class Mapset:
         location_name : str
             The name of the location where the mapset is created
         actinia : Actinia
-            An Actinia instance containing the url and authentication details
+            An Actinia instance containing the url
         auth : 
             Actinia authentication
         Returns
@@ -187,11 +185,11 @@ class Mapset:
         Parameters
         ----------
         mapset_name : str
-            The name of the created mapset.
+            The name of the mapset to delete
         location_name : str
-            The name of the location where the mapset is created
+            The name of the mapset's location
         actinia : Actinia
-            An Actinia instance containing the url and authentication details
+            An Actinia instance containing the url
         auth : 
             Actinia authentication
         """
@@ -210,11 +208,11 @@ class Mapset:
         Parameters
         ----------
         mapset_name : str
-            The name of the created mapset.
+            The name of mapset.
         location_name : str
-            The name of the location where the mapset is created
+            The name of the location
         actinia : Actinia
-            An Actinia instance containing the url and authentication details
+            An Actinia instance containing the url
         auth : 
             Actinia authentication
         """
