@@ -114,8 +114,7 @@ class Location:
         Deletes a mapset and return update mapseet list for the location.
         """
         Mapset.delete_mapset_request(name, self.name, self.__actinia, self.__auth)
-        # Refresh location mapsets from the server to make sure data isn't stale
-        self.__request_mapsets()
+        del self.mapsets[name]
         return self.mapsets
 
 
