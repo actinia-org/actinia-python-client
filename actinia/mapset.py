@@ -116,8 +116,8 @@ class Mapset:
 
     def delete(self):
         """Deletes the mapset"""
-        self.delete_mapset_request(self.name, self.__location_name, self.__actinia)
-
+        self.delete_mapset_request(self.name, self.__location_name, self.__actinia, self.__auth)
+        del self.__actinia.locations[self.__location_name].mapsets[self.name]
 
     @classmethod 
     def list_mapsets_request(cls, location_name, actinia, auth):

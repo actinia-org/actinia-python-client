@@ -109,6 +109,12 @@ class TestActiniaLocation(object):
         cls.mock_delete.return_value.status_code = 200
         cls.mock_delete.return_value.text = json.dumps(delete_mapset_resp)
 
+    @classmethod
+    def mock_delete(cls):
+        cls.mock_delete.return_value = Mock()
+        cls.mock_delete.return_value.status_code = 200
+        cls.mock_delete.return_value.text = json.dumps(delete_mapset_resp)
+
     def test_location_get_mapsets(self):
         """Test location get_mapsets method."""
         self.mock_get.return_value = Mock()
@@ -164,8 +170,17 @@ class TestActiniaLocation(object):
         assert NEW_MAPSET_NAME in self.testactinia.locations[LOCATION_NAME].mapsets, \
             "Created mapset is not added to location's mapsets"
 
-        #Delete mapset
+        #Delete mapset with Location method
         self.mock_delete_mapset()
         self.testactinia.locations[LOCATION_NAME].delete_mapset(NEW_MAPSET_NAME)
+        assert NEW_MAPSET_NAME not in self.testactinia.locations[LOCATION_NAME].mapsets, \
+            "Mapset not deleted"
+
+        # Recreate mapset and delete with Mapset method
+        mapset = self.testactinia.locations[LOCATION_NAME].create_mapset(
+            NEW_MAPSET_NAME
+        )
+        self.mock_delete()
+        mapset.delete()
         assert NEW_MAPSET_NAME not in self.testactinia.locations[LOCATION_NAME].mapsets, \
             "Mapset not deleted"
