@@ -27,9 +27,6 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
-import requests
-
 from actinia.raster import Raster
 from actinia.utils import request_and_check
 
@@ -73,14 +70,14 @@ class Mapset:
             self.__request_raster_layers()
         return self.raster_layers
 
-    def create_raster_layer(self, name, file):
-        """
-        Creates a raster layer from a given GTif file
-        """
-        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
-            f"mapsets/{self.name}/raster_layers/{name}"
-        # TODO
-        import pdb; pdb.set_trace()
+    # def create_raster_layer(self, name, file):
+    #     """
+    #     Creates a raster layer from a given GTif file
+    #     """
+    #     url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+    #         f"mapsets/{self.name}/raster_layers/{name}"
+    #     # TODO
+    #     # import pdb; pdb.set_trace()
 
 
 # TODO:
