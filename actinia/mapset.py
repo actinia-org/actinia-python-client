@@ -27,8 +27,12 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
+import json
+import requests
+
 from actinia.raster import Raster
-from actinia.utils import request_and_check
+from actinia.utils import request_and_check, print_stdout
+from actinia.job import Job
 
 
 class Mapset:
@@ -62,23 +66,59 @@ class Mapset:
         }
         self.raster_layers = rasters
 
-    def get_raster_layers(self):
+    def get_raster_layers(self, force=False):
         """
         Return raster layers
         """
-        if self.raster_layers is None:
+        if self.raster_layers is None or force is True:
             self.__request_raster_layers()
         return self.raster_layers
 
-    # def create_raster_layer(self, name, file):
-    #     """
-    #     Creates a raster layer from a given GTif file
-    #     """
-    #     url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
-    #         f"mapsets/{self.name}/raster_layers/{name}"
-    #     # TODO
-    #     # import pdb; pdb.set_trace()
+    def upload_raster(self, layer_name, tif_file):
+        """Upload GTiff as a raster layer
+        Parameters:
+            layername (string): Name for the raster layer
+            tif_file (string): Path of the GTiff file to upload
+        """
+        files = {"file": (tif_file, open(tif_file, "rb"))}
+        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            f"mapsets/{self.name}/raster_layers/{layer_name}"
+        resp = requests.post(
+                url=url,
+                files=files,
+                auth=self.__auth,
+        )
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        kwargs = json.loads(resp.text)
+        job = Job(
+            f"raster_upload_{self.__location_name}_{self.name}_{layer_name}",
+            self.__actinia, self.__auth, **kwargs)
+        job.poll_until_finished()
+        if job.status != "finished":
+            raise Exception(f"{job.status}: {job.message}")
+        if self.raster_layers is None:
+            self.get_raster_layers()
+        self.raster_layers[layer_name] = Raster(
+            layer_name, self.__location_name, self.name,
+            self.__actinia, self.__auth
+        )
 
+    def delete_raster(self, layer_name):
+        """Delete a raster layer"""
+        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            f"mapsets/{self.name}/raster_layers/{layer_name}"
+        resp = requests.delete(
+                url=url,
+                auth=self.__auth,
+        )
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        if self.raster_layers is None:
+            self.get_raster_layers()
+        else:
+            del self.raster_layers[layer_name]
+        print_stdout(f"Raster <{layer_name}> successfully deleted")
 
 # TODO:
 # * /locations/{location_name}/mapsets/{mapset_name} - DELETE, POST
@@ -86,7 +126,7 @@ class Mapset:
 # * (/locations/{location_name}/mapsets/{mapset_name}/lock - GET, DELETE, POST)
 
 # * /locations/{location_name}/mapsets/{mapset_name}/raster_layers
-#      - DELETE, GET, PUT
+#      - DELETE, PUT
 # * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
 # * "/locations/{location_name}/mapsets/{mapset_name}/vector_layers"
 

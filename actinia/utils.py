@@ -36,7 +36,6 @@ def request_and_check(url, auth, status_code=200):
     resp = requests.get(url, auth=auth)
     if resp.status_code != status_code:
         raise Exception(f"Error {resp.status_code}: {resp.text}")
-    # import pdb; pdb.set_trace()
     return json.loads(resp.text)
 
 
