@@ -20,4 +20,5 @@ test = Actinia()
 ## Run tests
 ```
 make test
+make devtest
 ```
