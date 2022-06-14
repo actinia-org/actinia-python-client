@@ -30,16 +30,19 @@ Upload a GTif as raster layers to a user mapset (here the user mapset will be
 created before)
 ```
 # TODO add mapset creation
-mapset_name = "AW_raster_upload"
+mapset_name = "test_mapset"
+
 # upload tif
 raster_layer_name = "test"
-file = "~/data/tif/elevation.tif"
-mapsets["PERMANENT"]
+file = "/home/testuser/data/tif/elevation.tif"
 locations["nc_spm_08"].mapsets[mapset_name].upload_raster(raster_layer_name, file)
+print(locations["nc_spm_08"].mapsets[mapset_name].raster_layers.keys())
 ```
 
 Delete a raster layer
 ```
 locations["nc_spm_08"].mapsets[mapset_name].delete_raster(raster_layer_name)
+print(locations["nc_spm_08"].mapsets[mapset_name].raster_layers.keys())
+
 # TODO delete mapset
 ```
