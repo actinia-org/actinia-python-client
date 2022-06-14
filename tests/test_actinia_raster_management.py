@@ -92,13 +92,14 @@ class TestActiniaRaster(object):
         cls.mock_get_patcher.stop()
         cls.mock_post_patcher.stop()
 
-    def test_get_rasters(self):
-        """Test get_raster_layers method."""
+    def test_get_rasters_and_raster_info(self):
+        """Test get_raster_layers and get_info methods."""
+        # get raster layers
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
         self.mock_get.return_value.text = json.dumps(get_rasters_mock)
         resp = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].upload_raster()
+            MAPSET_NAME].get_raster_layers()
 
         assert isinstance(resp, dict), "response is not a dictionary"
         assert "zipcodes" in resp, "'zipcodes' raster not in response"
@@ -108,8 +109,7 @@ class TestActiniaRaster(object):
         assert resp == self.testactinia.locations[LOCATION_NAME].mapsets[
             MAPSET_NAME].raster_layers
 
-    def test_raster_info(self):
-        """Test get_info method for a raster."""
+        # get raster info
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
         self.mock_get.return_value.text = json.dumps(get_raster_info_mock)
