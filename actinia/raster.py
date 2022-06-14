@@ -28,7 +28,6 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-# import requests
 
 from actinia.region import Region
 from actinia.utils import request_and_check, print_stdout
