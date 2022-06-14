@@ -130,8 +130,8 @@ get_vectors_mock = {
     "timestamp": 1655200659.8172982,
     "urls": {
         "resources": [],
-        "status": f"{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/testuser/"
-                  "resource_id-2a958ad5-020c-4b3a-a748-d43e11698914",
+        "status": f"{ACTINIA_BASEURL}/api/{ACTINIA_VERSION}/resources/testuser"
+                  "/resource_id-2a958ad5-020c-4b3a-a748-d43e11698914",
     },
     "user_id": "testuser",
 }
