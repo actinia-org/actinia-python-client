@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #######
-# acintia-python-client is a python client for actinia - an open source REST
+# actinia-python-client is a python client for actinia - an open source REST
 # API for scalable, distributed, high performance processing of geographical
 # data that uses GRASS GIS for computational tasks.
 #
@@ -33,6 +33,18 @@ import sys
 
 
 def request_and_check(url, auth, status_code=200):
+    """Function to send a GET request to an URL and check the status code.
+
+    Parameters:
+        url (string): URL as string
+        auth (tuple): Tupel of user and password
+        status_code (int): Status code to check if it is set; default is 200
+
+    Returns:
+        (dict): returns text of the response as dictionary
+
+    Throw s an error if the request does not have the status_code
+    """
     resp = requests.get(url, auth=auth)
     if resp.status_code != status_code:
         raise Exception(f"Error {resp.status_code}: {resp.text}")
@@ -40,4 +52,5 @@ def request_and_check(url, auth, status_code=200):
 
 
 def print_stdout(msg):
+    """Print message to stdout"""
     print(msg, file=sys.stdout)
