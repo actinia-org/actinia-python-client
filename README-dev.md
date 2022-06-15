@@ -22,3 +22,10 @@ test = Actinia()
 make test
 make devtest
 ```
+To run only a few tests you can mark the tests for development with
+`@pytest.mark.dev` and add `import pytest` to the `.py` file/s with the tests
+you want to run. Then run
+```
+make devtest
+```
+(This fails if no test is marked!)
