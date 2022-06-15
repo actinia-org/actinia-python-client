@@ -84,7 +84,7 @@ class Location:
 
         mapset_names = json.loads(resp.text)["process_results"]
         mapsets = {
-            mname: Mapset(mname, self.__actinia, self.__auth)
+            mname: Mapset(mname, self.name, self.__actinia, self.__auth)
             for mname in mapset_names
         }
         self.mapsets = mapsets
@@ -100,7 +100,7 @@ class Location:
 
     def get_mapsets(self):
         """
-        Return location information
+        Return mapsets
         """
         if self.mapsets is None:
             self.__request_mapsets()

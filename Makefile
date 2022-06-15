@@ -14,3 +14,8 @@ installdev: dependencies
 test: dependencies
 	pip install pytest
 	python -m pytest tests/
+
+devtest:
+	pip install -r $(SRC)/requirements.txt
+	pip install pytest
+	python -m pytest tests/ -m dev
