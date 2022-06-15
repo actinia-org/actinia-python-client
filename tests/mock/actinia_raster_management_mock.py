@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #######
-# acintia-python-client is a python client for actinia - an open source REST
+# actinia-python-client is a python client for actinia - an open source REST
 # API for scalable, distributed, high performance processing of geographical
 # data that uses GRASS GIS for computational tasks.
 #
@@ -29,8 +29,7 @@ __maintainer__ = "Anika Weinmann"
 
 from .actinia_mock import (
     ACTINIA_BASEURL,
-    ACTINIA_VERSION,
-    # fill_basic_frame,
+    ACTINIA_VERSION
 )
 
 

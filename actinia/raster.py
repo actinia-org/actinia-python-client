@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #######
-# acintia-python-client is a python client for actinia - an open source REST
+# actinia-python-client is a python client for actinia - an open source REST
 # API for scalable, distributed, high performance processing of geographical
 # data that uses GRASS GIS for computational tasks.
 #
@@ -28,10 +28,9 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-# import requests
 
 from actinia.region import Region
-from actinia.utils import request_and_check, print_stdout
+from actinia.utils import request_and_check
 
 
 class Raster:
@@ -76,5 +75,4 @@ class Raster:
                 cells=r_info["cells"],
                 cells3=None
             )
-        print_stdout(json.dumps(self.info, indent=4))
         return self.info
