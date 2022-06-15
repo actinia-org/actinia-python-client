@@ -47,7 +47,7 @@ print(locations["nc_spm_08"].mapsets[mapset_name].raster_layers.keys())
 # TODO delete mapset
 ```
 
-## Vector manangement
+## Vector management
 
 Get all vector maps of the `PERMANENT` mapsets
 ```

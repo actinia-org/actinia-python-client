@@ -44,7 +44,7 @@ class Vector:
         self.info = None
 
     def get_info(self):
-        """Return the informations of the vector map
+        """Return the information of the vector map
         """
         if self.info is None:
             url = f"{self.__actinia.url}/locations/{self.__location_name}/" \

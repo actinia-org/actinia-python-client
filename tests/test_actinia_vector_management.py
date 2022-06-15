@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #######
-# acintia-python-client is a python client for actinia - an open source REST
+# actinia-python-client is a python client for actinia - an open source REST
 # API for scalable, distributed, high performance processing of geographical
 # data that uses GRASS GIS for computational tasks.
 #
@@ -48,10 +48,6 @@ from .mock.actinia_vector_management_mock import (
     delete_vector_resp,
     start_job_resp,
 )
-
-__license__ = "GPLv3"
-__author__ = "Anika Weinmann"
-__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 
 LOCATION_NAME = "nc_spm_08"
 MAPSET_NAME = "PERMANENT"
