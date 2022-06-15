@@ -32,6 +32,7 @@ import requests
 
 from actinia.raster import Raster
 from actinia.vector import Vector
+from actinia.strds import STRDS
 from actinia.utils import request_and_check, print_stdout
 from actinia.job import Job
 
@@ -196,6 +197,76 @@ class Mapset:
             del self.vector_layers[layer_name]
         print_stdout(f"Vector <{layer_name}> successfully deleted")
 
+    def __request_strds(self):
+        """
+        Requests the STRDS in the mapset.
+
+        :return: A list of the strds maps
+        """
+        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            f"mapsets/{self.name}/strds"
+        resp = request_and_check(url, auth=self.__auth)
+        strds_names = resp["process_results"]
+        strds = {
+            mname: STRDS(
+                mname, self.__location_name, self.name,
+                self.__actinia, self.__auth
+            )
+            for mname in strds_names
+        }
+        self.strds = strds
+
+    def get_strds(self, force=False):
+        """
+        Return STRDS layers of the mapset
+        """
+        if self.strds is None or force is True:
+            self.__request_strds()
+        return self.strds
+
+    def create_strds(self, strds_name, title, description, temporaltype=None):
+        """Create a new STRDS."""
+        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            f"mapsets/{self.name}/strds/{strds_name}"
+
+        postkwargs = dict()
+        postkwargs["headers"] = self.__actinia.headers
+        postkwargs["auth"] = self.__auth
+        postbody = {
+            "title": title,
+            "description": description
+        }
+        if temporaltype is not None:
+            postbody["temporaltype"] = temporaltype
+        postkwargs["data"] = json.dumps(postbody)
+        try:
+            actiniaResp = requests.post(url, **postkwargs)
+        except requests.exceptions.ConnectionError as e:
+            raise e
+        if self.strds is None:
+            self.get_strds()
+        self.strds[strds_name] = STRDS(
+            strds_name, self.__location_name, self.name,
+            self.__actinia, self.__auth
+        )
+        print_stdout(f"STRDS <{strds_name}> created.")
+
+    def delete_strds(self, strds_name):
+        """Delete STRDS"""
+        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            f"mapsets/{self.name}/strds/{strds_name}"
+        resp = requests.delete(
+                url=url,
+                auth=self.__auth,
+        )
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        if self.strds is None:
+            self.get_strds()
+        else:
+            del self.strds[strds_name]
+        print_stdout(f"STRDS <{strds_name}> successfully deleted")
+
 # TODO:
 # * /locations/{location_name}/mapsets/{mapset_name} - DELETE, POST
 # * /locations/{location_name}/mapsets/{mapset_name}/info - GET
@@ -203,8 +274,6 @@ class Mapset:
 
 # * /locations/{location_name}/mapsets/{mapset_name}/raster_layers
 #      - DELETE, PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
-# * "/locations/{location_name}/mapsets/{mapset_name}/vector_layers"
 
 # * (/locations/{location_name}/mapsets/{mapset_name}/processing
 #          - POST (persistent, asyncron))

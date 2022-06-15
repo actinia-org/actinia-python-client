@@ -27,10 +27,119 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
+import json
+import requests
+
+from actinia.region import Region
+from actinia.utils import request_and_check, print_stdout
+
+
+class STRDS:
+    def __init__(self, name, location_name, mapset_name, actinia, auth):
+        self.name = name
+        self.__location_name = location_name
+        self.__mapset_name = mapset_name
+        self.__actinia = actinia
+        self.__auth = auth
+        self.region = None
+        self.info = None
+        self.start_time = None
+        self.end_time = None
+        self.granularity = None
+        self.raster_maps = None
+
+    def get_info(self):
+        """Return the informations of the STRDS map
+        """
+        if self.info is None:
+            url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+                f"mapsets/{self.__mapset_name}/strds/{self.name}"
+            resp = request_and_check(url, self.__auth)
+            info = resp["process_results"]
+            self.info = info
+
+            self.start_time = info["start_time"]
+            self.end_time = info["end_time"]
+            self.granularity = info["granularity"]
+
+            self.region = Region(
+                zone=None,
+                projection=None,
+                n=info["north"],
+                s=info["south"],
+                e=info["east"],
+                w=info["west"],
+                t=info["top"],
+                b=info["bottom"],
+                nsres=None,
+                ewres=None,
+                nsres3=None,
+                ewres3=None,
+                tbres=None,
+                rows=None,
+                cols=None,
+                rows3=None,
+                cols3=None,
+                depths=None,
+                cells=None,
+                cells3=None
+            )
+        print_stdout(json.dumps(self.info, indent=4))
+        return self.info
+
+    def get_raster_maps(self):
+        """Return the informations of the STRDS map
+        """
+        if self.raster_maps is None:
+            url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+                f"mapsets/{self.__mapset_name}/strds/{self.name}/raster_layers"
+            resp = request_and_check(url, self.__auth)
+            rasters = resp["process_results"]
+            self.raster_maps = dict()
+            for rast in rasters:
+                name, mapset = rast["id"].split("@")
+                rast["name"] = name
+                rast["mapset"] = mapset
+                self.raster_maps[rast["id"]] = rast
+        return self.raster_maps
+
+    def add_raster_maps(self, raster_maps, start_times, end_times):
+        """Register raster map layers in a STRDS"""
+
+        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            f"mapsets/{self.__mapset_name}/strds/{self.name}/raster_layers"
+
+        kwargs = dict()
+        kwargs["headers"] = self.__actinia.headers
+        kwargs["auth"] = self.__auth
+        name = raster_maps
+        start_time = start_times
+        end_time = end_times
+        data = list()
+        for name, start_time, end_time in zip(
+                raster_maps.split(","), start_times.split(","),
+                end_times.split(",")):
+            data.append({
+                "name": name,
+                "start_time": start_time,
+                "end_time": end_time,
+            })
+        kwargs["data"] = json.dumps(data)
+        try:
+            import pdb; pdb.set_trace()
+            resp = requests.put(url, **kwargs)
+        except requests.exceptions.ConnectionError as e:
+            raise e
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        self.get_raster_maps()
+        print_stdout(f"Raster maps <{raster_maps}> added to STRDS.")
+
+
 # TODO:
 # * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}
-#                - GET, DELETE, POST
+#                - DELETE, POST
 # * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
-#           raster_layers - DELETE, GET, PUT
+#           raster_layers - DELETE, PUT
 # * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
 #           render - GET

@@ -42,6 +42,8 @@ class Raster:
         self.__auth = auth
         self.region = None
         self.info = None
+        self.start_time = None
+        self.end_time = None
 
     def get_info(self):
         """Return the informations of the raster map

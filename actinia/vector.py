@@ -80,8 +80,6 @@ class Vector:
 
 # TODO:
 # * /locations/{location_name}/mapsets/{mapset_name}/vector_layers
-#          - DELETE, GET, PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/vector_layers/
-#          {vector_name} - GET, DELETE, POST
+#          - DELETE, PUT
 # * /locations/{location_name}/mapsets/{mapset_name}/vector_layers/
 #          {vector_name}/render - GET
