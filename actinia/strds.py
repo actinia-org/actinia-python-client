@@ -46,7 +46,7 @@ class STRDS:
         self.start_time = None
         self.end_time = None
         self.granularity = None
-        self.raster_maps = None
+        self.raster_layers = None
 
     def get_info(self):
         """Return the informations of the STRDS map
@@ -87,23 +87,23 @@ class STRDS:
         print_stdout(json.dumps(self.info, indent=4))
         return self.info
 
-    def get_raster_maps(self):
+    def get_raster_layers(self):
         """Return the informations of the STRDS map
         """
-        if self.raster_maps is None:
+        if self.raster_layers is None:
             url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
                 f"mapsets/{self.__mapset_name}/strds/{self.name}/raster_layers"
             resp = request_and_check(url, self.__auth)
             rasters = resp["process_results"]
-            self.raster_maps = dict()
+            self.raster_layers = dict()
             for rast in rasters:
                 name, mapset = rast["id"].split("@")
                 rast["name"] = name
                 rast["mapset"] = mapset
-                self.raster_maps[rast["id"]] = rast
-        return self.raster_maps
+                self.raster_layers[rast["id"]] = rast
+        return self.raster_layers
 
-    def add_raster_maps(self, raster_maps, start_times, end_times):
+    def add_raster_layers(self, raster_layers, start_times, end_times):
         """Register raster map layers in a STRDS"""
 
         url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
@@ -112,12 +112,12 @@ class STRDS:
         kwargs = dict()
         kwargs["headers"] = self.__actinia.headers
         kwargs["auth"] = self.__auth
-        name = raster_maps
+        name = raster_layers
         start_time = start_times
         end_time = end_times
         data = list()
         for name, start_time, end_time in zip(
-                raster_maps.split(","), start_times.split(","),
+                raster_layers.split(","), start_times.split(","),
                 end_times.split(",")):
             data.append({
                 "name": name,
@@ -126,14 +126,32 @@ class STRDS:
             })
         kwargs["data"] = json.dumps(data)
         try:
-            import pdb; pdb.set_trace()
             resp = requests.put(url, **kwargs)
         except requests.exceptions.ConnectionError as e:
             raise e
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        self.get_raster_maps()
-        print_stdout(f"Raster maps <{raster_maps}> added to STRDS.")
+        self.get_raster_layers()
+        print_stdout(f"Raster maps <{raster_layers}> added to STRDS.")
+
+    def remove_raster_layers(self, raster_layers):
+        """Register raster map layers in a STRDS"""
+
+        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            f"mapsets/{self.__mapset_name}/strds/{self.name}/raster_layers"
+
+        kwargs = dict()
+        kwargs["headers"] = self.__actinia.headers
+        kwargs["auth"] = self.__auth
+        kwargs["data"] = json.dumps(raster_layers.split(","))
+        try:
+            resp = requests.delete(url, **kwargs)
+        except requests.exceptions.ConnectionError as e:
+            raise e
+        if resp.status_code != 200:
+            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        self.get_raster_layers()
+        print_stdout(f"Raster maps <{raster_layers}> removed from STRDS.")
 
 
 # TODO:

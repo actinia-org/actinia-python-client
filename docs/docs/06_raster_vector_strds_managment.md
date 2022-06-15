@@ -80,3 +80,46 @@ print(locations["nc_spm_08"].mapsets[mapset_name].vector_layers.keys())
 
 # TODO delete mapset
 ```
+
+## STRDS management
+
+Get all space time raster data sets (STRDS) of the `modis_lst` mapsets
+```
+vectors = mapsets["modis_lst"].get_strds()
+print(vectors.keys())
+```
+
+Get information of the STRDS `LST_Day_monthly`
+```
+info = vectors["LST_Day_monthly"].get_info()
+```
+
+Create an empty STRDS and register raster in the same mapset
+```
+# TODO add mapset creation and add raster
+mapset_name = "test_mapset"
+
+# create STRDS
+strdsname = "test_strds"
+locations["nc_spm_08"].mapsets[mapset_name].create_strds(strdsname, "title", "description")
+print(locations["nc_spm_08"].mapsets[mapset_name].strds.keys())
+
+# register STRDS
+raster_maps = "test_elevation1,test_elevation2"
+strds.add_raster_layers(raster_maps, "1990-01-01,2000-01-01", "1990-01-02,2000-01-02")
+print(locations["nc_spm_08"].mapsets[mapset_name].strds[strdsname].raster_layers.keys())
+```
+
+Unregister raster maps from STRDS
+```
+strds.remove_raster_layers(raster_maps.split(",")[0])
+print(locations["nc_spm_08"].mapsets[mapset_name].strds[strdsname].raster_layers.keys())
+```
+
+Delete a STRDS
+```
+locations["nc_spm_08"].mapsets[mapset_name].delete_strds(strdsname)
+print(locations["nc_spm_08"].mapsets[mapset_name].strds.keys())
+
+# TODO delete mapset
+```
