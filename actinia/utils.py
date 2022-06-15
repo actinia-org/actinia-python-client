@@ -43,7 +43,7 @@ def request_and_check(url, auth, status_code=200):
     Returns:
         (dict): returns text of the response as dictionary
 
-    Throw s an error if the request does not have the status_code
+    Throws an error if the request does not have the status_code
     """
     resp = requests.get(url, auth=auth)
     if resp.status_code != status_code:

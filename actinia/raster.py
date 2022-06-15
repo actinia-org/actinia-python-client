@@ -42,7 +42,7 @@ class Raster:
         self.info = None
 
     def get_info(self):
-        """Return the informations of the raster map
+        """Return the information of the raster map
         """
         if self.info is None:
             url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
