@@ -103,7 +103,7 @@ class Location:
 
     def create_mapset(self, name):
         """
-        Creates a mapset with in the location.
+        Creates a mapset within the location.
         """
         mapset = Mapset.create_mapset_request(
             name,
