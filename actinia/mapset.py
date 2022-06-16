@@ -132,7 +132,7 @@ class Mapset:
     @classmethod
     def list_mapsets_request(cls, location_name, actinia, auth):
         """
-        Creates a mapset within a location.
+        Lists mapsets within a location.
 
         Parameters
         ----------
@@ -144,8 +144,9 @@ class Mapset:
             Actinia authentication
         Returns
         -------
-        Mapset
-            A new mapset instance for the created mapset
+        mapsets : dict[mapset_name, Mapset]
+            A dict of with keys equal to the mapset name and
+            values set to the Mapset class instance.
         """
         url = cls.__request_url(actinia.url, location_name)
         resp = requests.get(url, auth=auth)
