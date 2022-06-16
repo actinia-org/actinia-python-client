@@ -118,7 +118,7 @@ class Location:
 
     def delete_mapset(self, name):
         """
-        Deletes a mapset and return update mapseet list for the location.
+        Deletes a mapset and returns an updated mapset list for the location.
         """
         Mapset.delete_mapset_request(
             name,
