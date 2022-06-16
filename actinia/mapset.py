@@ -142,11 +142,18 @@ class Mapset:
             An Actinia instance containing the url
         auth :
             Actinia authentication
+
         Returns
         -------
         mapsets : dict[mapset_name, Mapset]
             A dict of with keys equal to the mapset name and
             values set to the Mapset class instance.
+
+        Raises
+        ------
+        Exception
+            Error string with response status code
+            and text if request fails.
         """
         url = cls.__request_url(actinia.url, location_name)
         resp = requests.get(url, auth=auth)
@@ -175,10 +182,17 @@ class Mapset:
             An Actinia instance containing the url
         auth :
             Actinia authentication
+
         Returns
         -------
         Mapset
             A new mapset instance for the created mapset
+
+        Raises
+        ------
+        Exception
+            Error string with response status code
+            and text if request fails.
         """
         url = cls.__request_url(actinia.url, location_name, mapset_name)
         resp = requests.post(url, auth=(auth))
@@ -201,6 +215,16 @@ class Mapset:
             An Actinia instance containing the url
         auth :
             Actinia authentication
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        Exception
+            Error string with response status code
+            and text if request fails.
         """
         url = cls.__request_url(actinia.url, location_name, mapset_name)
         resp = requests.delete(url, auth=(auth))
@@ -211,7 +235,7 @@ class Mapset:
     @classmethod
     def request_info(cls, mapset_name, location_name, actinia, auth):
         """
-        Delete a mapset within a location.
+        Gets detailed info about a mapset.
 
         Parameters
         ----------
@@ -223,6 +247,17 @@ class Mapset:
             An Actinia instance containing the url
         auth :
             Actinia authentication
+
+        Returns
+        -------
+        dict
+        Returns JSON process results if successful.
+
+        Raises
+        ------
+        Exception
+            Error string with response status code
+            and text if request fails.
         """
         url = cls.__request_url(
             actinia.url,
