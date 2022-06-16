@@ -80,13 +80,13 @@ class Mapset:
             (info) route:
                 /locations/{location_name}/mapsets/{mapset_name}/info
             (lock) route:
-                /locations/{location_name}/mapsets/{mapset_name}/raster_layers
+                /locations/{location_name}/mapsets/{mapset_name}/lock
             (raster_layers) route:
                 /locations/{location_name}/mapsets/{mapset_name}/raster_layers
             (vector_layers) route:
                 /locations/{location_name}/mapsets/{mapset_name}/vector_layers
             (strds) route:
-                /locations/{location_name}/mapsets/{mapset_name}/strds - GET
+                /locations/{location_name}/mapsets/{mapset_name}/strds
             (processing) route:
                 /locations/{location_name}/mapsets/{mapset_name}/processing
             (processing_async) route:
@@ -102,7 +102,7 @@ class Mapset:
         if mapset_name is not None:
             base_url = f"{base_url}/{mapset_name}"
             if isinstance(task, MAPSET_TASK):
-                base_url = f"{base_url}/{mapset_name}{task.value}"
+                base_url = f"{base_url}/{task.value}"
 
         return base_url
 

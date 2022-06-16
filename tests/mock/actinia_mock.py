@@ -29,6 +29,8 @@ __maintainer__ = "Anika Weinmann"
 
 ACTINIA_BASEURL = "http://localhost:8088"
 ACTINIA_VERSION = "v3"
+ACTINIA_TEST_AUTH = ("user", "pw")
+ACTINIA_API_PREFIX = "latest"
 
 version_resp_text = {
     "grass_version": {
