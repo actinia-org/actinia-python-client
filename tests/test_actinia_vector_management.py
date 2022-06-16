@@ -32,7 +32,7 @@ import os
 from unittest.mock import Mock, patch
 
 from actinia import Actinia
-from actinia.raster import Raster
+from actinia.vector import Vector
 
 from .mock.actinia_mock import (
     ACTINIA_BASEURL,
@@ -40,24 +40,23 @@ from .mock.actinia_mock import (
     location_get_mapset_resp,
 )
 from .mock.actinia_location_management_mock import get_locations_resp
-from .mock.actinia_raster_management_mock import (
-    get_rasters_mock,
-    get_raster_info_mock,
-    raster_info_resp,
-    upload_raster_resp,
-    delete_raster_resp,
+from .mock.actinia_vector_management_mock import (
+    get_vectors_mock,
+    get_vector_info_mock,
+    vector_info_resp,
+    upload_vector_resp,
+    delete_vector_resp,
     start_job_resp,
 )
 
-
 LOCATION_NAME = "nc_spm_08"
 MAPSET_NAME = "PERMANENT"
-RASTER_NAME = "zipcodes"
-UPLOAD_RASTER_TIF = "./data/elevation.tif"
-UPLOAD_RASTER_NAME = "test_raster"
+VECTOR_NAME = "boundary_county"
+UPLOAD_VECTOR_GEOJSON = "./data/firestations.geojson"
+UPLOAD_VECTOR_NAME = "test_vector"
 
 
-class TestActiniaRaster(object):
+class TestActiniaVector(object):
     @classmethod
     def setup_class(cls):
         cls.mock_get_patcher = patch("actinia.actinia.requests.get")
@@ -90,62 +89,62 @@ class TestActiniaRaster(object):
         cls.mock_post_patcher.stop()
         cls.mock_delete_patcher.stop()
 
-    def test_get_rasters_and_raster_info(self):
-        """Test get_raster_layers and get_info methods."""
-        # get raster layers
+    def test_get_vectors_and_vector_info(self):
+        """Test get_vector_layers and get_info methods."""
+        # get vector layers
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(get_rasters_mock)
+        self.mock_get.return_value.text = json.dumps(get_vectors_mock)
         resp = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].get_raster_layers()
+            MAPSET_NAME].get_vector_layers()
 
         assert isinstance(resp, dict), "response is not a dictionary"
-        assert "zipcodes" in resp, "'zipcodes' raster not in response"
+        assert VECTOR_NAME in resp, f"'{VECTOR_NAME}' vector not in response"
         assert isinstance(
-            resp["zipcodes"], Raster
-        ), "Rasters not of type Raster"
+            resp[VECTOR_NAME], Vector
+        ), "Vector not of type Vector"
         assert resp == self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers
+            MAPSET_NAME].vector_layers
 
-        # get raster info
+        # get vector info
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(get_raster_info_mock)
+        self.mock_get.return_value.text = json.dumps(get_vector_info_mock)
         resp = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers[RASTER_NAME].get_info()
+            MAPSET_NAME].vector_layers[VECTOR_NAME].get_info()
 
-        raster = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers[RASTER_NAME]
+        vector = self.testactinia.locations[LOCATION_NAME].mapsets[
+            MAPSET_NAME].vector_layers[VECTOR_NAME]
         assert isinstance(resp, dict), "response is not a dictionary"
-        assert raster_info_resp == resp, "response is not correct"
-        assert raster.info == resp, "raster info is not set correctly"
-        assert raster.region is not None, "raster region is not set"
+        assert vector_info_resp == resp, "response is not correct"
+        assert vector.info == resp, "vector info is not set correctly"
+        assert vector.region is not None, "vector region is not set"
 
-    def test_upload_and_delete_raster(self):
-        """Test upload_raster and delete_raster methods."""
+    def test_upload_and_delete_vector(self):
+        """Test upload_vector and delete_vector methods."""
         # mockup
         self.mock_get.return_value = Mock()
         self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(upload_raster_resp)
+        self.mock_get.return_value.text = json.dumps(upload_vector_resp)
         self.mock_post.return_value = Mock()
         self.mock_post.return_value.status_code = 200
         self.mock_post.return_value.text = json.dumps(start_job_resp)
         self.mock_delete.return_value = Mock()
         self.mock_delete.return_value.status_code = 200
-        self.mock_delete.return_value.text = json.dumps(delete_raster_resp)
+        self.mock_delete.return_value.text = json.dumps(delete_vector_resp)
 
         #  upload
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        tif_path = os.path.join(dir_path, UPLOAD_RASTER_TIF)
+        tif_path = os.path.join(dir_path, UPLOAD_VECTOR_GEOJSON)
         self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].upload_raster(UPLOAD_RASTER_NAME, tif_path)
-        raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers
-        assert UPLOAD_RASTER_NAME in raster_layers
+            MAPSET_NAME].upload_vector(UPLOAD_VECTOR_NAME, tif_path)
+        vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
+            MAPSET_NAME].vector_layers
+        assert UPLOAD_VECTOR_NAME in vector_layers
 
         # delete
         self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].delete_raster(UPLOAD_RASTER_NAME)
-        raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers
-        assert UPLOAD_RASTER_NAME not in raster_layers
+            MAPSET_NAME].delete_vector(UPLOAD_VECTOR_NAME)
+        vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
+            MAPSET_NAME].vector_layers
+        assert UPLOAD_VECTOR_NAME not in vector_layers
