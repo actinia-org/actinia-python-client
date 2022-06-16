@@ -111,7 +111,6 @@ class Location:
             self.__actinia,
             self.__auth
         )
-        mapset.location = self.name
         # We could also fetch data from the server again
         # with self.__request_mapsets() to ensure data is stale
         self.mapsets[name] = mapset
