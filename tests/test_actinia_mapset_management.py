@@ -110,12 +110,6 @@ class TestActiniaLocation(object):
         cls.mock_delete.return_value.status_code = 200
         cls.mock_delete.return_value.text = json.dumps(delete_mapset_resp)
 
-    @classmethod
-    def mock_delete(cls):
-        cls.mock_delete.return_value = Mock()
-        cls.mock_delete.return_value.status_code = 200
-        cls.mock_delete.return_value.text = json.dumps(delete_mapset_resp)
-
     def test_location_get_mapsets(self):
         """Test location get_mapsets method."""
         self.mock_get.return_value = Mock()
