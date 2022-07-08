@@ -27,13 +27,11 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
-
 from actinia.region import Region
-from actinia.utils import request_and_check, print_stdout
+from actinia.utils import request_and_check
 
 
-class Vector:
+class Raster:
     def __init__(self, name, location_name, mapset_name, actinia, auth):
         self.name = name
         self.__location_name = location_name
@@ -44,44 +42,35 @@ class Vector:
         self.info = None
 
     def get_info(self):
-        """Return the information of the vector map
+        """Return the information of the raster map
         """
         if self.info is None:
             url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
-                f"mapsets/{self.__mapset_name}/vector_layers/{self.name}"
+                f"mapsets/{self.__mapset_name}/raster_layers/{self.name}"
             resp = request_and_check(url, self.__auth)
-            v_info = resp["process_results"]
-            self.info = v_info
+            r_info = resp["process_results"]
+            self.info = r_info
 
             self.region = Region(
                 zone=None,
                 projection=None,
-                n=v_info["north"],
-                s=v_info["south"],
-                e=v_info["east"],
-                w=v_info["west"],
-                t=v_info["top"],
-                b=v_info["bottom"],
-                nsres=None,
-                ewres=None,
+                n=r_info["north"],
+                s=r_info["south"],
+                e=r_info["east"],
+                w=r_info["west"],
+                t=None,
+                b=None,
+                nsres=r_info["nsres"],
+                ewres=r_info["ewres"],
                 nsres3=None,
                 ewres3=None,
                 tbres=None,
-                rows=None,
-                cols=None,
+                rows=r_info["rows"],
+                cols=r_info["cols"],
                 rows3=None,
                 cols3=None,
                 depths=None,
-                cells=None,
+                cells=r_info["cells"],
                 cells3=None
             )
-        print_stdout(json.dumps(self.info, indent=4))
         return self.info
-
-# TODO:
-# * /locations/{location_name}/mapsets/{mapset_name}/vector_layers
-#          - DELETE, GET, PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/vector_layers/
-#          {vector_name} - GET, DELETE, POST
-# * /locations/{location_name}/mapsets/{mapset_name}/vector_layers/
-#          {vector_name}/render - GET

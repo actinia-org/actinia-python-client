@@ -95,7 +95,7 @@ class Location:
 
     def get_mapsets(self):
         """
-        Return location information
+        Return mapsets
         """
         if self.mapsets is None:
             self.__request_mapsets()

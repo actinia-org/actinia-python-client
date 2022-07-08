@@ -108,6 +108,7 @@ class Job:
         except requests.exceptions.ConnectionError as e:
             raise e
         resp = json.loads(actiniaResp.text)
+
         if "process_results" not in resp:
             resp["process_results"] = {}
         self.__update(
