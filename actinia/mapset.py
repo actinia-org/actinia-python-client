@@ -36,10 +36,6 @@ from actinia.vector import Vector
 from actinia.utils import request_and_check, print_stdout
 from actinia.job import Job
 
-from actinia.raster import Raster
-from actinia.vector import Vector
-from actinia.utils import request_and_check, print_stdout
-from actinia.job import Job
 
 @unique
 class MAPSET_TASK(Enum):
