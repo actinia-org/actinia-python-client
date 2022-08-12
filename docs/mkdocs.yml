@@ -3,8 +3,8 @@ site_url:  https://mundialis.github.io/actinia-python-client
 docs_dir:  docs
 theme:
   name: readthedocs
-  logo: docs/img/actinia_logo.svg
-  logo_only: True
+  # logo: img/actinia_logo.svg
+  # logo_only: True
   github_url: https://github.com/mundialis/openeo-python-client
   homepage: https://github.com/mundialis/openeo-python-client
   include_homepage_in_sidebar: True
@@ -18,7 +18,8 @@ nav:
     - 'index.md'
     - '02_installation.md'
     - '03_quickstart.md'
-    - '04_location_managment.md'
+    - '04_location_management.md'
     - '05_mapset_managment.md'
-    - '06_process_chain_validation.md'
-    - '07_processing.md'
+    - '06_raster_vector_strds_managment.md'
+    - '07_process_chain_validation.md'
+    - '08_processing.md'
