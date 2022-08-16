@@ -12,6 +12,10 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/mundialis/actinia-python-client",
     license="GPLv3",
+    setuptools_git_versioning={
+        "enabled": True,
+    },
+    setup_requires=["setuptools-git-versioning"],
     packages=find_packages(exclude=("tests", "docs")),
     package_data={
         "": ["templates/*.json"]
