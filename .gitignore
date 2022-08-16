@@ -10,6 +10,7 @@ __pycache__/*
 
 # Build and docs folder/files
 build/*
+build-pkg/*
 dist/*
 sdist/*
 docs/api/*

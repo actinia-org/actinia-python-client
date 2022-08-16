@@ -5,8 +5,8 @@ parent_dir = Path(__file__).resolve().parent
 
 setup(
     name="actinia-python-client",
-    version=parent_dir.joinpath(
-        "actinia/_version.txt").read_text(encoding="utf-8"),
+    # version=parent_dir.joinpath(
+    #     "actinia/_version.txt").read_text(encoding="utf-8"),
     author="Anika Weinmann",
     author_email="weinmann@mundialis.de",
     description="Python client library for actinia requests.",
@@ -16,7 +16,8 @@ setup(
     license="GPLv3",
     packages=find_packages(exclude=("tests", "docs")),
     package_data={
-        "": ["_version.txt"]
+        "": ["templates/*.json"]
+    #     "": ["_version.txt"]
     },
     include_package_data=True,
     zip_safe=False,
