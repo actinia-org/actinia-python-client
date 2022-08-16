@@ -48,10 +48,10 @@ class STRDS:
         self.granularity = None
         self.raster_layers = None
 
-    def get_info(self):
+    def get_info(self, force=False):
         """Return the informations of the STRDS map
         """
-        if self.info is None:
+        if self.info is None or force is True:
             url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
                 f"mapsets/{self.__mapset_name}/strds/{self.name}"
             resp = request_and_check(url, self.__auth)
@@ -87,13 +87,14 @@ class STRDS:
         print_stdout(json.dumps(self.info, indent=4))
         return self.info
 
-    def get_raster_layers(self):
+    def get_raster_layers(self, force=False):
         """Return the informations of the STRDS map
         """
-        if self.raster_layers is None:
+        if self.raster_layers is None or force is True:
             url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
                 f"mapsets/{self.__mapset_name}/strds/{self.name}/raster_layers"
             resp = request_and_check(url, self.__auth)
+            # import pdb; pdb.set_trace()
             rasters = resp["process_results"]
             self.raster_layers = dict()
             for rast in rasters:
@@ -131,7 +132,7 @@ class STRDS:
             raise e
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        self.get_raster_layers()
+        self.get_raster_layers(force=True)
         print_stdout(f"Raster maps <{raster_layers}> added to STRDS.")
 
     def remove_raster_layers(self, raster_layers):
@@ -150,14 +151,10 @@ class STRDS:
             raise e
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        self.get_raster_layers()
+        self.get_raster_layers(force=True)
         print_stdout(f"Raster maps <{raster_layers}> removed from STRDS.")
 
 
 # TODO:
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}
-#                - DELETE, POST
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
-#           raster_layers - DELETE, PUT
 # * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
 #           render - GET

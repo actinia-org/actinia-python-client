@@ -23,7 +23,7 @@
 #######
 
 __license__ = "GPLv3"
-__author__ = "testuser Weinmann"
+__author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "testuser Weinmann"
 
