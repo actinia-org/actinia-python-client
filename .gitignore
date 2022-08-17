@@ -22,3 +22,6 @@ site/
 
 # Per-project virtualenvs
 env/
+
+# vscode settigns
+.vscode/
