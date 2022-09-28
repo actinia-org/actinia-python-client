@@ -61,23 +61,16 @@ class Job:
 
     def __update(
         self,
-        datetime,
-        http_code,
-        message,
-        process_results,
-        status,
-        time_delta,
-        timestamp,
-        urls,
+        actinia_json_dict,
     ):
-        self.datetime = datetime
-        self.http_code = http_code
-        self.message = message
-        self.process_results = process_results
-        self.status = status
-        self.time_delta = time_delta
-        self.timestamp = timestamp
-        self.urls = urls
+        self.datetime = actinia_json_dict.get("datetime")
+        self.http_code = actinia_json_dict.get("http_code")
+        self.message = actinia_json_dict.get("message")
+        self.process_results = actinia_json_dict.get("process_results")
+        self.status = actinia_json_dict.get("status")
+        self.time_delta = actinia_json_dict.get("time_delta")
+        self.timestamp = actinia_json_dict.get("timestamp")
+        self.urls = actinia_json_dict.get("urls")
 
     def poll(self):
         """
@@ -99,14 +92,7 @@ class Job:
         if "process_results" not in resp:
             resp["process_results"] = {}
         self.__update(
-            resp["datetime"],
-            resp["http_code"],
-            resp["message"],
-            resp["process_results"],
-            resp["status"],
-            resp["time_delta"],
-            resp["timestamp"],
-            resp["urls"],
+            resp,
         )
         print(f"Status of {self.name} job is {self.status}.", file=sys.stdout)
 
