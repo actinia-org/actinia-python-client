@@ -39,38 +39,25 @@ class Job:
         name,
         actinia,
         auth,
-        accept_datetime,
-        accept_timestamp,
-        api_info,
-        datetime,
-        http_code,
-        message,
-        process_chain_list,
-        process_results,
-        resource_id,
-        status,
-        time_delta,
-        timestamp,
-        urls,
-        user_id,
+        actinia_json_dict,
     ):
         self.name = name
         self.__actinia = actinia
         self.__auth = auth
-        self.accept_datetime = accept_datetime
-        self.accept_timestamp = accept_timestamp
-        self.api_info = api_info
-        self.datetime = datetime
-        self.http_code = http_code
-        self.message = message
-        self.process_chain_list = process_chain_list
-        self.process_results = process_results
-        self.resource_id = resource_id
-        self.status = status
-        self.time_delta = time_delta
-        self.timestamp = timestamp
-        self.urls = urls
-        self.user_id = user_id
+        self.accept_datetime = actinia_json_dict.get("accept_datetime")
+        self.accept_timestamp = actinia_json_dict.get("accept_timestamp")
+        self.api_info = actinia_json_dict.get("api_info")
+        self.datetime = actinia_json_dict.get("datetime")
+        self.http_code = actinia_json_dict.get("http_code")
+        self.message = actinia_json_dict.get("message")
+        self.process_chain_list = actinia_json_dict.get("process_chain_list")
+        self.process_results = actinia_json_dict.get("process_results")
+        self.resource_id = actinia_json_dict.get("resource_id")
+        self.status = actinia_json_dict.get("status")
+        self.time_delta = actinia_json_dict.get("time_delta")
+        self.timestamp = actinia_json_dict.get("timestamp")
+        self.urls = actinia_json_dict.get("urls")
+        self.user_id = actinia_json_dict.get("user_id")
 
     def __update(
         self,
