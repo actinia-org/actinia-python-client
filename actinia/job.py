@@ -44,33 +44,15 @@ class Job:
         self.name = name
         self.__actinia = actinia
         self.__auth = auth
-        self.accept_datetime = actinia_json_dict.get("accept_datetime")
-        self.accept_timestamp = actinia_json_dict.get("accept_timestamp")
-        self.api_info = actinia_json_dict.get("api_info")
-        self.datetime = actinia_json_dict.get("datetime")
-        self.http_code = actinia_json_dict.get("http_code")
-        self.message = actinia_json_dict.get("message")
-        self.process_chain_list = actinia_json_dict.get("process_chain_list")
-        self.process_results = actinia_json_dict.get("process_results")
-        self.resource_id = actinia_json_dict.get("resource_id")
-        self.status = actinia_json_dict.get("status")
-        self.time_delta = actinia_json_dict.get("time_delta")
-        self.timestamp = actinia_json_dict.get("timestamp")
-        self.urls = actinia_json_dict.get("urls")
-        self.user_id = actinia_json_dict.get("user_id")
+        for key in actinia_json_dict:
+            setattr(self, key, actinia_json_dict[key])
 
     def __update(
         self,
         actinia_json_dict,
     ):
-        self.datetime = actinia_json_dict.get("datetime")
-        self.http_code = actinia_json_dict.get("http_code")
-        self.message = actinia_json_dict.get("message")
-        self.process_results = actinia_json_dict.get("process_results")
-        self.status = actinia_json_dict.get("status")
-        self.time_delta = actinia_json_dict.get("time_delta")
-        self.timestamp = actinia_json_dict.get("timestamp")
-        self.urls = actinia_json_dict.get("urls")
+        for key in actinia_json_dict:
+            setattr(self, key, actinia_json_dict[key])
 
     def poll(self):
         """
