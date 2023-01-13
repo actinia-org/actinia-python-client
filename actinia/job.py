@@ -53,6 +53,8 @@ class Job:
         timestamp,
         urls,
         user_id,
+        queue,
+        **args
     ):
         self.name = name
         self.__actinia = actinia
@@ -71,6 +73,7 @@ class Job:
         self.timestamp = timestamp
         self.urls = urls
         self.user_id = user_id
+        self.queue = queue
 
     def __update(
         self,
