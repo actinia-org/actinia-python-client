@@ -174,7 +174,7 @@ class Location:
             raise Exception(
                 f"Error {actiniaResp.status_code}: {actiniaResp.text}")
         resp = json.loads(actiniaResp.text)
-        job = Job(orig_name, self.__actinia, self.__auth, **resp)
+        job = Job(orig_name, self.__actinia, self.__auth, resp)
         self.__actinia.jobs[name] = job
         return job
 
