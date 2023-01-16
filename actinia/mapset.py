@@ -344,10 +344,10 @@ class Mapset:
         )
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        kwargs = json.loads(resp.text)
+        resp_dict = json.loads(resp.text)
         job = Job(
             f"raster_upload_{self.__location_name}_{self.name}_{layer_name}",
-            self.__actinia, self.__auth, **kwargs)
+            self.__actinia, self.__auth, resp_dict)
         job.poll_until_finished()
         if job.status != "finished":
             raise Exception(f"{job.status}: {job.message}")
@@ -392,10 +392,10 @@ class Mapset:
         )
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        kwargs = json.loads(resp.text)
+        resp_dict = json.loads(resp.text)
         job = Job(
             f"vector_upload_{self.__location_name}_{self.name}_{layer_name}",
-            self.__actinia, self.__auth, **kwargs)
+            self.__actinia, self.__auth, resp_dict)
         job.poll_until_finished()
         if job.status != "finished":
             raise Exception(f"{job.status}: {job.message}")
