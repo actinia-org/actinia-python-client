@@ -5,7 +5,7 @@
 # API for scalable, distributed, high performance processing of geographical
 # data that uses GRASS GIS for computational tasks.
 #
-# Copyright (c) 2022 mundialis GmbH & Co. KG
+# Copyright (c) 2023 mundialis GmbH & Co. KG
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,39 +24,27 @@
 
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
-__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
+__copyright__ = "Copyright 2022-2023, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
 import pytest
-from unittest.mock import Mock, patch
 
 from actinia import Actinia
 
-from .mock.actinia_mock import ACTINIA_BASEURL, version_resp_text
+from .actinia_config import ACTINIA_BASEURL, ACTINIA_VERSION, ACTINIA_AUTH
 
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
-__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
+__copyright__ = "Copyright 2023, mundialis GmbH & Co. KG"
 
 
 class TestActiniaAuth(object):
-    @classmethod
-    def setup_class(cls):
-        cls.mock_get_patcher = patch("actinia.actinia.requests.get")
-        cls.mock_get = cls.mock_get_patcher.start()
-
-    @classmethod
-    def teardown_class(cls):
-        cls.mock_get_patcher.stop()
 
     def test_actinia_base(self):
         """Base test of actinia with a version check."""
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(version_resp_text)
 
-        testactinia = Actinia(ACTINIA_BASEURL)
+        testactinia = Actinia(ACTINIA_BASEURL, ACTINIA_VERSION)
         assert isinstance(testactinia, Actinia)
 
         version = testactinia.get_version()
@@ -66,31 +54,22 @@ class TestActiniaAuth(object):
 
     def test_auth(self):
         """Test the authentication setting."""
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(version_resp_text)
 
-        testactinia = Actinia(ACTINIA_BASEURL)
+        testactinia = Actinia(ACTINIA_BASEURL, ACTINIA_VERSION)
         assert isinstance(testactinia, Actinia)
 
         try:
-            testactinia.set_authentication("user", "pw")
+            testactinia.set_authentication(
+                ACTINIA_AUTH[0], ACTINIA_AUTH[1]
+            )
         except Exception as e:
             raise pytest.fail(f"Authentication raises: {e}")
 
     def test_wrong_auth(self):
         """Test the behavior when a wrong authentication is set."""
-        # Configure the mock
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(version_resp_text)
 
-        testactinia = Actinia(ACTINIA_BASEURL)
+        testactinia = Actinia(ACTINIA_BASEURL, ACTINIA_VERSION)
         assert isinstance(testactinia, Actinia)
-
-        # check wrong auth behavior
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 401
 
         with pytest.raises(Exception) as e:
             testactinia.set_authentication("user", "pw")

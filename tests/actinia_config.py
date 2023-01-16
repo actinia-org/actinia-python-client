@@ -30,7 +30,6 @@ __maintainer__ = "Anika Weinmann"
 
 import os
 
-
 localhost = True
 if localhost:
     # localhost
@@ -48,5 +47,5 @@ else:
 
 LOCATION_NAME = "nc_spm_08"
 MAPSET_NAME = "PERMANENT"
-RASTER_NAME = "zipcodes"
+RASTER_NAME = "elevation"
 VECTOR_NAME = "boundary_county"

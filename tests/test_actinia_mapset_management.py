@@ -5,7 +5,7 @@
 # API for scalable, distributed, high performance processing of geographical
 # data that uses GRASS GIS for computational tasks.
 #
-# Copyright (c) 2022 mundialis GmbH & Co. KG
+# Copyright (c) 2023 mundialis GmbH & Co. KG
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,40 +24,23 @@
 
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
-__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
+__copyright__ = "Copyright 2023, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-from unittest.mock import Mock, patch
 
 from actinia import Actinia
 from actinia.mapset import Mapset
 from actinia.region import Region
 
-from .mock.actinia_mock import (
+from .actinia_config import (
     ACTINIA_BASEURL,
-    ACTINIA_TEST_AUTH,
-    ACTINIA_API_PREFIX,
-    version_resp_text,
-    location_get_mapset_resp,
+    ACTINIA_VERSION,
+    ACTINIA_AUTH,
+    LOCATION_NAME,
+    MAPSET_NAME,
 )
 
-from .mock.actinia_location_management_mock import get_locations_resp
-
-from .mock.actinia_mapset_management_mock import (
-    mapset_get_info_resp,
-    mapset_creation_resp,
-    delete_mapset_resp
-)
-
-__license__ = "GPLv3"
-__author__ = "Anika Weinmann"
-__copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
-
-LOCATION_NAME = "nc_spm_08"
-NEW_LOCATION_NAME = "test_location"
-EPSGCODE = 25832
-MAPSET_NAME = "test_mapset"
 NEW_MAPSET_NAME = "new_test_mapset"
 PC = {
     "list": [
@@ -74,53 +57,21 @@ PC = {
 class TestActiniaLocation(object):
     @classmethod
     def setup_class(cls):
-        cls.mock_get_patcher = patch("actinia.actinia.requests.get")
-        cls.mock_get = cls.mock_get_patcher.start()
-        cls.mock_post_patcher = patch("actinia.actinia.requests.post")
-        cls.mock_post = cls.mock_post_patcher.start()
-        cls.mock_delete_patcher = patch("actinia.actinia.requests.delete")
-        cls.mock_delete = cls.mock_delete_patcher.start()
-
-        cls.mock_get.return_value = Mock()
-        cls.mock_get.return_value.status_code = 200
-        cls.mock_get.return_value.text = json.dumps(version_resp_text)
-        cls.testactinia = Actinia(ACTINIA_BASEURL)
+        cls.testactinia = Actinia(ACTINIA_BASEURL, ACTINIA_VERSION)
         assert isinstance(cls.testactinia, Actinia)
-        cls.testactinia.set_authentication("user", "pw")
-        # get locations
-        cls.mock_get.return_value = Mock()
-        cls.mock_get.return_value.status_code = 200
-        cls.mock_get.return_value.text = json.dumps(get_locations_resp)
+        cls.testactinia.set_authentication(ACTINIA_AUTH[0], ACTINIA_AUTH[1])
         cls.testactinia.get_locations()
 
     @classmethod
     def teardown_class(cls):
-        cls.mock_get_patcher.stop()
-        cls.mock_post_patcher.stop()
-        cls.mock_delete_patcher.stop()
-        if NEW_LOCATION_NAME in cls.testactinia.locations:
-            cls.mock_delete_mapset()
-            cls.testactinia.locations[NEW_LOCATION_NAME].delete_mapset(
+        if NEW_MAPSET_NAME in cls.testactinia.locations[LOCATION_NAME].mapsets:
+            cls.testactinia.locations[LOCATION_NAME].delete_mapset(
                 NEW_MAPSET_NAME
             )
 
-    @classmethod
-    def mock_delete_mapset(cls):
-        cls.mock_delete.return_value = Mock()
-        cls.mock_delete.return_value.status_code = 200
-        cls.mock_delete.return_value.text = json.dumps(delete_mapset_resp)
-
     def test_location_get_mapsets(self):
         """Test location get_mapsets method."""
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(location_get_mapset_resp)
         resp = self.testactinia.locations[LOCATION_NAME].get_mapsets()
-        self.mock_get.assert_called_with(
-            f"{ACTINIA_BASEURL}/{ACTINIA_API_PREFIX}" +
-            f"/locations/{LOCATION_NAME}/mapsets",
-            auth=ACTINIA_TEST_AUTH
-        )
         assert isinstance(resp, dict), "response is not a dictionary"
         assert "PERMANENT" in resp, "'PERMANENT' mapset not in response"
         assert isinstance(
@@ -130,19 +81,9 @@ class TestActiniaLocation(object):
 
     def test_mapset_get_info(self):
         """Test mapset get_info method."""
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(mapset_get_info_resp)
         resp = self.testactinia.locations[
             LOCATION_NAME
         ].mapsets[MAPSET_NAME].info()
-
-        self.mock_get.assert_called_with(
-            f"{ACTINIA_BASEURL}/{ACTINIA_API_PREFIX}" +
-            f"/locations/{LOCATION_NAME}" +
-            f"/mapsets/{MAPSET_NAME}/info",
-            auth=ACTINIA_TEST_AUTH
-        )
         assert "region" in resp, "'region' not in location info"
         assert "projection" in resp, "'projection' not in location info"
         assert isinstance(resp["projection"], str), "'projection' wrong type"
@@ -161,23 +102,9 @@ class TestActiniaLocation(object):
 
     def test_actinia_create_and_delete_mapsets(self):
         """Test location creation and deletion"""
-        self.mock_post.return_value = Mock()
-        self.mock_post.return_value.status_code = 200
-        self.mock_post.return_value.text = json.dumps(mapset_creation_resp)
-
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.text = json.dumps(location_get_mapset_resp)
-
         # create mapset
         mapset = self.testactinia.locations[LOCATION_NAME].create_mapset(
             NEW_MAPSET_NAME
-        )
-        self.mock_post.assert_called_with(
-            f"{ACTINIA_BASEURL}/{ACTINIA_API_PREFIX}" +
-            f"/locations/{LOCATION_NAME}" +
-            f"/mapsets/{NEW_MAPSET_NAME}",
-            auth=ACTINIA_TEST_AUTH
         )
         assert isinstance(mapset, Mapset), \
             "Created mapset is not of type Mapset"
@@ -189,15 +116,8 @@ class TestActiniaLocation(object):
             "Created mapset is not added to location's mapsets"
 
         # Delete mapset with Location method
-        self.mock_delete_mapset()
         self.testactinia.locations[LOCATION_NAME].delete_mapset(
             NEW_MAPSET_NAME
-        )
-        self.mock_delete.assert_called_with(
-            f"{ACTINIA_BASEURL}/{ACTINIA_API_PREFIX}" +
-            f"/locations/{LOCATION_NAME}" +
-            f"/mapsets/{NEW_MAPSET_NAME}",
-            auth=ACTINIA_TEST_AUTH
         )
         assert NEW_MAPSET_NAME not in self.testactinia.locations[
             LOCATION_NAME
@@ -208,20 +128,7 @@ class TestActiniaLocation(object):
         mapset = self.testactinia.locations[LOCATION_NAME].create_mapset(
             NEW_MAPSET_NAME
         )
-        self.mock_post.assert_called_with(
-            f"{ACTINIA_BASEURL}/{ACTINIA_API_PREFIX}" +
-            f"/locations/{LOCATION_NAME}" +
-            f"/mapsets/{NEW_MAPSET_NAME}",
-            auth=ACTINIA_TEST_AUTH
-        )
-        self.mock_delete()
         mapset.delete()
-        self.mock_delete.assert_called_with(
-            f"{ACTINIA_BASEURL}/{ACTINIA_API_PREFIX}" +
-            f"/locations/{LOCATION_NAME}" +
-            f"/mapsets/{NEW_MAPSET_NAME}",
-            auth=ACTINIA_TEST_AUTH
-        )
         assert NEW_MAPSET_NAME not in self.testactinia.locations[
             LOCATION_NAME
         ].mapsets, \
