@@ -13,4 +13,4 @@ For newest version see [releases](https://github.com/mundialis/actinia-python-cl
 
 ## Small Example
 
-See [examples](https://mundialis.github.io/actinia-python-client/03_quickstart)
+See [examples](https://actinia-org.github.io/actinia-python-client/03_quickstart)
