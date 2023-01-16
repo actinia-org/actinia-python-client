@@ -27,8 +27,6 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2023, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
-
 from actinia import Actinia
 from actinia.mapset import Mapset
 from actinia.region import Region

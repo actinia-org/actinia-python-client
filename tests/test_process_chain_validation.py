@@ -27,9 +27,6 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2023, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
-from io import StringIO
-
 from actinia import Actinia
 from actinia.job import Job
 

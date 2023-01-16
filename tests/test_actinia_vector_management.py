@@ -27,7 +27,6 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2023, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
 import os
 
 from actinia import Actinia
@@ -94,20 +93,20 @@ class TestActiniaVector(object):
         assert vector.info == resp, "vector info is not set correctly"
         assert vector.region is not None, "vector region is not set"
 
-    # def test_upload_and_delete_vector(self):
-    #     """Test upload_vector and delete_vector methods."""
-    #     #  upload
-    #     dir_path = os.path.dirname(os.path.realpath(__file__))
-    #     tif_path = os.path.join(dir_path, UPLOAD_VECTOR_GEOJSON)
-    #     self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].upload_vector(UPLOAD_VECTOR_NAME, tif_path)
-    #     vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].vector_layers
-    #     assert UPLOAD_VECTOR_NAME in vector_layers
-    #
-    #     # delete
-    #     self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].delete_vector(UPLOAD_VECTOR_NAME)
-    #     vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].vector_layers
-    #     assert UPLOAD_VECTOR_NAME not in vector_layers
+    def test_upload_and_delete_vector(self):
+        """Test upload_vector and delete_vector methods."""
+        #  upload
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        tif_path = os.path.join(dir_path, UPLOAD_VECTOR_GEOJSON)
+        self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].upload_vector(UPLOAD_VECTOR_NAME, tif_path)
+        vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].vector_layers
+        assert UPLOAD_VECTOR_NAME in vector_layers
+
+        # delete
+        self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].delete_vector(UPLOAD_VECTOR_NAME)
+        vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].vector_layers
+        assert UPLOAD_VECTOR_NAME not in vector_layers

@@ -92,20 +92,20 @@ class TestActiniaRaster(object):
         assert raster.info == resp, "raster info is not set correctly"
         assert raster.region is not None, "raster region is not set"
 
-    # def test_upload_and_delete_raster(self):
-    #     """Test upload_raster and delete_raster methods."""
-    #     #  upload
-    #     dir_path = os.path.dirname(os.path.realpath(__file__))
-    #     tif_path = os.path.join(dir_path, UPLOAD_RASTER_TIF)
-    #     self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].upload_raster(UPLOAD_RASTER_NAME, tif_path)
-    #     raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].raster_layers
-    #     assert UPLOAD_RASTER_NAME in raster_layers
-    #
-    #     # delete uploaded raster
-    #     self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].delete_raster(UPLOAD_RASTER_NAME)
-    #     raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-    #         NEW_MAPSET_NAME].raster_layers
-    #     assert UPLOAD_RASTER_NAME not in raster_layers
+    def test_upload_and_delete_raster(self):
+        """Test upload_raster and delete_raster methods."""
+        #  upload
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        tif_path = os.path.join(dir_path, UPLOAD_RASTER_TIF)
+        self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].upload_raster(UPLOAD_RASTER_NAME, tif_path)
+        raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].raster_layers
+        assert UPLOAD_RASTER_NAME in raster_layers
+
+        # delete uploaded raster
+        self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].delete_raster(UPLOAD_RASTER_NAME)
+        raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
+            NEW_MAPSET_NAME].raster_layers
+        assert UPLOAD_RASTER_NAME not in raster_layers

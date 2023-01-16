@@ -1,6 +1,7 @@
 # Temporary and binary files
 __pycache__/*
 **/__pycache__/*
+docker/redis_data/dump.rdb
 
 # Package files
 *.egg

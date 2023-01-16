@@ -27,7 +27,6 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022-2023, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
 import pytest
 
 from actinia import Actinia
