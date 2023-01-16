@@ -214,7 +214,7 @@ class Location:
             raise e
         # create a job
         resp = json.loads(actiniaResp.text)
-        job = Job(orig_name, self.__actinia, self.__auth, **resp)
+        job = Job(orig_name, self.__actinia, self.__auth, resp)
         self.__actinia.jobs[name] = job
         return job
 
