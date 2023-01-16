@@ -49,8 +49,3 @@ def request_and_check(url, auth, status_code=200):
     if resp.status_code != status_code:
         raise Exception(f"Error {resp.status_code}: {resp.text}")
     return json.loads(resp.text)
-
-
-def print_stdout(msg):
-    """Print message to stdout"""
-    print(msg, file=sys.stdout)

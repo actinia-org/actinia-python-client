@@ -28,9 +28,10 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-import logging
 import requests
-import sys
+from time import sleep
+
+from actinia.resources.logger import log
 
 
 class Job:
@@ -54,12 +55,12 @@ class Job:
         for key in actinia_json_dict:
             setattr(self, key, actinia_json_dict[key])
 
-    def poll(self):
+    def poll(self, quiet=False):
         """
         Update job by polling.
         """
         if self.status not in ["accepted", "running"]:
-            logging.warning("The job is not running and can not be updated.")
+            log.warning("The job is not running and can not be updated.")
 
         kwargs = dict()
         kwargs["headers"] = self.__actinia.headers
@@ -76,22 +77,42 @@ class Job:
         self.__update(
             resp,
         )
-        print(f"Status of {self.name} job is {self.status}.", file=sys.stdout)
+        if not quiet:
+            log.info(f"Status of {self.name} job is {self.status}.")
 
-    def poll_until_finished(self):
+    def poll_until_finished(self, waiting_time=5, quiet=False):
         """
         Polling job until finished or error.
+
+        Args:
+            waiting_time: Time to wait in seconds for next poll
+            quiet: Bool if the method should log each process status or only
+                   changed
         """
         status_accepted_running = True
+        status = None
         while status_accepted_running:
-            self.poll()
+            self.poll(quiet=True)
             if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
                 msg = (
                     f"Status of {self.name} job is {self.status}: "
                     f"{self.message}"
                 )
-                print(msg, file=sys.stderr)
+                if self.status in ["terminated", "error"]:
+                    log.error(msg)
+                    return 1
+                elif self.status in ["finished"]:
+                    log.info(msg)
+                    return 0
+            sleep(waiting_time)
+            if self.status != status and not quiet:
+                status = self.status
+                msg = (
+                    f"Status of {self.name} job is {self.status}: "
+                    f"{self.message}"
+                )
+                log.info(msg)
 
     # def terminate(self):
     #     """

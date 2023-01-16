@@ -29,8 +29,9 @@ __maintainer__ = "Anika Weinmann"
 
 import json
 
+from actinia.resources.logger import log
 from actinia.region import Region
-from actinia.utils import request_and_check, print_stdout
+from actinia.utils import request_and_check
 
 
 class Vector:
@@ -76,7 +77,7 @@ class Vector:
                 cells=None,
                 cells3=None,
             )
-        print_stdout(json.dumps(self.info, indent=4))
+        log.info(json.dumps(self.info, indent=4))
         return self.info
 
 
