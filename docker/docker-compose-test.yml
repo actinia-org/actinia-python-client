@@ -1,0 +1,42 @@
+version: "3"
+services:
+
+  actinia-test:
+    build:
+      context: ..
+      dockerfile: docker/test-docker/Dockerfile
+    ports:
+      - "8088:8088"
+    # environment:
+    #   - JOBTABLE_PW=actinia
+    depends_on:
+      - redis
+    cap_add:
+      - SYS_PTRACE
+    networks:
+    -   actinia-test
+
+  redis:
+    image: redis:5.0.4-alpine
+    volumes:
+      - ./redis_data:/data
+    environment:
+      - REDIS_PASS_FILE=/data/config/.redis
+    command: [
+      "sh", "-c",
+      '
+      docker-entrypoint.sh
+      "/data/config/redis.conf"
+      --requirepass "$$(cat $$REDIS_PASS_FILE)"
+      '
+    ]
+    ports:
+        - "6379:6379"
+    networks:
+    -   actinia-test
+
+networks:
+  actinia-test:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/26
