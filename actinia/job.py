@@ -39,58 +39,20 @@ class Job:
         name,
         actinia,
         auth,
-        accept_datetime,
-        accept_timestamp,
-        api_info,
-        datetime,
-        http_code,
-        message,
-        process_chain_list,
-        process_results,
-        resource_id,
-        status,
-        time_delta,
-        timestamp,
-        urls,
-        user_id,
+        actinia_json_dict,
     ):
         self.name = name
         self.__actinia = actinia
         self.__auth = auth
-        self.accept_datetime = accept_datetime
-        self.accept_timestamp = accept_timestamp
-        self.api_info = api_info
-        self.datetime = datetime
-        self.http_code = http_code
-        self.message = message
-        self.process_chain_list = process_chain_list
-        self.process_results = process_results
-        self.resource_id = resource_id
-        self.status = status
-        self.time_delta = time_delta
-        self.timestamp = timestamp
-        self.urls = urls
-        self.user_id = user_id
+        for key in actinia_json_dict:
+            setattr(self, key, actinia_json_dict[key])
 
     def __update(
         self,
-        datetime,
-        http_code,
-        message,
-        process_results,
-        status,
-        time_delta,
-        timestamp,
-        urls,
+        actinia_json_dict,
     ):
-        self.datetime = datetime
-        self.http_code = http_code
-        self.message = message
-        self.process_results = process_results
-        self.status = status
-        self.time_delta = time_delta
-        self.timestamp = timestamp
-        self.urls = urls
+        for key in actinia_json_dict:
+            setattr(self, key, actinia_json_dict[key])
 
     def poll(self):
         """
@@ -112,14 +74,7 @@ class Job:
         if "process_results" not in resp:
             resp["process_results"] = {}
         self.__update(
-            resp["datetime"],
-            resp["http_code"],
-            resp["message"],
-            resp["process_results"],
-            resp["status"],
-            resp["time_delta"],
-            resp["timestamp"],
-            resp["urls"],
+            resp,
         )
         print(f"Status of {self.name} job is {self.status}.", file=sys.stdout)
 
