@@ -9,7 +9,6 @@ on:
 
 jobs:
 
-  tests:
   integration-tests:
     runs-on: ubuntu-latest
     steps:
@@ -22,18 +21,3 @@ jobs:
       run: make test
     - name: Stop containers
       run: docker-compose -f "docker/docker-compose-test.yml" down
-
-  mocked-tests:
-￼    runs-on: ubuntu-20.04
-￼    steps:
-￼    - uses: actions/checkout@v2
-￼    - name: Set up Python
-￼      uses: actions/setup-python@v2
-￼      with:
-￼        python-version: 3.8
-￼    - name: Install
-￼      run: |
-￼        python -m pip install --upgrade pip
-￼    - name: Run Tests
-￼      run: |
-￼        make mockedtest
