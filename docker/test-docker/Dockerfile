@@ -1,7 +1,6 @@
 FROM mundialis/actinia:2.5.0
+# TODO change to latest docker image if this is fixed
 # FROM mundialis/actinia:latest
-# FROM mundialis/actinia-core:4.6.1 as actinia_test
-# FROM mundialis/actinia-core:latest as actinia_test
 
 LABEL authors="Carmen Tawalika,Anika Weinmann"
 LABEL maintainer="tawalika@mundialis.de,weinmann@mundialis.de"
