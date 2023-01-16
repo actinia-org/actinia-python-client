@@ -19,3 +19,13 @@ Set authentication to get access to the actinia functionallity
 ```
 actinia_mundialis.set_authentication("demouser", "gu3st!pa55w0rd")
 ```
+
+
+## Using toolbox
+```
+from actinia import toolbox
+
+toolbox.list_mapsets("https://actinia-dev.mundialis.de/", "v3", ("demouser", "gu3st!pa55w0rd"), "nc_spm_08")
+
+toolbox.list_mapsets("https://actinia-dev.mundialis.de/", "v3", ("demouser", "gu3st!pa55w0rd"), "nc_spm_08")["PERMANENT"].info()
+```

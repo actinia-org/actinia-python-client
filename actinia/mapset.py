@@ -133,7 +133,7 @@ class Mapset:
         del self.__actinia.locations[self.__location_name].mapsets[self.name]
 
     @classmethod
-    def list_mapsets_request(cls, location_name, actinia, auth):
+    def __list_mapsets_request(cls, location_name, actinia, auth):
         """
         Lists mapsets within a location.
 

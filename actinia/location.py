@@ -77,7 +77,7 @@ class Location:
 
         :return: A list of the mapset names
         """
-        self.mapsets = Mapset.list_mapsets_request(
+        self.mapsets = Mapset.__list_mapsets_request(
             self.name,
             self.__actinia,
             self.__auth
