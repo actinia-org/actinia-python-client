@@ -39,7 +39,6 @@ __copyright__ = "Copyright 2023, mundialis GmbH & Co. KG"
 
 
 class TestActiniaAuth(object):
-
     def test_actinia_base(self):
         """Base test of actinia with a version check."""
 
@@ -58,9 +57,7 @@ class TestActiniaAuth(object):
         assert isinstance(testactinia, Actinia)
 
         try:
-            testactinia.set_authentication(
-                ACTINIA_AUTH[0], ACTINIA_AUTH[1]
-            )
+            testactinia.set_authentication(ACTINIA_AUTH[0], ACTINIA_AUTH[1])
         except Exception as e:
             raise pytest.fail(f"Authentication raises: {e}")
 

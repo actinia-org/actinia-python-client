@@ -54,9 +54,7 @@ class TestActiniaRaster(object):
         cls.testactinia.set_authentication(ACTINIA_AUTH[0], ACTINIA_AUTH[1])
         cls.testactinia.get_locations()
         cls.testactinia.locations[LOCATION_NAME].get_mapsets()
-        cls.testactinia.locations[LOCATION_NAME].create_mapset(
-            NEW_MAPSET_NAME
-        )
+        cls.testactinia.locations[LOCATION_NAME].create_mapset(NEW_MAPSET_NAME)
 
     @classmethod
     def teardown_class(cls):
@@ -68,23 +66,37 @@ class TestActiniaRaster(object):
     def test_get_rasters_and_raster_info(self):
         """Test get_raster_layers and get_info methods."""
         # get raster layers
-        resp = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].get_raster_layers()
+        resp = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .get_raster_layers()
+        )
 
         assert isinstance(resp, dict), "response is not a dictionary"
         assert RASTER_NAME in resp, f"'{RASTER_NAME}' raster not in response"
         assert isinstance(
             resp[RASTER_NAME], Raster
         ), "Rasters not of type Raster"
-        assert resp == self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers
+        assert (
+            resp
+            == self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .raster_layers
+        )
 
         # get raster info
-        resp = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers[RASTER_NAME].get_info()
+        resp = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .raster_layers[RASTER_NAME]
+            .get_info()
+        )
 
-        raster = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].raster_layers[RASTER_NAME]
+        raster = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .raster_layers[RASTER_NAME]
+        )
         assert isinstance(resp, dict), "response is not a dictionary"
         assert "cells" in resp, "response is not correct"
         assert resp["cells"] == "2025000", "response is not correct"
@@ -98,14 +110,22 @@ class TestActiniaRaster(object):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         tif_path = os.path.join(dir_path, UPLOAD_RASTER_TIF)
         self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].upload_raster(UPLOAD_RASTER_NAME, tif_path)
-        raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].raster_layers
+            NEW_MAPSET_NAME
+        ].upload_raster(UPLOAD_RASTER_NAME, tif_path)
+        raster_layers = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[NEW_MAPSET_NAME]
+            .raster_layers
+        )
         assert UPLOAD_RASTER_NAME in raster_layers
 
         # delete uploaded raster
         self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].delete_raster(UPLOAD_RASTER_NAME)
-        raster_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].raster_layers
+            NEW_MAPSET_NAME
+        ].delete_raster(UPLOAD_RASTER_NAME)
+        raster_layers = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[NEW_MAPSET_NAME]
+            .raster_layers
+        )
         assert UPLOAD_RASTER_NAME not in raster_layers

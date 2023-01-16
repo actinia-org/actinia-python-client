@@ -17,13 +17,12 @@ setup(
     },
     setup_requires=["setuptools-git-versioning"],
     packages=find_packages(exclude=("tests", "docs")),
-    package_data={
-        "": ["templates/*.json"]
-    },
+    package_data={"": ["templates/*.json"]},
     include_package_data=True,
     zip_safe=False,
-    install_requires=parent_dir.joinpath(
-        "requirements.txt").read_text().splitlines(),
+    install_requires=parent_dir.joinpath("requirements.txt")
+    .read_text()
+    .splitlines(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: GPLv3 License",

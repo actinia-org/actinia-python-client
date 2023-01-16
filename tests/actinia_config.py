@@ -42,7 +42,7 @@ else:
     ACTINIA_VERSION = "v3"
     ACTINIA_AUTH = (
         os.getenv("ACTINIA_USER", "demouser"),
-        os.getenv("ACTINIA_PW", "gu3st!pa55w0rd")
+        os.getenv("ACTINIA_PW", "gu3st!pa55w0rd"),
     )
 
 LOCATION_NAME = "nc_spm_08"

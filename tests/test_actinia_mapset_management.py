@@ -79,23 +79,28 @@ class TestActiniaLocation(object):
 
     def test_mapset_get_info(self):
         """Test mapset get_info method."""
-        resp = self.testactinia.locations[
-            LOCATION_NAME
-        ].mapsets[MAPSET_NAME].info()
+        resp = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .info()
+        )
         assert "region" in resp, "'region' not in location info"
         assert "projection" in resp, "'projection' not in location info"
         assert isinstance(resp["projection"], str), "'projection' wrong type"
         assert isinstance(resp["region"], Region), "'region' wrong type"
         region = resp["region"]
         assert hasattr(region, "n"), "Region has not the attribute 'n'"
-        assert region == self.testactinia.locations[
-            LOCATION_NAME
-        ].mapsets[MAPSET_NAME].region
+        assert (
+            region
+            == self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .region
+        )
         assert (
             resp["projection"]
-            == self.testactinia.locations[
-                LOCATION_NAME
-            ].mapsets[MAPSET_NAME].projection
+            == self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .projection
         )
 
     def test_actinia_create_and_delete_mapsets(self):
@@ -104,30 +109,30 @@ class TestActiniaLocation(object):
         mapset = self.testactinia.locations[LOCATION_NAME].create_mapset(
             NEW_MAPSET_NAME
         )
-        assert isinstance(mapset, Mapset), \
-            "Created mapset is not of type Mapset"
-        assert mapset.name == NEW_MAPSET_NAME, \
-            "Created location name is wrong"
-        assert NEW_MAPSET_NAME in self.testactinia.locations[
-            LOCATION_NAME
-        ].mapsets, \
-            "Created mapset is not added to location's mapsets"
+        assert isinstance(
+            mapset, Mapset
+        ), "Created mapset is not of type Mapset"
+        assert mapset.name == NEW_MAPSET_NAME, "Created location name is wrong"
+        assert (
+            NEW_MAPSET_NAME
+            in self.testactinia.locations[LOCATION_NAME].mapsets
+        ), "Created mapset is not added to location's mapsets"
 
         # Delete mapset with Location method
         self.testactinia.locations[LOCATION_NAME].delete_mapset(
             NEW_MAPSET_NAME
         )
-        assert NEW_MAPSET_NAME not in self.testactinia.locations[
-            LOCATION_NAME
-        ].mapsets, \
-            "Mapset not deleted"
+        assert (
+            NEW_MAPSET_NAME
+            not in self.testactinia.locations[LOCATION_NAME].mapsets
+        ), "Mapset not deleted"
 
         # Recreate mapset and delete with Mapset method
         mapset = self.testactinia.locations[LOCATION_NAME].create_mapset(
             NEW_MAPSET_NAME
         )
         mapset.delete()
-        assert NEW_MAPSET_NAME not in self.testactinia.locations[
-            LOCATION_NAME
-        ].mapsets, \
-            "Mapset not deleted"
+        assert (
+            NEW_MAPSET_NAME
+            not in self.testactinia.locations[LOCATION_NAME].mapsets
+        ), "Mapset not deleted"
