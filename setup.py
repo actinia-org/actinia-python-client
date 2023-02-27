@@ -10,7 +10,7 @@ setup(
     description="Python client library for actinia requests.",
     long_description=parent_dir.joinpath("README.md").read_text(),
     long_description_content_type="text/markdown",
-    url="https://github.com/mundialis/actinia-python-client",
+    url="https://github.com/actinia-org/actinia-python-client",
     license="GPLv3",
     setuptools_git_versioning={
         "enabled": True,
