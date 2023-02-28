@@ -78,15 +78,12 @@ class Location:
         :return: A list of the mapset names
         """
         self.mapsets = Mapset.list_mapsets_request(
-            self.name,
-            self.__actinia,
-            self.__auth
+            self.name, self.__actinia, self.__auth
         )
         return self.mapsets
 
     def delete(self):
-        """Delete a location via delete request.
-        """
+        """Delete a location via delete request."""
         url = f"{self.__actinia.url}/locations/{self.name}"
         resp = requests.delete(url, auth=self.__auth)
         if resp.status_code != 200:
@@ -106,10 +103,7 @@ class Location:
         Creates a mapset within the location.
         """
         mapset = Mapset.create_mapset_request(
-            name,
-            self.name,
-            self.__actinia,
-            self.__auth
+            name, self.name, self.__actinia, self.__auth
         )
         # We could also fetch data from the server again
         # with self.__request_mapsets() to ensure data is stale
@@ -121,10 +115,7 @@ class Location:
         Deletes a mapset and returns an updated mapset list for the location.
         """
         Mapset.delete_mapset_request(
-            name,
-            self.name,
-            self.__actinia,
-            self.__auth
+            name, self.name, self.__actinia, self.__auth
         )
         del self.mapsets[name]
         return self.mapsets
@@ -172,7 +163,8 @@ class Location:
         orig_name, name = self.__set_job_names(name, "unknown_validation_job")
         if actiniaResp.status_code != 200:
             raise Exception(
-                f"Error {actiniaResp.status_code}: {actiniaResp.text}")
+                f"Error {actiniaResp.status_code}: {actiniaResp.text}"
+            )
         resp = json.loads(actiniaResp.text)
         job = Job(orig_name, self.__actinia, self.__auth, resp)
         self.__actinia.jobs[name] = job

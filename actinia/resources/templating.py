@@ -27,6 +27,4 @@ __maintainer__ = "mundialis GmbH % Co. KG"
 
 from jinja2 import Environment, PackageLoader
 
-tplEnv = Environment(
-    loader=PackageLoader('actinia', 'templates')
-)
+tplEnv = Environment(loader=PackageLoader("actinia", "templates"))

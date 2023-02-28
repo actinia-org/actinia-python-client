@@ -57,13 +57,14 @@ class TestActinia(object):
     def test_actinia_get_locations(self):
         """Test get locations."""
 
-        assert self.testactinia.locations == {}, (
-            "Locations may not be an empty dictionary"
-        )
+        assert (
+            self.testactinia.locations == {}
+        ), "Locations may not be an empty dictionary"
 
         locations = self.testactinia.get_locations()
-        assert LOCATION_NAME in locations, \
-            f"'{LOCATION_NAME}' not in locations"
+        assert (
+            LOCATION_NAME in locations
+        ), f"'{LOCATION_NAME}' not in locations"
         assert isinstance(locations, dict), "locations not of type dictionary"
         assert isinstance(
             locations[LOCATION_NAME], Location
@@ -95,15 +96,20 @@ class TestActinia(object):
 
         # create location
         location = self.testactinia.create_location(
-            NEW_LOCATION_NAME, EPSGCODE)
-        assert isinstance(location, Location), \
-            "Created location is not of type Location"
-        assert location.name == NEW_LOCATION_NAME, \
-            "Created location name is wrong"
-        assert NEW_LOCATION_NAME in self.testactinia.locations, \
-            "Created location is not added to locations"
+            NEW_LOCATION_NAME, EPSGCODE
+        )
+        assert isinstance(
+            location, Location
+        ), "Created location is not of type Location"
+        assert (
+            location.name == NEW_LOCATION_NAME
+        ), "Created location name is wrong"
+        assert (
+            NEW_LOCATION_NAME in self.testactinia.locations
+        ), "Created location is not added to locations"
 
         # Delete location
         self.testactinia.locations[NEW_LOCATION_NAME].delete()
-        assert NEW_LOCATION_NAME not in self.testactinia.locations, \
-            "Location not deleted"
+        assert (
+            NEW_LOCATION_NAME not in self.testactinia.locations
+        ), "Location not deleted"

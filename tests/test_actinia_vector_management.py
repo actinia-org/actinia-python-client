@@ -54,9 +54,7 @@ class TestActiniaVector(object):
         cls.testactinia.set_authentication(ACTINIA_AUTH[0], ACTINIA_AUTH[1])
         cls.testactinia.get_locations()
         cls.testactinia.locations[LOCATION_NAME].get_mapsets()
-        cls.testactinia.locations[LOCATION_NAME].create_mapset(
-            NEW_MAPSET_NAME
-        )
+        cls.testactinia.locations[LOCATION_NAME].create_mapset(NEW_MAPSET_NAME)
 
     @classmethod
     def teardown_class(cls):
@@ -68,22 +66,36 @@ class TestActiniaVector(object):
     def test_get_vectors_and_vector_info(self):
         """Test get_vector_layers and get_info methods."""
         # get vector layers
-        resp = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].get_vector_layers()
+        resp = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .get_vector_layers()
+        )
         assert isinstance(resp, dict), "response is not a dictionary"
         assert VECTOR_NAME in resp, f"'{VECTOR_NAME}' vector not in response"
         assert isinstance(
             resp[VECTOR_NAME], Vector
         ), "Vector not of type Vector"
-        assert resp == self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].vector_layers
+        assert (
+            resp
+            == self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .vector_layers
+        )
 
         # get vector info
-        resp = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].vector_layers[VECTOR_NAME].get_info()
+        resp = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .vector_layers[VECTOR_NAME]
+            .get_info()
+        )
 
-        vector = self.testactinia.locations[LOCATION_NAME].mapsets[
-            MAPSET_NAME].vector_layers[VECTOR_NAME]
+        vector = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[MAPSET_NAME]
+            .vector_layers[VECTOR_NAME]
+        )
         assert isinstance(resp, dict), "response is not a dictionary"
         assert "Attributes" in resp, "response is not correct"
         assert len(resp["Attributes"]) == 25, "response is not correct"
@@ -99,14 +111,22 @@ class TestActiniaVector(object):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         tif_path = os.path.join(dir_path, UPLOAD_VECTOR_GEOJSON)
         self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].upload_vector(UPLOAD_VECTOR_NAME, tif_path)
-        vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].vector_layers
+            NEW_MAPSET_NAME
+        ].upload_vector(UPLOAD_VECTOR_NAME, tif_path)
+        vector_layers = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[NEW_MAPSET_NAME]
+            .vector_layers
+        )
         assert UPLOAD_VECTOR_NAME in vector_layers
 
         # delete
         self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].delete_vector(UPLOAD_VECTOR_NAME)
-        vector_layers = self.testactinia.locations[LOCATION_NAME].mapsets[
-            NEW_MAPSET_NAME].vector_layers
+            NEW_MAPSET_NAME
+        ].delete_vector(UPLOAD_VECTOR_NAME)
+        vector_layers = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[NEW_MAPSET_NAME]
+            .vector_layers
+        )
         assert UPLOAD_VECTOR_NAME not in vector_layers

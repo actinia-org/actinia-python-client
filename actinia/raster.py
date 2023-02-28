@@ -42,11 +42,12 @@ class Raster:
         self.info = None
 
     def get_info(self):
-        """Return the information of the raster map
-        """
+        """Return the information of the raster map"""
         if self.info is None:
-            url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            url = (
+                f"{self.__actinia.url}/locations/{self.__location_name}/"
                 f"mapsets/{self.__mapset_name}/raster_layers/{self.name}"
+            )
             resp = request_and_check(url, self.__auth)
             r_info = resp["process_results"]
             self.info = r_info
@@ -71,6 +72,6 @@ class Raster:
                 cols3=None,
                 depths=None,
                 cells=r_info["cells"],
-                cells3=None
+                cells3=None,
             )
         return self.info
