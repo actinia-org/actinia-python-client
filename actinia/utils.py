@@ -29,7 +29,6 @@ __maintainer__ = "Anika Weinmann"
 
 import json
 import requests
-import sys
 
 
 def request_and_check(url, auth, status_code=200):

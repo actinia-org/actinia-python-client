@@ -31,6 +31,7 @@ import os
 # check if colorlog is installed
 try:
     from colorlog import ColoredFormatter, StreamHandler
+
     log = logging.getLogger(__name__)
     formatter = ColoredFormatter(
         "%(log_color)s%(message)s",
