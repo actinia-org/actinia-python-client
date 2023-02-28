@@ -44,11 +44,12 @@ class Vector:
         self.info = None
 
     def get_info(self):
-        """Return the information of the vector map
-        """
+        """Return the information of the vector map"""
         if self.info is None:
-            url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+            url = (
+                f"{self.__actinia.url}/locations/{self.__location_name}/"
                 f"mapsets/{self.__mapset_name}/vector_layers/{self.name}"
+            )
             resp = request_and_check(url, self.__auth)
             v_info = resp["process_results"]
             self.info = v_info
@@ -73,10 +74,11 @@ class Vector:
                 cols3=None,
                 depths=None,
                 cells=None,
-                cells3=None
+                cells3=None,
             )
         print_stdout(json.dumps(self.info, indent=4))
         return self.info
+
 
 # TODO:
 # * /locations/{location_name}/mapsets/{mapset_name}/vector_layers

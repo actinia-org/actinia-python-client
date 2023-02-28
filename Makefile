@@ -11,6 +11,10 @@ install:
 installdev: dependencies
 	pip install -e .
 
+mockedtest: dependencies
+	pip install pytest
+	python -m pytest tests_mocked/
+
 test: dependencies
 	pip install pytest
 	python -m pytest tests/

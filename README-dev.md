@@ -19,8 +19,13 @@ test = Actinia()
 
 ## Run tests
 ```
+docker-compose -f "docker/docker-compose-test.yml" up -d --build
+
 make test
+# or
 make devtest
+
+docker-compose -f "docker/docker-compose-test.yml" down
 ```
 To run only a few tests you can mark the tests for development with
 `@pytest.mark.dev` and add `import pytest` to the `.py` file/s with the tests

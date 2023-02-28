@@ -87,8 +87,10 @@ class Job:
             self.poll()
             if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
-                msg = f"Status of {self.name} job is {self.status}: " \
+                msg = (
+                    f"Status of {self.name} job is {self.status}: "
                     f"{self.message}"
+                )
                 print(msg, file=sys.stderr)
 
     # def terminate(self):

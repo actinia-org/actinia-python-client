@@ -60,12 +60,7 @@ class Mapset:
         self.vector_layers = None
         self.strds = None
 
-    def __request_url(
-        actinia_url,
-        location_name,
-        mapset_name=None,
-        task=None
-    ):
+    def __request_url(actinia_url, location_name, mapset_name=None, task=None):
         """
         Provides the url to an Actinia mapset resource.
 
@@ -113,10 +108,7 @@ class Mapset:
         """Get mapset info"""
         if self.projection is None or self.region is None:
             proc_res = self.request_info(
-                self.name,
-                self.__location_name,
-                self.__actinia,
-                self.__auth
+                self.name, self.__location_name, self.__actinia, self.__auth
             )
             self.projection = proc_res["projection"]
             self.region = Region(**proc_res["region"])
@@ -125,10 +117,7 @@ class Mapset:
     def delete(self):
         """Deletes the mapset"""
         self.delete_mapset_request(
-            self.name,
-            self.__location_name,
-            self.__actinia,
-            self.__auth
+            self.name, self.__location_name, self.__actinia, self.__auth
         )
         del self.__actinia.locations[self.__location_name].mapsets[self.name]
 
@@ -263,10 +252,7 @@ class Mapset:
             and text if request fails.
         """
         url = cls.__request_url(
-            actinia.url,
-            location_name,
-            mapset_name,
-            MAPSET_TASK.INFO
+            actinia.url, location_name, mapset_name, MAPSET_TASK.INFO
         )
         resp = requests.get(url, auth=(auth))
         if resp.status_code != 200:
@@ -280,14 +266,19 @@ class Mapset:
 
         :return: A list of the raster maps
         """
-        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers"
+        )
         resp = request_and_check(url, auth=self.__auth)
         raster_names = resp["process_results"]
         rasters = {
             mname: Raster(
-                mname, self.__location_name, self.name,
-                self.__actinia, self.__auth
+                mname,
+                self.__location_name,
+                self.name,
+                self.__actinia,
+                self.__auth,
             )
             for mname in raster_names
         }
@@ -307,14 +298,19 @@ class Mapset:
 
         :return: A list of the vector maps
         """
-        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers"
+        )
         resp = request_and_check(url, auth=self.__auth)
         vector_names = resp["process_results"]
         vectors = {
             mname: Vector(
-                mname, self.__location_name, self.name,
-                self.__actinia, self.__auth
+                mname,
+                self.__location_name,
+                self.name,
+                self.__actinia,
+                self.__auth,
             )
             for mname in vector_names
         }
@@ -335,36 +331,46 @@ class Mapset:
             tif_file (string): Path of the GTiff file to upload
         """
         files = {"file": (tif_file, open(tif_file, "rb"))}
-        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers/{layer_name}"
+        )
         resp = requests.post(
-                url=url,
-                files=files,
-                auth=self.__auth,
+            url=url,
+            files=files,
+            auth=self.__auth,
         )
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        kwargs = json.loads(resp.text)
+        resp_dict = json.loads(resp.text)
         job = Job(
             f"raster_upload_{self.__location_name}_{self.name}_{layer_name}",
-            self.__actinia, self.__auth, **kwargs)
+            self.__actinia,
+            self.__auth,
+            resp_dict,
+        )
         job.poll_until_finished()
         if job.status != "finished":
             raise Exception(f"{job.status}: {job.message}")
         if self.raster_layers is None:
             self.get_raster_layers()
         self.raster_layers[layer_name] = Raster(
-            layer_name, self.__location_name, self.name,
-            self.__actinia, self.__auth
+            layer_name,
+            self.__location_name,
+            self.name,
+            self.__actinia,
+            self.__auth,
         )
 
     def delete_raster(self, layer_name):
         """Delete a raster layer"""
-        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers/{layer_name}"
+        )
         resp = requests.delete(
-                url=url,
-                auth=self.__auth,
+            url=url,
+            auth=self.__auth,
         )
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
@@ -383,36 +389,46 @@ class Mapset:
                                   to upload
         """
         files = {"file": (vector_file, open(vector_file, "rb"))}
-        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
+        )
         resp = requests.post(
-                url=url,
-                files=files,
-                auth=self.__auth,
+            url=url,
+            files=files,
+            auth=self.__auth,
         )
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
-        kwargs = json.loads(resp.text)
+        resp_dict = json.loads(resp.text)
         job = Job(
             f"vector_upload_{self.__location_name}_{self.name}_{layer_name}",
-            self.__actinia, self.__auth, **kwargs)
+            self.__actinia,
+            self.__auth,
+            resp_dict,
+        )
         job.poll_until_finished()
         if job.status != "finished":
             raise Exception(f"{job.status}: {job.message}")
         if self.vector_layers is None:
             self.get_vector_layers()
         self.vector_layers[layer_name] = Vector(
-            layer_name, self.__location_name, self.name,
-            self.__actinia, self.__auth
+            layer_name,
+            self.__location_name,
+            self.name,
+            self.__actinia,
+            self.__auth,
         )
 
     def delete_vector(self, layer_name):
         """Delete a vector layer"""
-        url = f"{self.__actinia.url}/locations/{self.__location_name}/" \
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
+        )
         resp = requests.delete(
-                url=url,
-                auth=self.__auth,
+            url=url,
+            auth=self.__auth,
         )
         if resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
