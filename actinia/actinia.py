@@ -28,12 +28,12 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-import logging
 import re
 import requests
 
 from actinia.location import Location
 from actinia.resources.templating import tplEnv
+from actinia.resources.logger import log
 
 
 class Actinia:
@@ -74,7 +74,7 @@ class Actinia:
         data = json.loads(resp.text)
 
         if len(data) > 2:
-            logging.info(f"{self.url} is working and will be used.")
+            log.debug(f"{self.url} is working and will be used.")
             # TODO schöneres format: return version
             return data
 
@@ -86,7 +86,7 @@ class Actinia:
                         rf"{base}/(.*?)/version", data[0]["links"][0]
                     )[0]
                     self.__set_url()
-                    logging.warning(f"Using actinia <{self.url}>")
+                    log.warning(f"Using actinia <{self.url}>")
                 else:
                     self.api_version = "v1"
                     self.__check_version()
@@ -118,7 +118,7 @@ class Actinia:
         elif resp.status_code != 200:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
         else:
-            logging.info(f"{self.user} is logged in.")
+            log.debug(f"{self.user} is logged in.")
 
     def set_authentication(self, user, pw):
         """

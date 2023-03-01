@@ -31,9 +31,10 @@ import json
 import requests
 from actinia.region import Region
 from enum import Enum, unique
+from actinia.resources.logger import log
 from actinia.raster import Raster
 from actinia.vector import Vector
-from actinia.utils import request_and_check, print_stdout
+from actinia.utils import request_and_check
 from actinia.job import Job
 
 
@@ -378,7 +379,7 @@ class Mapset:
             self.get_raster_layers()
         else:
             del self.raster_layers[layer_name]
-        print_stdout(f"Raster <{layer_name}> successfully deleted")
+        log.info(f"Raster <{layer_name}> successfully deleted")
 
     def upload_vector(self, layer_name, vector_file):
         """Upload vector file (GPKG, zipped Shapefile or GeoJSON) as a vector
@@ -436,7 +437,7 @@ class Mapset:
             self.get_vector_layers()
         else:
             del self.vector_layers[layer_name]
-        print_stdout(f"Vector <{layer_name}> successfully deleted")
+        log.info(f"Vector <{layer_name}> successfully deleted")
 
 
 # TODO:

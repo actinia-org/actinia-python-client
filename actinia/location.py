@@ -33,6 +33,7 @@ import os
 import sys
 from datetime import datetime
 
+from actinia.resources.logger import log
 from actinia.region import Region
 from actinia.mapset import Mapset
 from actinia.job import Job
@@ -150,10 +151,10 @@ class Location:
         """Validate a process chain (sync)."""
         resp = self.__validate_process_chain(pc, "sync")
         if resp.status_code == 200:
-            print(json.loads(resp.text)["message"], file=sys.stdout)
+            log.info(json.loads(resp.text)["message"])
         elif resp.status_code == 400:
             msg = f"Validation error: {json.loads(resp.text)['message']}"
-            print(msg, file=sys.stderr)
+            log.error(msg, file=sys.stderr)
         else:
             raise Exception(f"Error {resp.status_code}: {resp.text}")
 
