@@ -16,6 +16,20 @@ Types of changes
 
 ## [Unreleased]
 
+## [0.3.0] - 2023-03-01
+### Fixed
+* Initialize Job from dict
+
+### Changed
+* not mocked tests
+* improved mapset management
+
+### Added
+* own logging
+* linting (black)
+* Enhance docs
+* vector and raster management
+
 ## [0.2.0] - 2022-11-22
 ### Changed
 * Restructured mapset management
