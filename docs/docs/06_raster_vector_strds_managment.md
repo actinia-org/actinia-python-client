@@ -29,8 +29,10 @@ info = rasters["zipcodes"].get_info()
 Upload a GTif as raster layer to a user mapset (here the user mapset will be
 created before)
 ```
-# TODO add mapset creation
 mapset_name = "test_mapset"
+
+# mapset creation
+locations["nc_spm_08"].create_mapset(mapset_name)
 
 # upload tif
 raster_layer_name = "test"
@@ -44,7 +46,8 @@ Delete a raster layer
 locations["nc_spm_08"].mapsets[mapset_name].delete_raster(raster_layer_name)
 print(locations["nc_spm_08"].mapsets[mapset_name].raster_layers.keys())
 
-# TODO delete mapset
+# delete mapset
+locations["nc_spm_08"].delete_mapset(mapset_name)
 ```
 
 ## Vector management
@@ -63,8 +66,10 @@ info = vectors["boundary_county"].get_info()
 Upload a GeoJSON as vector layer to a user mapset (here the user mapset will
 be created before)
 ```
-# TODO add mapset creation
 mapset_name = "test_mapset"
+
+# mapset creation
+locations["nc_spm_08"].create_mapset(mapset_name)
 
 # upload tif
 vector_layer_name = "test"
@@ -78,5 +83,6 @@ Delete a raster layer
 locations["nc_spm_08"].mapsets[mapset_name].delete_vector(vector_layer_name)
 print(locations["nc_spm_08"].mapsets[mapset_name].vector_layers.keys())
 
-# TODO delete mapset
+# delete mapset
+locations["nc_spm_08"].delete_mapset(mapset_name)
 ```
