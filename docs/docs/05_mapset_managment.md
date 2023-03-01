@@ -24,6 +24,15 @@ mapsets = actinia_mundialis.locations["nc_spm_08"].get_mapsets()
 print(mapsets.keys())
 ```
 
-## TODO: Create Mapset in Specified Location
-
-## TODO: Delete Mapset in Specified Location
+## Create and delete Mapset in Specified Location
+Create ***test_mapset*** in ***nc_spm_08*** location:
+```
+mapset_name = "test_mapset"
+locations["nc_spm_08"].create_mapset(mapset_name)
+print(mapsets.keys())
+```
+Delete ***test_mapset*** mapset:
+```
+locations["nc_spm_08"].delete_mapset(mapset_name)
+print(mapsets.keys())
+```
