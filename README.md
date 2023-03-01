@@ -5,7 +5,7 @@ Python Client Library for [actinia](https://actinia.mundialis.de/).
 ## Installation
 
 ```
-VERSION="0.1.2"
+VERSION="0.3.0"
 
 pip3 install "actinia-python-client @ https://github.com/mundialis/actinia-python-client/releases/download/${VERSION}/actinia_python_client-${VERSION}-py3-none-any.whl"
 ```
