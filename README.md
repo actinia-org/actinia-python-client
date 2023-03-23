@@ -1,3 +1,5 @@
+[![image](https://img.shields.io/conda/vn/conda-forge/actinia-python-client.svg)](https://anaconda.org/conda-forge/actinia-python-client)
+
 # actinia-python-client
 
 Python Client Library for [actinia](https://actinia.mundialis.de/).
