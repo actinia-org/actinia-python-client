@@ -172,9 +172,7 @@ class Actinia:
         :return: The created location
         """
         if name in self.locations:
-            log.warning(
-                f"Location <{name}> already exists."
-            )
+            log.warning(f"Location <{name}> already exists.")
             return self.locations[name]
         tpl = tplEnv.get_template("create_location.json")
         postbody = tpl.render(epsgcode=epsgcode)

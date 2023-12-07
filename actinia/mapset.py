@@ -192,9 +192,7 @@ class Mapset:
             location_name, actinia, auth
         )
         if mapset_name in existing_mapsets:
-            log.warning(
-                f"Mapset <{mapset_name}> already exists."
-            )
+            log.warning(f"Mapset <{mapset_name}> already exists.")
             return existing_mapsets[mapset_name]
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
