@@ -103,22 +103,28 @@ class Location:
         """
         Creates a mapset within the location.
         """
+        if self.mapsets is None:
+            self.__request_mapsets()
         mapset = Mapset.create_mapset_request(
             name, self.name, self.__actinia, self.__auth
         )
         # We could also fetch data from the server again
         # with self.__request_mapsets() to ensure data is stale
-        self.mapsets[name] = mapset
+        if name not in self.mapsets:
+            self.mapsets[name] = mapset
         return mapset
 
     def delete_mapset(self, name):
         """
         Deletes a mapset and returns an updated mapset list for the location.
         """
+        if self.mapsets is None:
+            self.__request_mapsets()
         Mapset.delete_mapset_request(
             name, self.name, self.__actinia, self.__auth
         )
-        del self.mapsets[name]
+        if name is name in self.mapsets:
+            del self.mapsets[name]
         return self.mapsets
 
     def __validate_process_chain(self, pc, type):
