@@ -219,6 +219,16 @@ class Mapset:
             Error string with response status code
             and text if request fails.
         """
+        # check if mapset exists
+        existing_mapsets = cls.list_mapsets_request(
+            location_name, actinia, auth
+        )
+        if mapset_name not in existing_mapsets:
+            log.warning(
+                f"Mapset <{mapset_name}> does not exists an cannot be deleted."
+            )
+            return None
+
         url = cls.__request_url(actinia.url, location_name, mapset_name)
         resp = requests.delete(url, auth=(auth))
         if resp.status_code != 200:
