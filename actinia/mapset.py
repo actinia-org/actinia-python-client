@@ -187,6 +187,16 @@ class Mapset:
             Error string with response status code
             and text if request fails.
         """
+        # check if mapset exists
+        existing_mapsets = cls.list_mapsets_request(
+            location_name, actinia, auth
+        )
+        if mapset_name in existing_mapsets:
+            log.warning(
+                f"Mapset <{mapset_name}> already exists."
+            )
+            return existing_mapsets[mapset_name]
+
         url = cls.__request_url(actinia.url, location_name, mapset_name)
         resp = requests.post(url, auth=(auth))
         if resp.status_code != 200:

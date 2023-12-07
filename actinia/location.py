@@ -103,12 +103,15 @@ class Location:
         """
         Creates a mapset within the location.
         """
+        if self.mapsets is None:
+            self.__request_mapsets()
         mapset = Mapset.create_mapset_request(
             name, self.name, self.__actinia, self.__auth
         )
         # We could also fetch data from the server again
         # with self.__request_mapsets() to ensure data is stale
-        self.mapsets[name] = mapset
+        if not name in self.mapsets:
+            self.mapsets[name] = mapset
         return mapset
 
     def delete_mapset(self, name):
