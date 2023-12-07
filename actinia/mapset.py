@@ -233,7 +233,7 @@ class Mapset:
         )
         if mapset_name not in existing_mapsets:
             log.warning(
-                f"Mapset <{mapset_name}> does not exists an cannot be deleted."
+                f"Mapset <{mapset_name}> does not exist and cannot be deleted."
             )
             return None
 
