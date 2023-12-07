@@ -110,7 +110,7 @@ class Location:
         )
         # We could also fetch data from the server again
         # with self.__request_mapsets() to ensure data is stale
-        if not name in self.mapsets:
+        if name not in self.mapsets:
             self.mapsets[name] = mapset
         return mapset
 
