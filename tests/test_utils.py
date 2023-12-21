@@ -81,9 +81,6 @@ class TestActiniaUtils(object):
         """Test set_job_names utils function with using default name."""
         name_to_set = None
         orig_name, name = set_job_names(name_to_set)
-        import pdb
-
-        pdb.set_trace()
         assert "unknown_job" == orig_name
         assert "job" in name
 
