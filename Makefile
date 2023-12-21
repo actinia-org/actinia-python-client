@@ -1,25 +1,22 @@
 SRC := .
 
-.PHONY: dependencies
-
-dependencies:
-	pip install -r $(SRC)/requirements.txt
+.PHONY: installdev
 
 install:
 	pip install actinia-python-client
 
-installdev: dependencies
+installdev:
+	pip3 install pip-tools
 	pip install -e .
 
-mockedtest: dependencies
+mockedtest: installdev
 	pip install pytest
 	python -m pytest tests_mocked/
 
-test: dependencies
+test: installdev
 	pip install pytest
 	python -m pytest tests/
 
-devtest:
-	pip install -r $(SRC)/requirements.txt
+devtest: installdev
 	pip install pytest
 	python -m pytest tests/ -m dev
