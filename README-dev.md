@@ -7,15 +7,20 @@ source env/bin/activate
 ```
 With `deactivate` you can exit the virtual env
 
+
 ## Install actinia for development
-```
+
+```bash
 make installdev
 ```
+
 Test with Python3:
+
 ```python3
 from actinia import Actinia
 test = Actinia()
 ```
+
 
 ## Run tests
 ```

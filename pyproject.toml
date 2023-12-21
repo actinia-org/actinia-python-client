@@ -19,7 +19,11 @@ classifiers = [
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
 ]
-dependencies = requirements.txt
+dependencies = [
+        "jinja2",
+        "requests",
+        "sphinx-material",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/actinia-org/actinia-python-client"
