@@ -501,10 +501,48 @@ class Mapset:
         return job
 
 
-# TODO:
-# * (/locations/{location_name}/mapsets/{mapset_name}/lock - GET, DELETE, POST)
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/raster_layers
+    #      - DELETE
+    def delete_raster(self, name):
+        log.warning("Method not yes implemented")
 
-# * /locations/{location_name}/mapsets/{mapset_name}/raster_layers
-#      - DELETE, PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
-# * "/locations/{location_name}/mapsets/{mapset_name}/vector_layers"
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/raster_layers
+    #      - PUT
+    def upload_raster(self, name):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/vector_layers
+    #      - DELETE
+    def delete_vector(self, name):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/vector_layers
+    #      - PUT
+    def rename_vector(self, old_name, new_name):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds - GET
+    def get_strds(self):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}
+    #                - DELETE
+    def delete_strds(self, name):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}
+    #                - POST
+    def create_strds(self, name):
+        log.warning("Method not yes implemented")
+
+    # TODO (/locations/{location_name}/mapsets/{mapset_name}/lock - GET)
+    def get_lock(self):
+        log.warning("Method not yes implemented")
+
+    # TODO (/locations/{location_name}/mapsets/{mapset_name}/lock - DELETE)
+    def delete_lock(self):
+        log.warning("Method not yes implemented")
+
+    # TODO (/locations/{location_name}/mapsets/{mapset_name}/lock - POST)
+    def lock(self):
+        log.warning("Method not yes implemented")

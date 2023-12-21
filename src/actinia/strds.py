@@ -27,10 +27,36 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-# TODO:
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}
-#                - GET, DELETE, POST
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
-#           raster_layers - DELETE, GET, PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
-#           render - GET
+
+from actinia.resources.logger import log
+
+
+class Strds:
+    # TODO init
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}
+    #                - GET
+    def get_info(self):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
+    #           raster_layers - PUT
+    def register_rasters(self, name, start_time, end_time):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
+    #           raster_layers - DELETE
+    def unregister_rasters(self, names):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
+    #           raster_layers - GET
+    def get_rasters(self, names):
+        log.warning("Method not yes implemented")
+
+    # TODO /locations/{location_name}/mapsets/{mapset_name}/strds/{strds_name}/
+    #           render - GET
+    def render_in_single_image(
+            self, n, s, e, w, start_time, end_time, width= 800 height=600
+        ):
+        log.warning("Method not yes implemented")

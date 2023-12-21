@@ -114,9 +114,9 @@ class Job:
                 )
                 log.info(msg)
 
-    # def terminate(self):
-    #     """
-    #     Terminate job.
-    #     """
-    #
     # TODO
+    def terminate(self):
+        """
+        Terminate job.
+        """
+        log.warning("Method not yes implemented")

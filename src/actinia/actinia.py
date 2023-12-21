@@ -198,8 +198,33 @@ class Actinia:
 
         return location
 
+    # TODO /resource_storage - GET
+    def get_resource_storage(self):
+        log.warning("Method not yes implemented")
 
-# TODO:
-# * /resource_storage - GET, DELETE
-# * /resources/{user_id} - GET, DELETE
-# * /resources/{user_id}/{resource_id} - DELETE, GET, PUT
+    # TODO /resource_storage - DELETE
+    def delete_resource_storage(self):
+        log.warning("Method not yes implemented")
+
+    # TODO /resources/{user_id} - GET
+    def get_resources(self):
+        # return dict with jobs (self.jobs)
+        log.warning("Method not yes implemented")
+
+    # TODO /resources/{user_id} - DELETE
+    def delete_resources(self):
+        # delete (self.jobs)
+        log.warning("Method not yes implemented")
+
+    # TODO /resources/{user_id}/{resource_id} - GET
+    def get_resource(self, resource_id):
+        # return job
+        log.warning("Method not yes implemented")
+
+    # TODO /resources/{user_id}/{resource_id} - DELETE
+    def delete_resource(self, resource_id):
+        log.warning("Method not yes implemented")
+
+    # TODO /resources/{user_id}/{resource_id} - PUT
+    def update_resource(self, resource_id):
+        log.warning("Method not yes implemented")

@@ -207,12 +207,6 @@ class Location:
         self.__actinia.jobs[name] = job
         return job
 
-
 # TODO:
-# * /locations/{location_name}/process_chain_validation_async - POST
-# * /locations/{location_name}/process_chain_validation_sync - POST
-# * /locations/{location_name}/processing_async_export
-#               - POST (ephemeral database)
-# * (/locations/{location_name}/processing_export - POST (ephemeral database))
 # * (/locations/{location_name}/processing_async_export_gcs - POST)
 # * (/locations/{location_name}/processing_async_export_s3 - POST)
