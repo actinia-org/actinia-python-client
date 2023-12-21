@@ -43,7 +43,7 @@ print(job.message)
 
 ## Persistent Processing
 
-Start an persistent processing job
+Start a persistent processing job
 ```
 pc = {
     "list": [

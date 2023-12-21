@@ -26,7 +26,7 @@ Types of changes
 
 ## [0.3.1] - 2023-12-08
 ### Fixed
-- fix mapset deletion if mapset does not exists
+- fix mapset deletion if mapset does not exist
 - fix location creation if location already exists
 - fix mapset creation if mapset exists
 
