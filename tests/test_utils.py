@@ -32,7 +32,6 @@ from .actinia_config import ACTINIA_BASEURL, ACTINIA_VERSION, ACTINIA_AUTH
 
 
 class TestActiniaUtils(object):
-
     def test_request_and_check(self):
         """Test request_and_check utils function."""
         url = f"{ACTINIA_BASEURL}api/{ACTINIA_VERSION}/version"
@@ -76,7 +75,9 @@ class TestActiniaUtils(object):
         """Test set_job_names utils function with using default name."""
         name_to_set = None
         orig_name, name = set_job_names(name_to_set)
-        import pdb; pdb.set_trace()
+        import pdb
+
+        pdb.set_trace()
         assert "unknown_job" == orig_name
         assert "job" in name
 
@@ -91,7 +92,7 @@ class TestActiniaUtils(object):
         pc_item = create_actinia_pc_item(
             id=id,
             module="g.region",
-            inputs= inputs,
+            inputs=inputs,
             flags="g",
         )
         assert "module" in pc_item

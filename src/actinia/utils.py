@@ -64,18 +64,18 @@ def set_job_names(name, default_name="unknown_job"):
 
 
 def create_actinia_pc_item(
-        id,
-        module,
-        inputs=None,
-        outputs=None,
-        flags=None,
-        stdin=None,
-        stdout=None,
-        overwrite=False,
-        superquiet=False,
-        verbose=False,
-        interface_description=False
-    ):
+    id,
+    module,
+    inputs=None,
+    outputs=None,
+    flags=None,
+    stdin=None,
+    stdout=None,
+    overwrite=False,
+    superquiet=False,
+    verbose=False,
+    interface_description=False,
+):
     """
     Creates a list item for an actinia process chain
 
