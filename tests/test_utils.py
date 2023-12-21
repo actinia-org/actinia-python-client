@@ -27,7 +27,13 @@ __author__ = "Anika Weinmann, Markus Metz"
 __copyright__ = "Copyright 2023, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-from actinia.utils import *
+import pytest
+
+from actinia.utils import (
+    create_actinia_pc_item,
+    request_and_check,
+    set_job_names,
+)
 from .actinia_config import ACTINIA_BASEURL, ACTINIA_VERSION, ACTINIA_AUTH
 
 
@@ -43,7 +49,7 @@ class TestActiniaUtils(object):
         url = f"{ACTINIA_BASEURL}api/{ACTINIA_VERSION}/version_fail"
         err_msg = "The requested URL was not found on the server."
         with pytest.raises(Exception) as excinfo:
-            resp = request_and_check(url, ACTINIA_AUTH, status_code=200)
+            request_and_check(url, ACTINIA_AUTH, status_code=200)
         assert err_msg in str(excinfo.value)
 
     def test_request_and_check_wrong_auth(self):
@@ -52,7 +58,7 @@ class TestActiniaUtils(object):
         err_msg = "Unauthorized Access"
         wrong_auth = ("actinia-gdi", "wrong_pw")
         with pytest.raises(Exception) as excinfo:
-            resp = request_and_check(url, wrong_auth, status_code=200)
+            request_and_check(url, wrong_auth, status_code=200)
         assert err_msg in str(excinfo.value)
 
     def test_set_job_names(self):

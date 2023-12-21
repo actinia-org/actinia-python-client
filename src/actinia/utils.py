@@ -87,12 +87,14 @@ def create_actinia_pc_item(
         some valid GRASS or actinia module
     inputs: list or dict
         list of input parameters with values in the form
-        [{"param": key1, "value": value1}, {"param": key2, "value": value2}, ...]
+        [{"param": key1, "value": value1}, {"param": key2, "value": value2},
+        ...]
         shorter alternative as dict
         {"key1": value1, "key2": value2, ...}
     outputs: list or dict
         list of output parameters with values in the form
-        [{"param": key1, "value": value1}, {"param": key2, "value": value2}, ...]
+        [{"param": key1, "value": value1}, {"param": key2, "value": value2},
+        ...]
         shorter alternative as dict
         {"key1": value1, "key2": value2, ...}
     flags: str
