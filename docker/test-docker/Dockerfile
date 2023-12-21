@@ -1,4 +1,4 @@
-FROM mundialis/actinia:2.5.0
+FROM mundialis/actinia:2.6.6
 # TODO change to latest docker image if this is fixed
 # FROM mundialis/actinia:latest
 
