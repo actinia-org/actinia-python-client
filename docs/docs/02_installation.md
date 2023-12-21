@@ -2,7 +2,6 @@
 
 You can install the the actinia Python library via:
 ```
-VERSION="0.3.0"
-pip3 install "actinia-python-client @ https://github.com/actinia-org/actinia-python-client/releases/download/${VERSION}/actinia_python_client-${VERSION}-py3-none-any.whl"
+pip3 install actinia-python-client
 ```
 For newest version see [releases](https://github.com/actinia-org/actinia-python-client/releases).

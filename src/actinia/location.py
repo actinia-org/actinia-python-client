@@ -31,12 +31,12 @@ import json
 import requests
 import os
 import sys
-from datetime import datetime
 
 from actinia.resources.logger import log
 from actinia.region import Region
 from actinia.mapset import Mapset
 from actinia.job import Job
+from actinia.utils import set_job_names
 
 
 class Location:
@@ -46,7 +46,7 @@ class Location:
         self.region = None
         self.__actinia = actinia
         self.__auth = auth
-        self.mapsets = None
+        self.mapsets = dict()
 
     def __request_info(self):
         """
@@ -95,7 +95,7 @@ class Location:
         """
         Return mapsets
         """
-        if self.mapsets is None:
+        if self.mapsets is None or len(self.mapsets) == 0:
             self.__request_mapsets()
         return self.mapsets
 
@@ -103,7 +103,7 @@ class Location:
         """
         Creates a mapset within the location.
         """
-        if self.mapsets is None:
+        if self.mapsets is None or len(self.mapsets) == 0:
             self.__request_mapsets()
         mapset = Mapset.create_mapset_request(
             name, self.name, self.__actinia, self.__auth
@@ -118,7 +118,7 @@ class Location:
         """
         Deletes a mapset and returns an updated mapset list for the location.
         """
-        if self.mapsets is None:
+        if self.mapsets is None or len(self.mapsets) == 0:
             self.__request_mapsets()
         Mapset.delete_mapset_request(
             name, self.name, self.__actinia, self.__auth
@@ -143,16 +143,6 @@ class Location:
         )
         return resp
 
-    def __set_job_names(self, name, default_name="unknown_job"):
-        now = datetime.now()
-        if name is None:
-            orig_name = default_name
-            name = f"job_{now.strftime('%Y%d%m_%H%M%S')}"
-        else:
-            orig_name = name
-            name += f"_{now.strftime('%Y%d%m_%H%M%S')}"
-        return orig_name, name
-
     def validate_process_chain_sync(self, pc):
         """Validate a process chain (sync)."""
         resp = self.__validate_process_chain(pc, "sync")
@@ -167,7 +157,7 @@ class Location:
     def validate_process_chain_async(self, pc, name=None):
         """Validate a process chain (async)."""
         actiniaResp = self.__validate_process_chain(pc, "async")
-        orig_name, name = self.__set_job_names(name, "unknown_validation_job")
+        orig_name, name = set_job_names(name, "unknown_validation_job")
         if actiniaResp.status_code != 200:
             raise Exception(
                 f"Error {actiniaResp.status_code}: {actiniaResp.text}"
@@ -177,7 +167,7 @@ class Location:
         self.__actinia.jobs[name] = job
         return job
 
-    # * /locations/{location_name}/processing_async_export
+    # TODO: * /locations/{location_name}/processing_async_export
     #            - POST (ephemeral database)
     # * (/locations/{location_name}/processing_export
     #            - POST (ephemeral database))
@@ -186,7 +176,7 @@ class Location:
         Creates a processing_export job with a given PC.
         """
         # set name
-        orig_name, name = self.__set_job_names(name)
+        orig_name, name = set_job_names(name)
         # set endpoint in url
         url = (
             f"{self.__actinia.url}/locations/{self.name}/"

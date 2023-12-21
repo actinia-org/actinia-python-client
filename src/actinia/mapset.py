@@ -28,14 +28,17 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
+import os
 import requests
-from actinia.region import Region
 from enum import Enum, unique
+
+from actinia.region import Region
 from actinia.resources.logger import log
 from actinia.raster import Raster
 from actinia.vector import Vector
 from actinia.utils import request_and_check
 from actinia.job import Job
+from actinia.utils import set_job_names
 
 
 @unique
@@ -457,6 +460,46 @@ class Mapset:
             del self.vector_layers[layer_name]
         log.info(f"Vector <{layer_name}> successfully deleted")
 
+    # TODO: * (/locations/{location_name}/mapsets/{mapset_name}/processing
+    #          - POST (persistent, asyncron))
+    # * /locations/{location_name}/mapsets/{mapset_name}/processing_async
+    #          - POST (persistent, asyncron)
+    def create_processing_job(self, pc, name=None):
+        """
+        Creates a processing job with a given PC.
+        """
+        # set name
+        orig_name, name = set_job_names(name)
+        # set endpoint in url
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
+            f"mapsets/{self.name}/processing_async"
+        )
+        # make POST request
+        postkwargs = dict()
+        postkwargs["headers"] = self.__actinia.headers
+        postkwargs["auth"] = self.__auth
+        if isinstance(pc, str):
+            if os.path.isfile(pc):
+                with open(pc, "r") as pc_file:
+                    postkwargs["data"] = pc_file.read()
+            else:
+                postkwargs["data"] = pc
+        elif isinstance(pc, dict):
+            postkwargs["data"] = json.dumps(pc)
+        else:
+            raise Exception("Given process chain has no valid type.")
+
+        try:
+            actiniaResp = requests.post(url, **postkwargs)
+        except requests.exceptions.ConnectionError as e:
+            raise e
+        # create a job
+        resp = json.loads(actiniaResp.text)
+        job = Job(orig_name, self.__actinia, self.__auth, resp)
+        self.__actinia.jobs[name] = job
+        return job
+
 
 # TODO:
 # * (/locations/{location_name}/mapsets/{mapset_name}/lock - GET, DELETE, POST)
@@ -465,8 +508,3 @@ class Mapset:
 #      - DELETE, PUT
 # * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
 # * "/locations/{location_name}/mapsets/{mapset_name}/vector_layers"
-
-# * (/locations/{location_name}/mapsets/{mapset_name}/processing
-#          - POST (persistent, asyncron))
-# * /locations/{location_name}/mapsets/{mapset_name}/processing_async
-#          - POST (persistent, asyncron)
