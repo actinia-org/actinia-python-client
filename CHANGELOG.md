@@ -15,6 +15,21 @@ Types of changes
 
 
 ## [Unreleased]
+### Added
+- persistent processing
+
+
+## [0.3.2] - 2023-12-21
+### Added
+- set up from PyPI
+
+
+## [0.3.1] - 2023-12-08
+### Fixed
+- fix mapset deletion if mapset does not exists
+- fix location creation if location already exists
+- fix mapset creation if mapset exists
+
 
 ## [0.3.0] - 2023-03-01
 ### Fixed
