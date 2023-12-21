@@ -15,6 +15,7 @@ locations = actinia_mundialis.get_locations()
 ```
 
 ## Ephemeral Processing
+
 Start an ephemeral processing job
 ```
 pc = {
@@ -37,4 +38,44 @@ job.poll_until_finished()
 
 print(job.status)
 print(job.message)
+```
+
+
+## Persistent Processing
+
+Start a persistent processing job
+```
+pc = {
+    "list": [
+      {
+          "id": "r_mapcalc",
+          "module": "r.mapcalc",
+          "inputs": [
+              {
+                  "param": "expression",
+                  "value": "baum=5"
+              }
+          ]
+      }
+    ],
+    "version": "1"
+}
+# create user mapset (persistent processing can only be done in a user mapset)
+mapset_name = "test_mapset"
+locations["nc_spm_08"].create_mapset(mapset_name)
+
+# create job
+job = locations["nc_spm_08"].mapsets[mapset_name].create_processing_job(pc, "test")
+job.poll_until_finished()
+
+print(job.status)
+print(job.message)
+
+# print rasters in "test_mapset"
+rasters = locations["nc_spm_08"].mapsets[mapset_name].get_raster_layers()
+print(rasters.keys())
+
+# delete user mapset
+locations["nc_spm_08"].delete_mapset(mapset_name)
+print(locations["nc_spm_08"].mapsets.keys())
 ```

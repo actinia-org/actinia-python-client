@@ -29,6 +29,7 @@ __maintainer__ = "Anika Weinmann"
 
 import json
 import requests
+from datetime import datetime
 
 
 def request_and_check(url, auth, status_code=200):
@@ -48,3 +49,14 @@ def request_and_check(url, auth, status_code=200):
     if resp.status_code != status_code:
         raise Exception(f"Error {resp.status_code}: {resp.text}")
     return json.loads(resp.text)
+
+
+def set_job_names(name, default_name="unknown_job"):
+    now = datetime.now()
+    if name is None:
+        orig_name = default_name
+        name = f"job_{now.strftime('%Y%d%m_%H%M%S')}"
+    else:
+        orig_name = name
+        name += f"_{now.strftime('%Y%d%m_%H%M%S')}"
+    return orig_name, name
