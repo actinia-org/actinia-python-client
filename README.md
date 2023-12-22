@@ -12,6 +12,9 @@ pip3 install actinia-python-client
 
 For newest version see [releases](https://github.com/actinia-org/actinia-python-client/releases).
 
+## Conda
+
+actinia-python-client is automatically packaged on [conda-forge / actinia-python-client-feedstock](https://github.com/conda-forge/actinia-python-client-feedstock/).
 
 ## Small Example
 
