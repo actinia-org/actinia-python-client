@@ -6,6 +6,8 @@ Python Client Library for [actinia](https://actinia.mundialis.de/).
 
 ## Installation
 
+The client is available at https://pypi.org/project/actinia-python-client/
+
 ```bash
 pip3 install actinia-python-client
 ```
