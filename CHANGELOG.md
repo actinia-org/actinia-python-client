@@ -15,9 +15,11 @@ Types of changes
 
 
 ## [Unreleased]
+
+## [0.4.0] - 2024-02-20
 ### Added
 - persistent processing
-- Add create_actinia_pc_item function to utils
+- Add `create_actinia_pc_item` function to utils
 
 
 ## [0.3.2] - 2023-12-21
