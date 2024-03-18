@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://actinia-org.github.io/actinia-python-client/06_raster_vector_strds_managment/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Raster, Vector and STRDS Management - actinia-python-client</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Raster, Vector and STRDS Management";
+        var mkdocs_page_input_path = "06_raster_vector_strds_managment.md";
+        var mkdocs_page_url = "/actinia-python-client/06_raster_vector_strds_managment/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> actinia-python-client
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">actinia-python-client</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../02_installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../03_quickstart/">Quickstart</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../04_location_management/">Location Management</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../05_mapset_managment/">Mapset Management</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Raster, Vector and STRDS Management</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#raster-manangement">Raster manangement</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#vector-management">Vector management</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../07_process_chain_validation/">Process Chain Validation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../08_processing/">Processing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">actinia-python-client</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Raster, Vector and STRDS Management</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="raster-vector-and-strds-management">Raster, Vector and STRDS Management</h1>
+<pre><code>from actinia import Actinia
+
+actinia_mundialis = Actinia()
+actinia_mundialis.get_version()
+actinia_mundialis.set_authentication(&quot;demouser&quot;, &quot;gu3st!pa55w0rd&quot;)
+
+# request all locations
+locations = actinia_mundialis.get_locations()
+# Get Mapsets of nc_spm_08 location
+mapsets = actinia_mundialis.locations[&quot;nc_spm_08&quot;].get_mapsets()
+</code></pre>
+<h2 id="raster-manangement">Raster manangement</h2>
+<p>Get all rasters of the <code>PERMANENT</code> mapsets</p>
+<pre><code>rasters = mapsets[&quot;PERMANENT&quot;].get_raster_layers()
+print(rasters.keys())
+</code></pre>
+<p>Get information of the raster <code>zipcodes</code></p>
+<pre><code>info = rasters[&quot;zipcodes&quot;].get_info()
+</code></pre>
+<p>Upload a GTif as raster layer to a user mapset (here the user mapset will be
+created before)</p>
+<pre><code>mapset_name = &quot;test_mapset&quot;
+
+# mapset creation
+locations[&quot;nc_spm_08&quot;].create_mapset(mapset_name)
+
+# upload tif
+raster_layer_name = &quot;test&quot;
+file = &quot;/home/testuser/data/elevation.tif&quot;
+locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].upload_raster(raster_layer_name, file)
+print(locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].raster_layers.keys())
+</code></pre>
+<p>Delete a raster layer</p>
+<pre><code>locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].delete_raster(raster_layer_name)
+print(locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].raster_layers.keys())
+
+# delete mapset
+locations[&quot;nc_spm_08&quot;].delete_mapset(mapset_name)
+</code></pre>
+<h2 id="vector-management">Vector management</h2>
+<p>Get all vector maps of the <code>PERMANENT</code> mapsets</p>
+<pre><code>vectors = mapsets[&quot;PERMANENT&quot;].get_vector_layers()
+print(vectors.keys())
+</code></pre>
+<p>Get information of the vector <code>boundary_county</code></p>
+<pre><code>info = vectors[&quot;boundary_county&quot;].get_info()
+</code></pre>
+<p>Upload a GeoJSON as vector layer to a user mapset (here the user mapset will
+be created before)</p>
+<pre><code>mapset_name = &quot;test_mapset&quot;
+
+# mapset creation
+locations[&quot;nc_spm_08&quot;].create_mapset(mapset_name)
+
+# upload tif
+vector_layer_name = &quot;test&quot;
+file = &quot;/home/testuser/data/firestations.geojson&quot;
+locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].upload_vector(vector_layer_name, file)
+print(locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].vector_layers.keys())
+</code></pre>
+<p>Delete a raster layer</p>
+<pre><code>locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].delete_vector(vector_layer_name)
+print(locations[&quot;nc_spm_08&quot;].mapsets[mapset_name].vector_layers.keys())
+
+# delete mapset
+locations[&quot;nc_spm_08&quot;].delete_mapset(mapset_name)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../05_mapset_managment/" class="btn btn-neutral float-left" title="Mapset Management"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../07_process_chain_validation/" class="btn btn-neutral float-right" title="Process Chain Validation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../05_mapset_managment/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../07_process_chain_validation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
