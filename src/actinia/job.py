@@ -95,10 +95,7 @@ class Job:
             self.poll(quiet=True)
             if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
-                msg = (
-                    f"Status of {self.name} job is {self.status}: "
-                    f"{self.message}"
-                )
+                msg = f"Status of {self.name} job is {self.status}: " f"{self.message}"
                 if self.status in ["terminated", "error"]:
                     log.error(msg)
                     return 1
@@ -108,15 +105,16 @@ class Job:
             sleep(waiting_time)
             if self.status != status and not quiet:
                 status = self.status
-                msg = (
-                    f"Status of {self.name} job is {self.status}: "
-                    f"{self.message}"
-                )
+                msg = f"Status of {self.name} job is {self.status}: " f"{self.message}"
                 log.info(msg)
 
-    # def terminate(self):
-    #     """
-    #     Terminate job.
-    #     """
-    #
-    # TODO
+    def terminate(self):
+        """Terminate the current job"""
+        kwargs = {"auth": self._Job__auth}
+        url = f"{self._Job__actinia.url}/resources/{self.user_id}/{self.resource_id}"
+        try:
+            actiniaResp = requests.delete(url, **kwargs, timeout=5)
+            actiniaResp.raise_for_status()
+        except requests.exceptions.ConnectionError as e:
+            raise e
+        log.info("Termination request for job {self.resource_id} committed.")
