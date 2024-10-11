@@ -67,7 +67,7 @@ class Job:
             "timeout": self.__actinia.timeout,
         }
         url = self.urls["status"]
-        resp = request_and_check("GET", url, **kwargs)
+        resp = request_and_check("GET", url, status_code=(200, 400), **kwargs)
 
         if "process_results" not in resp:
             resp["process_results"] = {}
