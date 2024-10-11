@@ -151,7 +151,7 @@ class Mapset:
         """
         url = cls.__request_url(actinia.url, location_name)
         mapset_names = request_and_check(
-            "GET", url, auth=auth, timeout=actinia.timeout
+            "GET", url, **{"auth": auth, "timeout": actinia.timeout}
         )["process_results"]
         mapsets = {
             mname: Mapset(mname, location_name, actinia, auth) for mname in mapset_names
@@ -192,7 +192,7 @@ class Mapset:
             return existing_mapsets[mapset_name]
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        request_and_check("POST", url, auth=(auth), timeout=actinia.timeout)
+        request_and_check("POST", url, **{"auth": (auth), "timeout": actinia.timeout})
         return Mapset(mapset_name, location_name, actinia, auth)
 
     @classmethod
@@ -228,7 +228,7 @@ class Mapset:
             return None
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        request_and_check("DELETE", url, auth=(auth), timeout=actinia.timeout)
+        request_and_check("DELETE", url, **{"auth": (auth), "timeout": actinia.timeout})
         return None
 
     @classmethod
@@ -261,9 +261,9 @@ class Mapset:
         url = cls.__request_url(
             actinia.url, location_name, mapset_name, MAPSET_TASK.INFO
         )
-        return request_and_check("GET", url, auth=(auth), timeout=actinia.timeout)[
-            "process_results"
-        ]
+        return request_and_check(
+            "GET", url, **{"auth": (auth), "timeout": actinia.timeout}
+        )["process_results"]
 
     def __request_raster_layers(self):
         """
@@ -276,7 +276,7 @@ class Mapset:
             f"mapsets/{self.name}/raster_layers"
         )
         raster_names = request_and_check(
-            "GET", url, auth=self.__auth, timeout=self.__actinia.timeout
+            "GET", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
         )["process_results"]
         rasters = {
             mname: Raster(
@@ -309,7 +309,7 @@ class Mapset:
             f"mapsets/{self.name}/vector_layers"
         )
         vector_names = request_and_check(
-            "GET", url, auth=self.__auth, timeout=self.__actinia.timeout
+            "GET", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
         )["process_results"]
         vectors = {
             mname: Vector(
@@ -343,7 +343,9 @@ class Mapset:
             f"mapsets/{self.name}/raster_layers/{layer_name}"
         )
         resp_dict = request_and_check(
-            "POST", url, auth=self.__auth, files=files, timeout=self.__actinia.timeout
+            "POST",
+            url,
+            **{"auth": self.__auth, "files": files, "timeout": self.__actinia.timeout},
         )
         job = Job(
             f"raster_upload_{self.__location_name}_{self.name}_{layer_name}",
@@ -371,7 +373,7 @@ class Mapset:
             f"mapsets/{self.name}/raster_layers/{layer_name}"
         )
         request_and_check(
-            "DELETE", url, auth=self.__auth, timeout=self.__actinia.timeout
+            "DELETE", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
         )
         if self.raster_layers is None:
             self.get_raster_layers()
@@ -395,9 +397,7 @@ class Mapset:
         resp_dict = request_and_check(
             "POST",
             url,
-            files=files,
-            auth=self.__auth,
-            timeout=self.__actinia.timeout,
+            **{"files": files, "auth": self.__auth, "timeout": self.__actinia.timeout},
         )
         job = Job(
             f"vector_upload_{self.__location_name}_{self.name}_{layer_name}",
@@ -427,8 +427,7 @@ class Mapset:
         request_and_check(
             "DELETE",
             url,
-            auth=self.__auth,
-            timeout=self.__actinia.timeout,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
         )
         if self.vector_layers is None:
             self.get_vector_layers()
