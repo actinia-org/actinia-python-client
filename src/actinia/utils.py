@@ -32,7 +32,7 @@ import requests
 from datetime import datetime
 
 
-def request_and_check(method, url, status_code=200, **kwargs):
+def request_and_check(method, url, status_code=(200), **kwargs):
     """Function to send a GET request to an URL and check the status code.
 
     Parameters:
@@ -52,7 +52,7 @@ def request_and_check(method, url, status_code=200, **kwargs):
     # Use resp.raise_for_status() ?
     if resp.status_code == 401:
         raise Exception("Wrong user or password. Please check your inputs.")
-    elif resp.status_code != status_code:
+    elif resp.status_code not in status_code:
         raise Exception(f"Error {resp.status_code}: {resp.text}")
     return json.loads(resp.text)
 
