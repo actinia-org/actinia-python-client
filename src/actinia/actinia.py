@@ -69,9 +69,7 @@ class Actinia:
 
     def __check_version(self):
         version_url = f"{self.url}/version"
-        data = request_and_check(
-            "GET", version_url, status_code=200, **{"timeout": self.timeout}
-        )
+        data = request_and_check("GET", version_url, **{"timeout": self.timeout})
 
         if len(data) > 2:
             log.debug(f"{self.url} is working and will be used.")
