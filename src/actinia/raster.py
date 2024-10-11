@@ -49,7 +49,7 @@ class Raster:
                 f"mapsets/{self.__mapset_name}/raster_layers/{self.name}"
             )
             r_info = request_and_check(
-                "GET", url, self.__auth, timeout=self.__actinia.timeout
+                "GET", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
             )["process_results"]
             self.info = r_info
 
