@@ -48,7 +48,7 @@ def request_and_check(method, url, status_code=200, **kwargs):
 
     Throws an error if the request does not have the status_code
     """
-    resp = requests.request(method, url, **kwargs)  # auth=kwargs.get("auth"), timeout=kwargs.get("timeout"))
+    resp = requests.request(method, url, **kwargs)
     # Use resp.raise_for_status() ?
     if resp.status_code == 401:
         raise Exception("Wrong user or password. Please check your inputs.")
