@@ -32,7 +32,7 @@ import requests
 from datetime import datetime
 
 
-def request_and_check(method, url, status_code=(200), **kwargs):
+def request_and_check(method, url, status_code=(200,), **kwargs):
     """Function to send a GET request to an URL and check the status code.
 
     Parameters:
