@@ -70,7 +70,7 @@ class Actinia:
     def __check_version(self):
         version_url = f"{self.url}/version"
         data = request_and_check(
-            "GET", version_url, status_code=200, timeout=self.timeout
+            "GET", version_url, status_code=200, **{"timeout": self.timeout}
         )
 
         if len(data) > 2:
@@ -100,14 +100,12 @@ class Actinia:
         """
 
         version_url = f"{self.url}/version"
-        return request_and_check(
-            "GET", version_url, status_code=200, timeout=self.timeout
-        )
+        return request_and_check("GET", version_url, **{"timeout": self.timeout})
 
     def __check_auth(self):
         url = f"{self.url}/locations"
         request_and_check(
-            "GET", url, auth=(self.__auth), status_code=200, timeout=self.timeout
+            "GET", url, **{"timeout": self.timeout, "auth": (self.__auth)}
         )
         log.debug(f"{self.user} is logged in.")
 
@@ -147,7 +145,7 @@ class Actinia:
 
         url = f"{self.url}/locations"
         loc_names = request_and_check(
-            "GET", url, auth=(self.__auth), status_code=200, timeout=self.timeout
+            "GET", url, **{"timeout": self.timeout, "auth": (self.__auth)}
         )["locations"]
         loc = {lname: Location(lname, self, self.__auth) for lname in loc_names}
         self.locations = loc
@@ -168,11 +166,12 @@ class Actinia:
         request_and_check(
             "POST",
             url,
-            auth=(self.__auth),
-            headers=self.headers,
-            data=postbody,
-            status_code=200,
-            timeout=self.timeout,
+            **{
+                "timeout": self.timeout,
+                "auth": (self.__auth),
+                "headers": self.headers,
+                "data": postbody,
+            },
         )
 
         location = Location(name, self, self.__auth)
