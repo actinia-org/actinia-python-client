@@ -32,21 +32,27 @@ import requests
 from datetime import datetime
 
 
-def request_and_check(url, auth, status_code=200):
+def request_and_check(method, url, status_code=200, **kwargs):
     """Function to send a GET request to an URL and check the status code.
 
     Parameters:
+        method (string): Request method (GET, POST, PUT, DELETE, ...)
         url (string): URL as string
-        auth (tuple): Tupel of user and password
         status_code (int): Status code to check if it is set; default is 200
+        auth (tuple): Tuple of user and password
+        timeout (tuple): Tuple of connection timeout and read timeout
+        headers (dict): Request headers
 
     Returns:
         (dict): returns text of the response as dictionary
 
     Throws an error if the request does not have the status_code
     """
-    resp = requests.get(url, auth=auth)
-    if resp.status_code != status_code:
+    resp = requests.request(method, url, auth=kwargs["auth"], timeout=kwargs["timeout"])
+    # Use resp.raise_for_status() ?
+    if resp.status_code == 401:
+        raise Exception("Wrong user or password. Please check your inputs.")
+    elif resp.status_code != status_code:
         raise Exception(f"Error {resp.status_code}: {resp.text}")
     return json.loads(resp.text)
 

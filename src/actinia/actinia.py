@@ -27,13 +27,12 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
 import re
-import requests
 
 from actinia.location import Location
 from actinia.resources.templating import tplEnv
 from actinia.resources.logger import log
+from actinia.utils import request_and_check
 
 
 class Actinia:
@@ -43,6 +42,8 @@ class Actinia:
         api_version="latest",
         user=None,
         pw=None,
+        connect_timeout=None,
+        read_timeout=None,
     ):
         self.api_prefix = api_version
         self.base_url = url
@@ -50,6 +51,7 @@ class Actinia:
         self.user = None
         self.__password = None
         self.__auth = None
+        self.timeout = (connect_timeout, read_timeout)
         if user and pw:
             self.set_authentication(user, pw)
         self.locations = dict()
@@ -67,11 +69,9 @@ class Actinia:
 
     def __check_version(self):
         version_url = f"{self.url}/version"
-        resp = requests.get(version_url)
-        if resp.status_code != 200:
-            raise Exception("Connection to actinia server failed!")
-
-        data = json.loads(resp.text)
+        data = request_and_check(
+            "GET", version_url, status_code=200, timeout=self.timeout
+        )
 
         if len(data) > 2:
             log.debug(f"{self.url} is working and will be used.")
@@ -91,9 +91,7 @@ class Actinia:
                     self.api_version = "v1"
                     self.__check_version()
             else:
-                raise Exception(
-                    f"Connection to actinia server <{self.url}> failed!"
-                )
+                raise Exception(f"Connection to actinia server <{self.url}> failed!")
 
     def get_version(self):
         """
@@ -102,23 +100,16 @@ class Actinia:
         """
 
         version_url = f"{self.url}/version"
-        resp = requests.get(version_url)
-        if resp.status_code != 200:
-            raise Exception("Connection to actinia server failed!")
-        data = json.loads(resp.text)
-        return data
+        return request_and_check(
+            "GET", version_url, status_code=200, timeout=self.timeout
+        )
 
     def __check_auth(self):
         url = f"{self.url}/locations"
-        resp = requests.get(url, auth=(self.__auth))
-        if resp.status_code == 401:
-            raise Exception(
-                "Wrong user or password. Please check your inputs."
-            )
-        elif resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-        else:
-            log.debug(f"{self.user} is logged in.")
+        request_and_check(
+            "GET", url, auth=(self.__auth), status_code=200, timeout=self.timeout
+        )
+        log.debug(f"{self.user} is logged in.")
 
     def set_authentication(self, user, pw):
         """
@@ -155,14 +146,10 @@ class Actinia:
             raise Exception("Authentication is not set.")
 
         url = f"{self.url}/locations"
-        resp = requests.get(url, auth=(self.__auth))
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-
-        loc_names = json.loads(resp.text)["locations"]
-        loc = {
-            lname: Location(lname, self, self.__auth) for lname in loc_names
-        }
+        loc_names = request_and_check(
+            "GET", url, auth=(self.__auth), status_code=200, timeout=self.timeout
+        )["locations"]
+        loc = {lname: Location(lname, self, self.__auth) for lname in loc_names}
         self.locations = loc
 
     def create_location(self, name, epsgcode):
@@ -178,18 +165,15 @@ class Actinia:
         postbody = tpl.render(epsgcode=epsgcode)
 
         url = f"{self.url}/locations/{name}"
-        resp = requests.post(
+        request_and_check(
+            "POST",
             url,
             auth=(self.__auth),
             headers=self.headers,
             data=postbody,
+            status_code=200,
+            timeout=self.timeout,
         )
-        if resp.status_code != 200:
-            try:
-                msg = json.loads(resp.text)["message"]
-            except Exception:
-                msg = resp.text
-            raise Exception(f"Error {resp.status_code}: {msg}")
 
         location = Location(name, self, self.__auth)
         if len(self.locations) == 0:

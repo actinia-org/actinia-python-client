@@ -27,11 +27,10 @@ __author__ = "Anika Weinmann"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import json
-import requests
 from time import sleep
 
 from actinia.resources.logger import log
+from actinia.utils import request_and_check
 
 
 class Job:
@@ -62,15 +61,13 @@ class Job:
         if self.status not in ["accepted", "running"]:
             log.warning("The job is not running and can not be updated.")
 
-        kwargs = dict()
-        kwargs["headers"] = self.__actinia.headers
-        kwargs["auth"] = self.__auth
+        kwargs = {
+            "headers": self.__actinia.headers,
+            "auth": self.__auth,
+            "timeout": self.__actinia.timeout,
+        }
         url = self.urls["status"]
-        try:
-            actiniaResp = requests.get(url, **kwargs)
-        except requests.exceptions.ConnectionError as e:
-            raise e
-        resp = json.loads(actiniaResp.text)
+        resp = request_and_check("GET", url, **kwargs)
 
         if "process_results" not in resp:
             resp["process_results"] = {}
@@ -110,11 +107,7 @@ class Job:
 
     def terminate(self):
         """Terminate the current job"""
-        kwargs = {"auth": self._Job__auth}
+        kwargs = {"auth": self._Job__auth, "timeout": self.__actinia.timeout}
         url = f"{self._Job__actinia.url}/resources/{self.user_id}/{self.resource_id}"
-        try:
-            actiniaResp = requests.delete(url, **kwargs, timeout=5)
-            actiniaResp.raise_for_status()
-        except requests.exceptions.ConnectionError as e:
-            raise e
+        request_and_check("DELETE", url, **kwargs)
         log.info("Termination request for job {self.resource_id} committed.")

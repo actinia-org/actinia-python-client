@@ -36,7 +36,7 @@ from actinia.resources.logger import log
 from actinia.region import Region
 from actinia.mapset import Mapset
 from actinia.job import Job
-from actinia.utils import set_job_names
+from actinia.utils import set_job_names, request_and_check
 
 
 class Location:
@@ -56,11 +56,9 @@ class Location:
             raise Exception("Authentication is not set.")
 
         url = f"{self.__actinia.url}/locations/{self.name}/info"
-        resp = requests.get(url, auth=(self.__auth))
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-
-        proc_res = json.loads(resp.text)["process_results"]
+        proc_res = request_and_check(
+            url, (self.__auth), timeout=self.__actinia.timeout
+        )["process_results"]
         self.projection = proc_res["projection"]
         self.region = Region(**proc_res["region"])
 
@@ -86,9 +84,9 @@ class Location:
     def delete(self):
         """Delete a location via delete request."""
         url = f"{self.__actinia.url}/locations/{self.name}"
-        resp = requests.delete(url, auth=self.__auth)
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        request_and_check(
+            "DELETE", url, auth=self.__auth, timeout=self.__actinia.timeout
+        )
         del self.__actinia.locations[self.name]
 
     def get_mapsets(self):
@@ -120,10 +118,8 @@ class Location:
         """
         if self.mapsets is None or len(self.mapsets) == 0:
             self.__request_mapsets()
-        Mapset.delete_mapset_request(
-            name, self.name, self.__actinia, self.__auth
-        )
-        if name is name in self.mapsets:
+        Mapset.delete_mapset_request(name, self.name, self.__actinia, self.__auth)
+        if name and name in self.mapsets:
             del self.mapsets[name]
         return self.mapsets
 
@@ -140,6 +136,7 @@ class Location:
             auth=self.__auth,
             headers=self.__actinia.headers,
             data=json.dumps(pc),
+            timeout=self.__actinia.timeout,
         )
         return resp
 
@@ -159,9 +156,7 @@ class Location:
         actiniaResp = self.__validate_process_chain(pc, "async")
         orig_name, name = set_job_names(name, "unknown_validation_job")
         if actiniaResp.status_code != 200:
-            raise Exception(
-                f"Error {actiniaResp.status_code}: {actiniaResp.text}"
-            )
+            raise Exception(f"Error {actiniaResp.status_code}: {actiniaResp.text}")
         resp = json.loads(actiniaResp.text)
         job = Job(orig_name, self.__actinia, self.__auth, resp)
         self.__actinia.jobs[name] = job
@@ -178,14 +173,13 @@ class Location:
         # set name
         orig_name, name = set_job_names(name)
         # set endpoint in url
-        url = (
-            f"{self.__actinia.url}/locations/{self.name}/"
-            "processing_async_export"
-        )
+        url = f"{self.__actinia.url}/locations/{self.name}/" "processing_async_export"
         # make POST request
-        postkwargs = dict()
-        postkwargs["headers"] = self.__actinia.headers
-        postkwargs["auth"] = self.__auth
+        postkwargs = {
+            "headers": self.__actinia.headers,
+            "auth": self.__auth,
+            "timeout": self.__actinia.timeout,
+        }
         if isinstance(pc, str):
             if os.path.isfile(pc):
                 with open(pc, "r") as pc_file:
@@ -197,12 +191,8 @@ class Location:
         else:
             raise Exception("Given process chain has no valid type.")
 
-        try:
-            actiniaResp = requests.post(url, **postkwargs)
-        except requests.exceptions.ConnectionError as e:
-            raise e
+        resp = request_and_check("POST", url, **postkwargs)
         # create a job
-        resp = json.loads(actiniaResp.text)
         job = Job(orig_name, self.__actinia, self.__auth, resp)
         self.__actinia.jobs[name] = job
         return job

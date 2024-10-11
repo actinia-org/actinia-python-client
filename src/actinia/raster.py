@@ -48,8 +48,9 @@ class Raster:
                 f"{self.__actinia.url}/locations/{self.__location_name}/"
                 f"mapsets/{self.__mapset_name}/raster_layers/{self.name}"
             )
-            resp = request_and_check(url, self.__auth)
-            r_info = resp["process_results"]
+            r_info = request_and_check(
+                "GET", url, self.__auth, timeout=self.__actinia.timeout
+            )["process_results"]
             self.info = r_info
 
             self.region = Region(

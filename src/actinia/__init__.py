@@ -28,7 +28,7 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 from pkg_resources import get_distribution, DistributionNotFound
-from actinia.actinia import Actinia
+from actinia.actinia import Actinia as Actinia
 
 try:
     # Change here if project is renamed and does not equal the package name
