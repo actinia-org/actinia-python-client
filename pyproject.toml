@@ -41,9 +41,7 @@ target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
 # Temporarily deactivate black checks
 extend-exclude = '''
 (
-    notebooks/,
-    src/,
-    tests/,
+    ^/.*.py
 )
 '''
 
