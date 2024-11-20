@@ -7,7 +7,6 @@ on:
       - main
       - pre_commit_ruff
   pull_request:
-    - main
 
 jobs:
   python-checks:
