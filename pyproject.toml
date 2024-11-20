@@ -32,3 +32,108 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 actinia = ["templates/*.json"]
+
+[tool.black]
+required-version = '24'
+line-length = 88
+target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
+# 'extend-exclude' excludes files or directories in addition to the defaults
+
+[tool.ruff]
+
+required-version = ">=0.6.0"
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+# See https://docs.astral.sh/ruff/rules/
+select = [
+    # "A",      # flake8-builtins (A)
+    "AIR",    # Airflow (AIR)
+    # "ANN",    # flake8-annotations (ANN)
+    "ARG",    # flake8-unused-arguments (ARG)
+    # "B",      # flake8-bugbear (B)
+    # "BLE",    # flake8-blind-except (BLE)
+    # "C4",     # flake8-comprehensions (C4)
+    "COM",    # flake8-commas (COM)
+    # "D",      # pydocstyle (D)
+    # "DTZ",    # flake8-datetimez (DTZ)
+    "E",      # pycodestyle (E, W)
+    "F",      # Pyflakes (F)
+    "FA",     # flake8-future-annotations (FA)
+    "FBT",    # flake8-boolean-trap (FBT)
+    "FLY",    # flynt (FLY)
+    # "FURB",   # refurb (FURB)
+    "G",      # flake8-logging-format (G)
+    "I",      # isort (I)
+    "ICN",    # flake8-import-conventions (ICN)
+    "INT",    # flake8-gettext (INT)
+    "ISC",    # flake8-implicit-str-concat (ISC)
+    "LOG",    # flake8-logging (LOG)
+    # "N",      # pep8-naming (N)
+    "NPY",    # NumPy-specific rules (NPY)
+    "PERF",   # Perflint (PERF)
+    "PGH",    # pygrep-hooks (PGH)
+    "PIE",    # flake8-pie (PIE)
+    "PLC",    # Pylint (PL) Convention (C)
+    "PLE",    # Pylint (PL) Error (E)
+    # "PLR",    # Pylint (PL) Refactor (R)
+    # "PLW",    # Pylint (PL) Warning (W)
+    # "PT",     # flake8-pytest-style (PT)
+    # "PTH",    # flake8-use-pathlib (PTH)
+    "PYI",    # flake8-pyi (PYI)
+    "Q",      # flake8-quotes (Q)
+    # "RET",    # flake8-return (RET)
+    "RSE",    # flake8-raise (RSE)
+    "RUF",    # Ruff-specific rules (RUF)
+    # "S",      # flake8-bandit (S)
+    # "SIM",    # flake8-simplify (SIM)
+    "SLF",    # flake8-self (SLF)
+    "SLOT",   # flake8-slots (SLOT)
+    "T10",    # flake8-debugger (T10)
+    "TCH",    # flake8-type-checking (TCH)
+    "TID",    # flake8-tidy-imports (TID)
+    # "TRY",    # tryceratops (TRY)
+    "UP",     # pyupgrade (UP)
+    "W",      # pycodestyle (E, W)
+    "YTT",    # flake8-2020 (YTT)
+]
+
+ignore = [
+    # See https://docs.astral.sh/ruff/rules/
+    "ANN201",
+    "E501",
+    "FBT002",
+    "PLC0414",
+    "PLR6301",
+    "S101",
+]
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = false
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
