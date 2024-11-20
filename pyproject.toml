@@ -104,6 +104,9 @@ select = [
 ignore = [
     # See https://docs.astral.sh/ruff/rules/
     "ANN201",
+    "COM812",
+    "E265",
+    "E266",
     "E501",
     "FBT002",
     "PLC0414",
