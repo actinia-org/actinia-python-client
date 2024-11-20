@@ -110,10 +110,6 @@ jobs:
         run: |
           flake8 --count --statistics --show-source --jobs=$(nproc) .
 
-      - name: Run Flake8 on additional files
-        run: |
-          flake8 --count --statistics --show-source --jobs=$(nproc) python/grass/{script,jupyter}/testsuite/
-
       - name: Bandit Vulnerability Scan
         run: |
           bandit -c pyproject.toml -iii -r . -f sarif -o bandit.sarif --exit-zero
