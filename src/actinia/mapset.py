@@ -276,7 +276,9 @@ class Mapset:
             f"mapsets/{self.name}/raster_layers"
         )
         raster_names = request_and_check(
-            "GET", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
+            "GET",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
         )["process_results"]
         rasters = {
             mname: Raster(
@@ -309,7 +311,9 @@ class Mapset:
             f"mapsets/{self.name}/vector_layers"
         )
         vector_names = request_and_check(
-            "GET", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
+            "GET",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
         )["process_results"]
         vectors = {
             mname: Vector(
@@ -345,7 +349,11 @@ class Mapset:
         resp_dict = request_and_check(
             "POST",
             url,
-            **{"auth": self.__auth, "files": files, "timeout": self.__actinia.timeout},
+            **{
+                "auth": self.__auth,
+                "files": files,
+                "timeout": self.__actinia.timeout,
+            },
         )
         job = Job(
             f"raster_upload_{self.__location_name}_{self.name}_{layer_name}",
@@ -373,7 +381,9 @@ class Mapset:
             f"mapsets/{self.name}/raster_layers/{layer_name}"
         )
         request_and_check(
-            "DELETE", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
+            "DELETE",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
         )
         if self.raster_layers is None:
             self.get_raster_layers()
@@ -397,7 +407,11 @@ class Mapset:
         resp_dict = request_and_check(
             "POST",
             url,
-            **{"files": files, "auth": self.__auth, "timeout": self.__actinia.timeout},
+            **{
+                "files": files,
+                "auth": self.__auth,
+                "timeout": self.__actinia.timeout,
+            },
         )
         job = Job(
             f"vector_upload_{self.__location_name}_{self.name}_{layer_name}",

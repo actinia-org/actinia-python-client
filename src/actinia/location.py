@@ -57,7 +57,9 @@ class Location:
 
         url = f"{self.__actinia.url}/locations/{self.name}/info"
         proc_res = request_and_check(
-            "GET", url, **{"auth": (self.__auth), "timeout": self.__actinia.timeout}
+            "GET",
+            url,
+            **{"auth": (self.__auth), "timeout": self.__actinia.timeout},
         )["process_results"]
         self.projection = proc_res["projection"]
         self.region = Region(**proc_res["region"])
@@ -85,7 +87,9 @@ class Location:
         """Delete a location via delete request."""
         url = f"{self.__actinia.url}/locations/{self.name}"
         request_and_check(
-            "DELETE", url, **{"auth": self.__auth, "timeout": self.__actinia.timeout}
+            "DELETE",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
         )
         del self.__actinia.locations[self.name]
 
