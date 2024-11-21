@@ -114,6 +114,9 @@ class Job:
     def terminate(self):
         """Terminate the current job"""
         kwargs = {"auth": self._Job__auth, "timeout": self.__actinia.timeout}
-        url = f"{self._Job__actinia.url}/resources/{self.user_id}/{self.resource_id}"
+        url = (
+            f"{self._Job__actinia.url}/resources/"
+            f"{self.user_id}/{self.resource_id}"
+        )
         request_and_check("DELETE", url, **kwargs)
         log.info("Termination request for job {self.resource_id} committed.")

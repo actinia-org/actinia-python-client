@@ -154,7 +154,8 @@ class Mapset:
             "GET", url, **{"auth": auth, "timeout": actinia.timeout}
         )["process_results"]
         mapsets = {
-            mname: Mapset(mname, location_name, actinia, auth) for mname in mapset_names
+            mname: Mapset(mname, location_name, actinia, auth)
+            for mname in mapset_names
         }
         return mapsets
 
@@ -186,13 +187,17 @@ class Mapset:
             and text if request fails.
         """
         # check if mapset exists
-        existing_mapsets = cls.list_mapsets_request(location_name, actinia, auth)
+        existing_mapsets = cls.list_mapsets_request(
+            location_name, actinia, auth
+        )
         if mapset_name in existing_mapsets:
             log.warning(f"Mapset <{mapset_name}> already exists.")
             return existing_mapsets[mapset_name]
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        request_and_check("POST", url, **{"auth": (auth), "timeout": actinia.timeout})
+        request_and_check(
+            "POST", url, **{"auth": (auth), "timeout": actinia.timeout}
+        )
         return Mapset(mapset_name, location_name, actinia, auth)
 
     @classmethod
@@ -222,13 +227,19 @@ class Mapset:
             and text if request fails.
         """
         # check if mapset exists
-        existing_mapsets = cls.list_mapsets_request(location_name, actinia, auth)
+        existing_mapsets = cls.list_mapsets_request(
+            location_name, actinia, auth
+        )
         if mapset_name not in existing_mapsets:
-            log.warning(f"Mapset <{mapset_name}> does not exist and cannot be deleted.")
+            log.warning(
+                f"Mapset <{mapset_name}> does not exist and cannot be deleted."
+            )
             return None
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        request_and_check("DELETE", url, **{"auth": (auth), "timeout": actinia.timeout})
+        request_and_check(
+            "DELETE", url, **{"auth": (auth), "timeout": actinia.timeout}
+        )
         return None
 
     @classmethod
