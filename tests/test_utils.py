@@ -57,7 +57,7 @@ class TestActiniaUtils(object):
     def test_request_and_check_wrong_auth(self):
         """Test request_and_check utils function with wrong auth."""
         url = f"{ACTINIA_BASEURL}api/{ACTINIA_VERSION}/locations"
-        err_msg = "Unauthorized Access"
+        err_msg = "Wrong user or password. Please check your inputs."
         wrong_auth = ("actinia-gdi", "wrong_pw")
         with pytest.raises(Exception) as excinfo:
             request_and_check("GET", url, status_code=(200,), **{"auth": wrong_auth})
