@@ -51,7 +51,9 @@ class TestActiniaUtils(object):
         url = f"{ACTINIA_BASEURL}api/{ACTINIA_VERSION}/version_fail"
         err_msg = "The requested URL was not found on the server."
         with pytest.raises(Exception) as excinfo:
-            request_and_check("GET", url, status_code=(200,), **{"auth": ACTINIA_AUTH})
+            request_and_check(
+                "GET", url, status_code=(200,), **{"auth": ACTINIA_AUTH}
+            )
         assert err_msg in str(excinfo.value)
 
     def test_request_and_check_wrong_auth(self):
@@ -60,7 +62,9 @@ class TestActiniaUtils(object):
         err_msg = "Wrong user or password. Please check your inputs."
         wrong_auth = ("actinia-gdi", "wrong_pw")
         with pytest.raises(Exception) as excinfo:
-            request_and_check("GET", url, status_code=(200,), **{"auth": wrong_auth})
+            request_and_check(
+                "GET", url, status_code=(200,), **{"auth": wrong_auth}
+            )
         assert err_msg in str(excinfo.value)
 
     def test_set_job_names(self):

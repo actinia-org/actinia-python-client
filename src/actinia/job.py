@@ -92,7 +92,10 @@ class Job:
             self.poll(quiet=True)
             if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
-                msg = f"Status of {self.name} job is {self.status}: " f"{self.message}"
+                msg = (
+                    f"Status of {self.name} job is {self.status}: "
+                    f"{self.message}"
+                )
                 if self.status in ["terminated", "error"]:
                     log.error(msg)
                     return 1
@@ -102,7 +105,10 @@ class Job:
             sleep(waiting_time)
             if self.status != status and not quiet:
                 status = self.status
-                msg = f"Status of {self.name} job is {self.status}: " f"{self.message}"
+                msg = (
+                    f"Status of {self.name} job is {self.status}: "
+                    f"{self.message}"
+                )
                 log.info(msg)
 
     def terminate(self):

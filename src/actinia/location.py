@@ -122,7 +122,9 @@ class Location:
         """
         if self.mapsets is None or len(self.mapsets) == 0:
             self.__request_mapsets()
-        Mapset.delete_mapset_request(name, self.name, self.__actinia, self.__auth)
+        Mapset.delete_mapset_request(
+            name, self.name, self.__actinia, self.__auth
+        )
         if name and name in self.mapsets:
             del self.mapsets[name]
         return self.mapsets
@@ -160,7 +162,9 @@ class Location:
         actiniaResp = self.__validate_process_chain(pc, "async")
         orig_name, name = set_job_names(name, "unknown_validation_job")
         if actiniaResp.status_code != 200:
-            raise Exception(f"Error {actiniaResp.status_code}: {actiniaResp.text}")
+            raise Exception(
+                f"Error {actiniaResp.status_code}: {actiniaResp.text}"
+            )
         resp = json.loads(actiniaResp.text)
         job = Job(orig_name, self.__actinia, self.__auth, resp)
         self.__actinia.jobs[name] = job
@@ -177,7 +181,10 @@ class Location:
         # set name
         orig_name, name = set_job_names(name)
         # set endpoint in url
-        url = f"{self.__actinia.url}/locations/{self.name}/" "processing_async_export"
+        url = (
+            f"{self.__actinia.url}/locations/{self.name}/"
+            "processing_async_export"
+        )
         # make POST request
         postkwargs = {
             "headers": self.__actinia.headers,

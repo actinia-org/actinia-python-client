@@ -69,7 +69,9 @@ class Actinia:
 
     def __check_version(self):
         version_url = f"{self.url}/version"
-        data = request_and_check("GET", version_url, **{"timeout": self.timeout})
+        data = request_and_check(
+            "GET", version_url, **{"timeout": self.timeout}
+        )
 
         if len(data) > 2:
             log.debug(f"{self.url} is working and will be used.")
@@ -89,7 +91,9 @@ class Actinia:
                     self.api_version = "v1"
                     self.__check_version()
             else:
-                raise Exception(f"Connection to actinia server <{self.url}> failed!")
+                raise Exception(
+                    f"Connection to actinia server <{self.url}> failed!"
+                )
 
     def get_version(self):
         """
@@ -98,7 +102,9 @@ class Actinia:
         """
 
         version_url = f"{self.url}/version"
-        return request_and_check("GET", version_url, **{"timeout": self.timeout})
+        return request_and_check(
+            "GET", version_url, **{"timeout": self.timeout}
+        )
 
     def __check_auth(self):
         url = f"{self.url}/locations"
@@ -145,7 +151,9 @@ class Actinia:
         loc_names = request_and_check(
             "GET", url, **{"timeout": self.timeout, "auth": (self.__auth)}
         )["locations"]
-        loc = {lname: Location(lname, self, self.__auth) for lname in loc_names}
+        loc = {
+            lname: Location(lname, self, self.__auth) for lname in loc_names
+        }
         self.locations = loc
 
     def create_location(self, name, epsgcode):
