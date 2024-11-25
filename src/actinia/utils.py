@@ -38,10 +38,13 @@ def request_and_check(method, url, status_code=(200,), **kwargs):
     Parameters:
         method (string): Request method (GET, POST, PUT, DELETE, ...)
         url (string): URL as string
-        status_code (int): Status code to check if it is set; default is 200
-        auth (tuple): Tuple of user and password
-        timeout (tuple): Tuple of connection timeout and read timeout
-        headers (dict): Request headers
+        status_code (tuple): Tuple of acceptable status codes to check
+                             if it is set; default is 200
+        **kwargs:
+            auth (tuple): Tuple of user and password
+            timeout (tuple): Tuple of connection timeout and read timeout
+            headers (dict): Request headers
+            data (str): Request body to send (if needed)
 
     Returns:
         (dict): returns text of the response as dictionary
