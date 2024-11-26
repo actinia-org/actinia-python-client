@@ -29,16 +29,14 @@ __maintainer__ = "Anika Weinmann"
 
 import json
 import os
-import requests
 from enum import Enum, unique
 
+from actinia.job import Job
 from actinia.region import Region
 from actinia.resources.logger import log
 from actinia.raster import Raster
+from actinia.utils import set_job_names, request_and_check
 from actinia.vector import Vector
-from actinia.utils import request_and_check
-from actinia.job import Job
-from actinia.utils import set_job_names
 
 
 @unique
@@ -152,11 +150,9 @@ class Mapset:
             and text if request fails.
         """
         url = cls.__request_url(actinia.url, location_name)
-        resp = requests.get(url, auth=auth)
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-
-        mapset_names = json.loads(resp.text)["process_results"]
+        mapset_names = request_and_check(
+            "GET", url, **{"auth": auth, "timeout": actinia.timeout}
+        )["process_results"]
         mapsets = {
             mname: Mapset(mname, location_name, actinia, auth)
             for mname in mapset_names
@@ -199,9 +195,9 @@ class Mapset:
             return existing_mapsets[mapset_name]
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        resp = requests.post(url, auth=(auth))
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        request_and_check(
+            "POST", url, **{"auth": (auth), "timeout": actinia.timeout}
+        )
         return Mapset(mapset_name, location_name, actinia, auth)
 
     @classmethod
@@ -241,9 +237,9 @@ class Mapset:
             return None
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        resp = requests.delete(url, auth=(auth))
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
+        request_and_check(
+            "DELETE", url, **{"auth": (auth), "timeout": actinia.timeout}
+        )
         return None
 
     @classmethod
@@ -276,11 +272,9 @@ class Mapset:
         url = cls.__request_url(
             actinia.url, location_name, mapset_name, MAPSET_TASK.INFO
         )
-        resp = requests.get(url, auth=(auth))
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-        proc_res = json.loads(resp.text)["process_results"]
-        return proc_res
+        return request_and_check(
+            "GET", url, **{"auth": (auth), "timeout": actinia.timeout}
+        )["process_results"]
 
     def __request_raster_layers(self):
         """
@@ -292,8 +286,11 @@ class Mapset:
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers"
         )
-        resp = request_and_check(url, auth=self.__auth)
-        raster_names = resp["process_results"]
+        raster_names = request_and_check(
+            "GET",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
+        )["process_results"]
         rasters = {
             mname: Raster(
                 mname,
@@ -324,8 +321,11 @@ class Mapset:
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers"
         )
-        resp = request_and_check(url, auth=self.__auth)
-        vector_names = resp["process_results"]
+        vector_names = request_and_check(
+            "GET",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
+        )["process_results"]
         vectors = {
             mname: Vector(
                 mname,
@@ -357,14 +357,15 @@ class Mapset:
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers/{layer_name}"
         )
-        resp = requests.post(
-            url=url,
-            files=files,
-            auth=self.__auth,
+        resp_dict = request_and_check(
+            "POST",
+            url,
+            **{
+                "auth": self.__auth,
+                "files": files,
+                "timeout": self.__actinia.timeout,
+            },
         )
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-        resp_dict = json.loads(resp.text)
         job = Job(
             f"raster_upload_{self.__location_name}_{self.name}_{layer_name}",
             self.__actinia,
@@ -390,12 +391,11 @@ class Mapset:
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers/{layer_name}"
         )
-        resp = requests.delete(
-            url=url,
-            auth=self.__auth,
+        request_and_check(
+            "DELETE",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
         )
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
         if self.raster_layers is None:
             self.get_raster_layers()
         else:
@@ -415,14 +415,15 @@ class Mapset:
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
         )
-        resp = requests.post(
-            url=url,
-            files=files,
-            auth=self.__auth,
+        resp_dict = request_and_check(
+            "POST",
+            url,
+            **{
+                "files": files,
+                "auth": self.__auth,
+                "timeout": self.__actinia.timeout,
+            },
         )
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
-        resp_dict = json.loads(resp.text)
         job = Job(
             f"vector_upload_{self.__location_name}_{self.name}_{layer_name}",
             self.__actinia,
@@ -448,12 +449,11 @@ class Mapset:
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
         )
-        resp = requests.delete(
-            url=url,
-            auth=self.__auth,
+        request_and_check(
+            "DELETE",
+            url,
+            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
         )
-        if resp.status_code != 200:
-            raise Exception(f"Error {resp.status_code}: {resp.text}")
         if self.vector_layers is None:
             self.get_vector_layers()
         else:
@@ -476,9 +476,11 @@ class Mapset:
             f"mapsets/{self.name}/processing_async"
         )
         # make POST request
-        postkwargs = dict()
-        postkwargs["headers"] = self.__actinia.headers
-        postkwargs["auth"] = self.__auth
+        postkwargs = {
+            "headers": self.__actinia.headers,
+            "auth": self.__auth,
+            "timeout": self.__actinia.timeout,
+        }
         if isinstance(pc, str):
             if os.path.isfile(pc):
                 with open(pc, "r") as pc_file:
@@ -490,12 +492,8 @@ class Mapset:
         else:
             raise Exception("Given process chain has no valid type.")
 
-        try:
-            actiniaResp = requests.post(url, **postkwargs)
-        except requests.exceptions.ConnectionError as e:
-            raise e
+        resp = request_and_check("POST", url, **postkwargs)
         # create a job
-        resp = json.loads(actiniaResp.text)
         job = Job(orig_name, self.__actinia, self.__auth, resp)
         self.__actinia.jobs[name] = job
         return job

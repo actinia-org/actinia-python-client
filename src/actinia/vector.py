@@ -51,8 +51,11 @@ class Vector:
                 f"{self.__actinia.url}/locations/{self.__location_name}/"
                 f"mapsets/{self.__mapset_name}/vector_layers/{self.name}"
             )
-            resp = request_and_check(url, self.__auth)
-            v_info = resp["process_results"]
+            v_info = request_and_check(
+                "GET",
+                url,
+                **{"auth": self.__auth, "timeout": self.__actinia.timeout},
+            )["process_results"]
             self.info = v_info
 
             self.region = Region(
