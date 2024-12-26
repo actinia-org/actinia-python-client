@@ -191,7 +191,8 @@ class Mapset:
             timeout=actinia.timeout,
         )["process_results"]
         return {
-            mname: Mapset(mname, location_name, actinia, auth) for mname in mapset_names
+            mname: Mapset(mname, location_name, actinia, auth)
+            for mname in mapset_names
         }
 
     @classmethod
@@ -222,7 +223,9 @@ class Mapset:
 
         """
         # check if mapset exists
-        existing_mapsets = cls.list_mapsets_request(location_name, actinia, auth)
+        existing_mapsets = cls.list_mapsets_request(
+            location_name, actinia, auth
+        )
         if mapset_name in existing_mapsets:
             log.warning(f"Mapset <{mapset_name}> already exists.")
             return existing_mapsets[mapset_name]
@@ -254,9 +257,13 @@ class Mapset:
 
         """
         # check if mapset exists
-        existing_mapsets = cls.list_mapsets_request(location_name, actinia, auth)
+        existing_mapsets = cls.list_mapsets_request(
+            location_name, actinia, auth
+        )
         if mapset_name not in existing_mapsets:
-            log.warning(f"Mapset <{mapset_name}> does not exist and cannot be deleted.")
+            log.warning(
+                f"Mapset <{mapset_name}> does not exist and cannot be deleted."
+            )
             return
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
@@ -476,7 +483,9 @@ class Mapset:
             and text if request fails.
 
         """
-        files = {"file": (vector_file, Path(vector_file).open("rb"))}  # NOQA: SIM115
+        files = {
+            "file": (vector_file, Path(vector_file).open("rb"))
+        }  # NOQA: SIM115
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
@@ -573,7 +582,9 @@ class Mapset:
             msg = f"SpaceTimeRasterDataset <{strds_name}> does not exist"
             raise RuntimeError(msg)
 
-    def get_strds(self, *, force: bool = False) -> list[SpaceTimeRasterDataset]:
+    def get_strds(
+        self, *, force: bool = False
+    ) -> list[SpaceTimeRasterDataset]:
         """Return SpaceTimeRasterDatasets of the given mapsets.
 
         Parameters
@@ -583,7 +594,8 @@ class Mapset:
 
         Returns
         -------
-            dict[SpaceTimeRasterDataset: str]: A dict with the SpaceTimeRasterDatasets
+        strds: dict[SpaceTimeRasterDataset: str]
+            A dict with the SpaceTimeRasterDatasets
 
         """
         if self.strds is None or force is True:
@@ -772,7 +784,9 @@ class Mapset:
             url += f"sampling_{'a' if async_request else ''}sync"
         return request_and_check("POST", url, **postkwargs)
 
-    def create_processing_job(self, pc: str | dict, name: Optional(str) = None) -> Job:
+    def create_processing_job(
+        self, pc: str | dict, name: Optional(str) = None
+    ) -> Job:
         """Create a processing job with a given processing chain.
 
         Parameters
@@ -826,7 +840,7 @@ class Mapset:
 # TODO: # NOQA: FIX002, TD002, TD003
 # * /locations/{location_name}/mapsets/{mapset_name}/processing - POST
 # * /locations/{location_name}/mapsets/{mapset_name}/processing_async - POST
-# * /locations/{location_name}/mapsets/{mapset_name}/lock - GET, DELETE, POST
-# * /locations/{location_name}/mapsets/{mapset_name}/raster_layers - DELETE, PUT
+# * /locations/{location_name}/mapsets/{mapset_name}/lock - GET/DELETE/POST
+# * /locations/{location_name}/mapsets/{mapset_name}/raster_layers - DELETE/PUT
 # * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
 # * /locations/{location_name}/mapsets/{mapset_name}/vector_layers
