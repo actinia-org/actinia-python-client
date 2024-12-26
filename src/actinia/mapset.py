@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""The mapst module provides a Mapset class to interact with mapsets.
+"""The mapset module provides a Mapset class to interact with mapsets.
 
 actinia-python-client is a python client for actinia - an open source REST
 API for scalable, distributed, high performance processing of geographical
