@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""The strds module provides a class for SpaceTimeRasterDataset (STRDS) operations.
+"""The strds module provides a class for SpaceTimeRasterDataset handling.
 
 actinia-python-client is a python client for actinia - an open source REST
 API for scalable, distributed, high performance processing of geographical
