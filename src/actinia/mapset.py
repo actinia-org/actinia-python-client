@@ -35,7 +35,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from actinia import Actinia
 from actinia.job import Job
 from actinia.raster import Raster
 from actinia.region import Region
