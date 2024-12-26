@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""The strds module provides a class for SpaceTimeRasterDataSet (STRDS) operations.
+"""The strds module provides a class for SpaceTimeRasterDataset (STRDS) operations.
 
 actinia-python-client is a python client for actinia - an open source REST
 API for scalable, distributed, high performance processing of geographical
@@ -39,8 +39,8 @@ if TYPE_CHECKING:
     from actinia import Actinia
 
 
-class SpaceTimeRasterDataSet:
-    """Class for SpaceTimeRasterDataSet (STRDS) operations."""
+class SpaceTimeRasterDataset:
+    """Class for SpaceTimeRasterDataset (STRDS) operations."""
 
     def __init__(
         self,
@@ -50,7 +50,7 @@ class SpaceTimeRasterDataSet:
         actinia: Actinia,
         auth: tuple,
     ) -> None:
-        """Initialize the SpaceTimeRasterDataSet (STRDS) object."""
+        """Initialize the SpaceTimeRasterDataset (STRDS) object."""
         self.name = name
         self.__location_name = location_name
         self.__mapset_name = mapset_name
@@ -60,7 +60,7 @@ class SpaceTimeRasterDataSet:
         self.info = None
 
     def get_info(self, *, force: Optional(bool) = False) -> dict:
-        """Return the information of the SpaceTimeRasterDataSet (STRDS).
+        """Return the information of the SpaceTimeRasterDataset (STRDS).
 
         Parameters
         ----------
@@ -89,7 +89,7 @@ class SpaceTimeRasterDataSet:
         *,
         force: Optional(bool) = False,
     ) -> dict:
-        """Return a list of Raster Layers from a SpaceTimeRasterDataSet.
+        """Return a list of Raster Layers from a SpaceTimeRasterDataset.
 
         Parameters
         ----------
@@ -123,7 +123,7 @@ class SpaceTimeRasterDataSet:
         start_time: str | datetime,
         end_time: str | datetime,
     ) -> None:
-        """Register a Raster Layer in a SpaceTimeRasterDataSet (STRDS)."""
+        """Register a Raster Layer in a SpaceTimeRasterDataset (STRDS)."""
         if isinstance(start_time, datetime):
             start_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
         if isinstance(end_time, datetime):
@@ -143,7 +143,7 @@ class SpaceTimeRasterDataSet:
         request_and_check("PUT", url, **putkwargs)
 
     def unregister_raster_layers(self, raster_layers: list[str]) -> None:
-        """Unregister Raster Layers from a SpaceTimeRasterDataSet (STRDS)."""
+        """Unregister Raster Layers from a SpaceTimeRasterDataset (STRDS)."""
         delkwargs = {
             "headers": self.__actinia.headers,
             "auth": self.__auth,
@@ -157,7 +157,7 @@ class SpaceTimeRasterDataSet:
         request_and_check("DEL", url, **delkwargs)
 
     def render(self, render_dict: dict) -> dict:
-        """Render Raster layers in a SpaceTimeRasterDataSet (STRDS).
+        """Render Raster layers in a SpaceTimeRasterDataset (STRDS).
 
         Returns
         -------
