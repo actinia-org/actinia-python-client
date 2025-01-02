@@ -31,6 +31,7 @@ __maintainer__ = "Anika Weinmann"
 
 import json
 from datetime import datetime
+from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from actinia.utils import request_and_check
@@ -121,9 +122,21 @@ class SpaceTimeRasterDataset:
         self,
         name: str,
         start_time: str | datetime,
-        end_time: str | datetime,
+        end_time: str | datetime = "",
     ) -> None:
-        """Register a Raster Layer in a SpaceTimeRasterDataset (STRDS)."""
+        """Register a Raster Layer in a SpaceTimeRasterDataset (STRDS).
+
+        Parameters
+        ----------
+        name: string
+            Name of the raster layer to register in STRDS
+        start_time: string
+            Start time of the raster layer to register in STRDS
+        end_time: string | datetime
+            End time of the raster layer to register in STRDS
+            Can be empty (default).
+
+        """
         if isinstance(start_time, datetime):
             start_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
         if isinstance(end_time, datetime):
@@ -143,7 +156,15 @@ class SpaceTimeRasterDataset:
         request_and_check("PUT", url, **putkwargs)
 
     def unregister_raster_layers(self, raster_layers: list[str]) -> None:
-        """Unregister Raster Layers from a SpaceTimeRasterDataset (STRDS)."""
+        """Unregister Raster Layers from a SpaceTimeRasterDataset (STRDS).
+
+        Parameters
+        ----------
+        raster_layers: list of strings
+            List with names of the raster layers to unregister
+            from STRDS
+
+        """
         delkwargs = {
             "headers": self.__actinia.headers,
             "auth": self.__auth,
@@ -155,6 +176,115 @@ class SpaceTimeRasterDataset:
             f"mapsets/{self.__mapset_name}/strds/{self.name}/raster_layers"
         )
         request_and_check("DEL", url, **delkwargs)
+
+    def sample_strds(
+        self,
+        points: list[list[str]] | dict | Path | str,
+        *,
+        async_request: bool = False,
+    ) -> dict:
+        """Sample SpaceTimeRasterDataset at point locations.
+
+        Parameters
+        ----------
+        strds_name: str
+            Name of the SpaceTimeRasterDataset to sample
+        points: list[tuple] | dict | Path | str
+            Point locations to sample
+        async_request: bool
+            If True, the request is sent asynchronously
+
+        Returns
+        -------
+        strds_values: dict
+            Values of the SpaceTimeRasterDataset
+            at point locations
+
+        Raises
+        ------
+        OSError
+            OSError if input file does not exist.
+
+        """
+        postkwargs = {
+            "headers": self.__actinia.headers,
+            "auth": self.__auth,
+            "timeout": self.__actinia.timeout,
+        }
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
+            f"mapsets/{self.__mapset_name}/strds/{self.name}"
+        )
+        if isinstance(points, str):
+            points = Path(points)
+        if isinstance(points, Path):
+            if not points.exists():
+                msg = f"File <{points}> does not exist"
+                raise OSError(msg)
+            url += f"sampling_{'a' if async_request else ''}sync_geojson"
+            postkwargs["data"] = points.read_text(encoding="UTF8")
+        else:
+            if isinstance(points, list):
+                postkwargs["data"] = json.dumps({"points": points})
+            else:
+                postkwargs["data"] = json.dumps(points)
+            url += f"sampling_{'a' if async_request else ''}sync"
+        return request_and_check("POST", url, **postkwargs)
+
+    def compute_strds_statistics(
+        self,
+        polygon: dict | Path | str,
+        timestamp: Optional(datetime) = None,
+        *,
+        async_request: bool = False,
+    ) -> dict:
+        """Compute SpaceTimeRasterDataset statistics within polygon.
+
+        Parameters
+        ----------
+        strds_name: str
+            Name of the SpaceTimeRasterDatasetto compute statistics for
+        polygon: list[tuple] | dict | Path | str
+            Polygon to compute statistics for either as list of tuples
+            with valid coordinates, GeoJSON dict, or path to GeoJSON file
+        timestamp: datetime | None
+            Timestamp to compute statistics for
+        async_request: bool
+            If True, the request is sent asynchronously
+
+        Returns
+        -------
+        strds_statistics: dict
+            Statistics of the SpaceTimeRasterDataset
+
+        Raises
+        ------
+        OSError
+            OSError if input file is not found.
+
+        """
+        postkwargs = {
+            "headers": self.__actinia.headers,
+            "auth": self.__auth,
+            "timeout": self.__actinia.timeout,
+        }
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
+            f"mapsets/{self.__mapset_name}/strds/{self.name}"
+            f"timestamp/{timestamp.strftime('%Y-%m-%dT%H:%M:%S')}"
+        )
+        if isinstance(polygon, str):
+            polygon = Path(polygon)
+        if isinstance(polygon, Path):
+            if not polygon.exists():
+                msg = f"File <{polygon}> does not exist"
+                raise OSError(msg)
+            url += f"sampling_{'a' if async_request else ''}sync_geojson"
+            postkwargs["data"] = polygon.read_text(encoding="UTF8")
+        else:
+            postkwargs["data"] = json.dumps(polygon)
+            url += f"sampling_{'a' if async_request else ''}sync"
+        return request_and_check("POST", url, **postkwargs)
 
     def render(self, render_dict: dict) -> dict:
         """Render Raster layers in a SpaceTimeRasterDataset (STRDS).
