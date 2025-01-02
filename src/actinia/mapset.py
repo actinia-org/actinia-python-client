@@ -30,7 +30,6 @@ __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-from datetime import datetime
 from enum import Enum, unique
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -224,7 +223,9 @@ class Mapset:
         """
         # check if mapset exists
         existing_mapsets = cls.list_mapsets_request(
-            location_name, actinia, auth
+            location_name,
+            actinia,
+            auth,
         )
         if mapset_name in existing_mapsets:
             log.warning(f"Mapset <{mapset_name}> already exists.")
@@ -258,11 +259,13 @@ class Mapset:
         """
         # check if mapset exists
         existing_mapsets = cls.list_mapsets_request(
-            location_name, actinia, auth
+            location_name,
+            actinia,
+            auth,
         )
         if mapset_name not in existing_mapsets:
             log.warning(
-                f"Mapset <{mapset_name}> does not exist and cannot be deleted."
+                f"Mapset <{mapset_name}> does not exist and cannot be deleted.",
             )
             return
 
@@ -484,8 +487,11 @@ class Mapset:
 
         """
         files = {
-            "file": (vector_file, Path(vector_file).open("rb"))
-        }  # NOQA: SIM115
+            "file": (
+                vector_file,
+                Path(vector_file).open("rb"),  # NOQA: SIM115
+            ),
+        }
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
@@ -583,7 +589,9 @@ class Mapset:
             raise RuntimeError(msg)
 
     def get_strds(
-        self, *, force: bool = False
+        self,
+        *,
+        force: bool = False,
     ) -> list[SpaceTimeRasterDataset]:
         """Return SpaceTimeRasterDatasets of the given mapsets.
 
@@ -664,6 +672,18 @@ class Mapset:
         }
         request_and_check("POST", url, **postkwargs)
 
+        # Update STRDS list
+        if self.strds is None:
+            self.get_strds()
+        self.strds[strds_name] = SpaceTimeRasterDataset(
+            strds_name,
+            self.__location_name,
+            self.name,
+            self.__actinia,
+            self.__auth,
+        )
+        log.info(f"SpaceTimeRasterDataset <{strds_name}> successfully created")
+
     def delete_strds(self, strds_name: str) -> None:
         """Delete a SpaceTimeRasterDataset (STRDS)."""
         self.__check_strds_existence(strds_name)
@@ -672,120 +692,14 @@ class Mapset:
             f"mapsets/{self.name}/strds/{strds_name}"
         )
         request_and_check("DELETE", url, auth=self.__auth)
+        # Update STRDS list
         del self.strds[strds_name]
         log.info(f"SpaceTimeRasterDataset <{strds_name}> successfully deleted")
 
-    def sample_strds(
-        self,
-        strds_name: str,
-        points: list[list[str]] | dict | Path | str,
-        *,
-        async_request: bool = False,
-    ) -> dict | Job:
-        """Sample SpaceTimeRasterDataset at point locations.
-
-        Parameters
-        ----------
-        strds_name: str
-            Name of the SpaceTimeRasterDataset to sample
-        points: list[tuple] | dict | Path | str
-            Point locations to sample
-        async_request: bool
-            If True, the request is sent asynchronously
-
-        Returns
-        -------
-            dict | Job
-
-        Raises
-        ------
-        OSError
-            OSError if input file does not exist.
-
-        """
-        postkwargs = {
-            "headers": self.__actinia.headers,
-            "auth": self.__auth,
-            "timeout": self.__actinia.timeout,
-        }
-        self.__check_strds_existence(strds_name)
-        url = (
-            f"{self.__actinia.url}/locations/{self.__location_name}/"
-            f"mapsets/{self.name}/strds/{strds_name}"
-        )
-        if isinstance(points, str):
-            points = Path(points)
-        if isinstance(points, Path):
-            if not points.exists():
-                msg = f"File <{points}> does not exist"
-                raise OSError(msg)
-            url += f"sampling_{'a' if async_request else ''}sync_geojson"
-            postkwargs["data"] = points.read_text(encoding="UTF8")
-        else:
-            if isinstance(points, list):
-                postkwargs["data"] = json.dumps({"points": points})
-            else:
-                postkwargs["data"] = json.dumps(points)
-            url += f"sampling_{'a' if async_request else ''}sync"
-        return request_and_check("POST", url, **postkwargs)
-
-    def compute_strds_statistics(
-        self,
-        strds_name: str,
-        polygon: dict | Path | str,
-        timestamp: Optional(datetime) = None,
-        *,
-        async_request: bool = False,
-    ) -> dict:
-        """Compute SpaceTimeRasterDataset statistics within polygon.
-
-        Parameters
-        ----------
-        strds_name: str
-            Name of the SpaceTimeRasterDatasetto compute statistics for
-        polygon: list[tuple] | dict | Path | str
-            Polygon to compute statistics for
-        timestamp: datetime | None
-            Timestamp to compute statistics for
-        async_request: bool
-            If True, the request is sent asynchronously
-
-        Returns
-        -------
-            dict: Statistics of the SpaceTimeRasterDataset
-
-        Raises
-        ------
-        OSError
-            OSError if input file is not found.
-
-        """
-        postkwargs = {
-            "headers": self.__actinia.headers,
-            "auth": self.__auth,
-            "timeout": self.__actinia.timeout,
-        }
-        self.__check_strds_existence(strds_name)
-        url = (
-            f"{self.__actinia.url}/locations/{self.__location_name}/"
-            f"mapsets/{self.name}/strds/{strds_name}"
-            f"timestamp/{timestamp.strftime('%Y-%m-%dT%H:%M:%S')}"
-        )
-        if isinstance(polygon, str):
-            polygon = Path(polygon)
-        if isinstance(polygon, Path):
-            if not polygon.exists():
-                msg = f"File <{polygon}> does not exist"
-                raise OSError(msg)
-            url += f"sampling_{'a' if async_request else ''}sync_geojson"
-            postkwargs["data"] = polygon.read_text(encoding="UTF8")
-        else:
-            postkwargs["data"] = json.dumps(polygon)
-            url += f"sampling_{'a' if async_request else ''}sync"
-        return request_and_check("POST", url, **postkwargs)
-
     def create_processing_job(
-        self, pc: str | dict, name: Optional(str) = None
+        self,
+        pc: str | dict,
+        name: Optional(str) = None,
     ) -> Job:
         """Create a processing job with a given processing chain.
 
@@ -842,5 +756,4 @@ class Mapset:
 # * /locations/{location_name}/mapsets/{mapset_name}/processing_async - POST
 # * /locations/{location_name}/mapsets/{mapset_name}/lock - GET/DELETE/POST
 # * /locations/{location_name}/mapsets/{mapset_name}/raster_layers - DELETE/PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
 # * /locations/{location_name}/mapsets/{mapset_name}/vector_layers
