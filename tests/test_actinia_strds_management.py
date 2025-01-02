@@ -41,6 +41,39 @@ from .actinia_config import (
 NEW_MAPSET_NAME = "new_test_mapset"
 UPLOAD_RASTER_TIF = "../test_data/elevation.tif"
 UPLOAD_RASTER_NAME = "test_raster"
+STRDS_INFO_KEYS = {
+    "aggregation_type",
+    "bottom",
+    "creation_time",
+    "creator",
+    "east",
+    "end_time",
+    "ewres_max",
+    "ewres_min",
+    "granularity",
+    "id",
+    "map_time",
+    "mapset",
+    "max_max",
+    "max_min",
+    "min_max",
+    "min_min",
+    "modification_time",
+    "name",
+    "north",
+    "nsres_max",
+    "nsres_min",
+    "number_of_maps",
+    "number_of_semantic_labels",
+    "raster_register",
+    "semantic_labels",
+    "semantic_type",
+    "south",
+    "start_time",
+    "temporal_type",
+    "top",
+    "west",
+}
 
 
 class TestActiniaSpaceTimeRasterDatasets:
@@ -65,8 +98,8 @@ class TestActiniaSpaceTimeRasterDatasets:
             )
 
     def test_get_strds_info(self) -> None:
-        """Test get_strds_info."""
-        # get raster layers
+        """Test STRDS management."""
+        # Create STRDS
         resp = (
             self.testactinia.locations[LOCATION_NAME]
             .mapsets[NEW_MAPSET_NAME]
@@ -77,7 +110,6 @@ class TestActiniaSpaceTimeRasterDatasets:
                 "absolute",
             )
         )
-        # register_raster_layer
         strds = (
             self.testactinia.locations[LOCATION_NAME]
             .mapsets[NEW_MAPSET_NAME]
@@ -92,7 +124,18 @@ class TestActiniaSpaceTimeRasterDatasets:
 
         # Get STRDS info
         resp = strds[STRDS_NAME].get_info()
+        key_difference = STRDS_INFO_KEYS.difference(set(resp.keys()))
         assert isinstance(resp, dict), "response is not a dictionary"
-        assert "cells" in resp, "response is not correct"
-        assert resp["cells"] == "2025000", "response is not correct"
-        assert resp["min"] == "55.57879", "response is not correct"
+        assert not key_difference, f"keys {key_difference} missing in response"
+
+        # Get STRDS raster layers
+        resp = strds[STRDS_NAME].get_strds_raster_layers()
+        assert isinstance(resp, dict), "response is not a dictionary"
+
+        # Delete STRDS
+        resp = (
+            self.testactinia.locations[LOCATION_NAME]
+            .mapsets[NEW_MAPSET_NAME]
+            .delete_strds(STRDS_NAME)
+        )
+        assert isinstance(resp, dict), "response is not a dictionary"
