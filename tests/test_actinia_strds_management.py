@@ -35,7 +35,6 @@ from .actinia_config import (
     ACTINIA_BASEURL,
     ACTINIA_VERSION,
     LOCATION_NAME,
-    MAPSET_NAME,
     STRDS_NAME,
 )
 
