@@ -265,7 +265,8 @@ class Mapset:
         )
         if mapset_name not in existing_mapsets:
             log.warning(
-                f"Mapset <{mapset_name}> does not exist and cannot be deleted.",
+                f"Mapset <{mapset_name}> does not"
+                " exist and cannot be deleted.",
             )
             return
 
@@ -568,26 +569,6 @@ class Mapset:
         }
         self.strds = strds
 
-    def __check_strds_existence(self, strds_name: str) -> None:
-        """Check if a SpaceTimeRasterDataset exists in the mapset.
-
-        Parameters
-        ----------
-        strds_name: string
-            Name of the STRDS to check
-
-        Raises
-        ------
-        RuntimeError
-            Error if mapset does not exist.
-
-        """
-        if self.strds is None:
-            self.__request_strds()
-        if strds_name not in self.strds:
-            msg = f"SpaceTimeRasterDataset <{strds_name}> does not exist"
-            raise RuntimeError(msg)
-
     def get_strds(
         self,
         *,
@@ -647,12 +628,13 @@ class Mapset:
             raise ValueError(msg)
         if self.strds is None:
             self.__request_strds()
-        if strds_name:
-            if strds_name in self.strds and not overwrite:
+        if strds_name in self.strds:
+            if not overwrite:
                 msg = f"SpaceTimeRasterDataset <{strds_name}> already exists."
                 raise RuntimeError(msg)
-            log.info(f"Overwriting STRDS <{strds_name}>")
-            self.delete_strds(strds_name)
+            else:
+                log.info(f"Overwriting STRDS <{strds_name}>")
+                self.delete_strds(strds_name)
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/strds/{strds_name}"
@@ -685,8 +667,19 @@ class Mapset:
         log.info(f"SpaceTimeRasterDataset <{strds_name}> successfully created")
 
     def delete_strds(self, strds_name: str) -> None:
-        """Delete a SpaceTimeRasterDataset (STRDS)."""
-        self.__check_strds_existence(strds_name)
+        """Delete a SpaceTimeRasterDataset (STRDS).
+
+        Parameters
+        ----------
+        strds_name: string
+            Name of the STRDS to delete
+
+        """
+        if strds_name not in self.get_strds():
+            log.warning(
+                f"SpaceTimeRasterDataset <{strds_name}> does not exist"
+                " in mapset {self.name} and cannot be deleted.")
+            return
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/strds/{strds_name}"
