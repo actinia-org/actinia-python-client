@@ -648,7 +648,7 @@ class Mapset:
                 {
                     "title": title,
                     "description": description,
-                    "temporal_type": temporal_type,
+                    "temporaltype": temporal_type,
                 },
             ),
         }
