@@ -70,7 +70,7 @@ class TestActiniaSpaceTimeRasterDatasets:
         # get raster layers
         resp = (
             self.testactinia.locations[LOCATION_NAME]
-            .mapsets[MAPSET_NAME]
+            .mapsets[NEW_MAPSET_NAME]
             .create_strds(
                 STRDS_NAME,
                 "test title",
@@ -81,7 +81,7 @@ class TestActiniaSpaceTimeRasterDatasets:
         # register_raster_layer
         strds = (
             self.testactinia.locations[LOCATION_NAME]
-            .mapsets[MAPSET_NAME]
+            .mapsets[NEW_MAPSET_NAME]
             .strds
         )
         assert isinstance(strds, dict), "response is not a dictionary"
