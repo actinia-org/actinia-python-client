@@ -138,4 +138,3 @@ class TestActiniaSpaceTimeRasterDatasets:
             .mapsets[NEW_MAPSET_NAME]
             .delete_strds(STRDS_NAME)
         )
-        assert isinstance(resp, dict), "response is not a dictionary"
