@@ -106,7 +106,7 @@ class SpaceTimeRasterDataset:
             dict with information about the SpaceTimeRasterDataset
 
         """
-        if self.info is None or force is True:
+        if self.raster_layers is None or force is True:
             url = (
                 f"{self.__actinia.url}/locations/{self.__location_name}/"
                 f"mapsets/{self.__mapset_name}/strds/{self.name}"
@@ -114,9 +114,8 @@ class SpaceTimeRasterDataset:
             if where:
                 url += f"?where={where}"
             resp = request_and_check("GET", url, auth=self.__auth)
-            raster_layers = resp["process_results"]
-            self.raster_layers = raster_layers
-        return self.info
+            self.raster_layers = resp["process_results"]
+        return self.raster_layers
 
     def register_raster_layer(
         self,
