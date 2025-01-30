@@ -109,7 +109,7 @@ class SpaceTimeRasterDataset:
         if self.raster_layers is None or force is True:
             url = (
                 f"{self.__actinia.url}/locations/{self.__location_name}/"
-                f"mapsets/{self.__mapset_name}/strds/{self.name}"
+                f"mapsets/{self.__mapset_name}/strds/{self.name}/raster_layers"
             )
             if where:
                 url += f"?where={where}"
