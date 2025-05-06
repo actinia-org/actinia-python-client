@@ -17,7 +17,7 @@ services:
     -   actinia-test
 
   redis:
-    image: redis:7.2.3-alpine
+    image: redis:8.0.0-alpine
     volumes:
       - ./redis_data:/data
     environment:
