@@ -148,9 +148,13 @@ class Actinia:
             raise Exception("Authentication is not set.")
 
         url = f"{self.url}/locations"
-        loc_names = request_and_check(
+        loc_response = request_and_check(
             "GET", url, **{"timeout": self.timeout, "auth": (self.__auth)}
-        )["locations"]
+        )
+        loc_names = loc_response.get("locations") or loc_response.get("projects")
+        if not loc_names:
+            raise Exception("Authentication is not set.")
+
         loc = {
             lname: Location(lname, self, self.__auth) for lname in loc_names
         }
