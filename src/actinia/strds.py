@@ -101,12 +101,18 @@ class SpaceTimeRasterDataset:
         force: bool
             Force uptating STRDS info
 
+        Raises
+        ------
+        RuntimeError
+            For response status code 400 except for empty STRDS
+
         Returns
         -------
         info: dict
             dict with information about the SpaceTimeRasterDataset
 
         """
+        possible_status = 400
         if self.raster_layers is None or force is True:
             url = (
                 f"{self.__actinia.url}/locations/{self.__location_name}/"
@@ -121,16 +127,16 @@ class SpaceTimeRasterDataset:
                 auth=self.__auth,
                 status_code=(
                     200,
-                    400,
+                    possible_status,
                 ),
             )
             if "Dataset is empty" in resp["stderr"]:
                 log.info("No raster layer found in STRDS <%s>.", self.name)
                 self.raster_layers = {}
-            elif resp["http_code"] == 400:
-                raise RuntimeError(
-                    "Request failed with the following response:\n%s", resp
-                )
+            # All other cases with status 400 should raise an error
+            elif resp["http_code"] == possible_status:
+                error_msg = "Request failed with the following response:\n%s"
+                raise RuntimeError(error_msg, resp)
             else:
                 self.raster_layers = resp["process_results"]
 
