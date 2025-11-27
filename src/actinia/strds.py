@@ -34,6 +34,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
+from actinia.resources.logger import log
 from actinia.utils import request_and_check
 
 if TYPE_CHECKING:
@@ -113,8 +114,16 @@ class SpaceTimeRasterDataset:
             )
             if where:
                 url += f"?where={where}"
-            resp = request_and_check("GET", url, auth=self.__auth)
-            self.raster_layers = resp["process_results"]
+            # Empty STRDS returns status code 400
+            resp = request_and_check("GET", url, auth=self.__auth, status_code=(200,400,))
+            if "Dataset is empty" in resp["stderr"]:
+                log.info("No raster layer found in STRDS <%s>.", self.name)
+                self.raster_layers = {}
+            elif resp["http_code"] == 400:
+                raise RuntimeError("Request failed with the following response:\n%s", resp)
+            else:
+                self.raster_layers = resp["process_results"]
+
         return self.raster_layers
 
     def register_raster_layer(
@@ -186,8 +195,6 @@ class SpaceTimeRasterDataset:
 
         Parameters
         ----------
-        strds_name: str
-            Name of the SpaceTimeRasterDataset to sample
         points: list[tuple] | dict | Path | str
             Point locations to sample
         async_request: bool
@@ -241,8 +248,6 @@ class SpaceTimeRasterDataset:
 
         Parameters
         ----------
-        strds_name: str
-            Name of the SpaceTimeRasterDatasetto compute statistics for
         polygon: list[tuple] | dict | Path | str
             Polygon to compute statistics for either as list of tuples
             with valid coordinates, GeoJSON dict, or path to GeoJSON file
