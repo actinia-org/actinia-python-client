@@ -146,7 +146,7 @@ class SpaceTimeRasterDataset:
         self,
         name: str,
         start_time: str | datetime,
-        end_time: str | datetime = "",
+        end_time: str | datetime | None = None,
     ) -> None:
         """Register a Raster Layer in a SpaceTimeRasterDataset (STRDS).
 
@@ -163,7 +163,9 @@ class SpaceTimeRasterDataset:
         """
         if isinstance(start_time, datetime):
             start_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
-        if isinstance(end_time, datetime):
+        if not end_time:
+            end_time = start_time
+        elif isinstance(end_time, datetime):
             end_time = end_time.strftime("%Y-%m-%d %H:%M:%S")
         putkwargs = {
             "headers": self.__actinia.headers,
