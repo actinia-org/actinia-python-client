@@ -142,38 +142,28 @@ class SpaceTimeRasterDataset:
 
         return self.raster_layers
 
-    def register_raster_layer(
-        self,
-        name: str,
-        start_time: str | datetime,
-        end_time: str | datetime | None = None,
-    ) -> None:
+    def register_raster_layer(self, raster_list: list[dict]) -> None:
         """Register a Raster Layer in a SpaceTimeRasterDataset (STRDS).
 
         Parameters
         ----------
-        name: string
-            Name of the raster layer to register in STRDS
-        start_time: string
-            Start time of the raster layer to register in STRDS
-        end_time: string | datetime
-            End time of the raster layer to register in STRDS
-            Can be empty (default).
+        raster_list: List of raster layer dicts
+            list of dict with keys 'name', 'start_time', 'end_time'
+            name: string
+                Name of the raster layer to register in STRDS
+            start_time: string
+                Start time of the raster layer to register in STRDS
+            end_time: string
+                End time of the raster layer to register in STRDS
+
+            Time values have to be formatted: "YYYY-MM-DD HH:MM:SS"
 
         """
-        if isinstance(start_time, datetime):
-            start_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
-        if not end_time:
-            end_time = start_time
-        elif isinstance(end_time, datetime):
-            end_time = end_time.strftime("%Y-%m-%d %H:%M:%S")
         putkwargs = {
             "headers": self.__actinia.headers,
             "auth": self.__auth,
             "timeout": self.__actinia.timeout,
-            "data": json.dumps(
-                {"name": name, "start_time": start_time, "end_time": end_time},
-            ),
+            "data": json.dumps(raster_list),
         }
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
