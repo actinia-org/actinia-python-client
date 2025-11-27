@@ -140,7 +140,7 @@ class TestActiniaSpaceTimeRasterDatasets:
         self.testactinia.locations[LOCATION_NAME].mapsets[
             NEW_MAPSET_NAME
         ].upload_raster(UPLOAD_RASTER_NAME, str(tif_path))
-        strds[STRDS_NAME].register_raster_layer(
+        strds[STRDS_NAME].register_raster_layers(
             [
                 {
                     "name": UPLOAD_RASTER_NAME,
@@ -153,7 +153,7 @@ class TestActiniaSpaceTimeRasterDatasets:
         assert isinstance(resp, list), "response is not a list"
 
         # Test unregistering raster from STRDS
-        strds[STRDS_NAME].unregister_raster_layer([UPLOAD_RASTER_NAME])
+        strds[STRDS_NAME].unregister_raster_layers([UPLOAD_RASTER_NAME])
 
         # Delete STRDS
         resp = (
