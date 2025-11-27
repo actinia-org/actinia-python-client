@@ -26,7 +26,7 @@ __author__ = "Anika Weinmann, Stefan Bøumentrath"
 __copyright__ = "Copyright 2023-2024, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
-import os
+from pathlib import Path
 
 from actinia import Actinia
 from actinia.strds import SpaceTimeRasterDataset
@@ -129,17 +129,21 @@ class TestActiniaSpaceTimeRasterDatasets:
         assert isinstance(resp, dict), "response is not a dictionary"
         assert not key_difference, f"keys {key_difference} missing in response"
 
-        # Get STRDS raster layers from empty STRDS (do not fail, but report empty STRDS / selection)
+        # Get STRDS raster layers from empty STRDS
+        # do not fail, but report empty STRDS / selection
         resp = strds[STRDS_NAME].get_strds_raster_layers()
         assert isinstance(resp, list), "response is not a list"
 
         # Register raster to STRDS and check registration
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        tif_path = os.path.join(dir_path, UPLOAD_RASTER_TIF)
+        dir_path = Path(__file__).resolve().parent
+        tif_path = (dir_path / UPLOAD_RASTER_TIF).resolve()
         self.testactinia.locations[LOCATION_NAME].mapsets[
             NEW_MAPSET_NAME
-        ].upload_raster(UPLOAD_RASTER_NAME, tif_path)
-        strds[STRDS_NAME].register_raster_layer(UPLOAD_RASTER_NAME, "2023-01-01 00:00:00")
+        ].upload_raster(UPLOAD_RASTER_NAME, str(tif_path))
+        strds[STRDS_NAME].register_raster_layer(
+            UPLOAD_RASTER_NAME,
+            "2023-01-01 00:00:00",
+        )
         resp = strds[STRDS_NAME].get_strds_raster_layers()
         assert isinstance(resp, list), "response is not a list"
 
