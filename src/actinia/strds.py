@@ -115,12 +115,22 @@ class SpaceTimeRasterDataset:
             if where:
                 url += f"?where={where}"
             # Empty STRDS returns status code 400
-            resp = request_and_check("GET", url, auth=self.__auth, status_code=(200,400,))
+            resp = request_and_check(
+                "GET",
+                url,
+                auth=self.__auth,
+                status_code=(
+                    200,
+                    400,
+                ),
+            )
             if "Dataset is empty" in resp["stderr"]:
                 log.info("No raster layer found in STRDS <%s>.", self.name)
                 self.raster_layers = {}
             elif resp["http_code"] == 400:
-                raise RuntimeError("Request failed with the following response:\n%s", resp)
+                raise RuntimeError(
+                    "Request failed with the following response:\n%s", resp
+                )
             else:
                 self.raster_layers = resp["process_results"]
 
