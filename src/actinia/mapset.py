@@ -678,7 +678,8 @@ class Mapset:
         if strds_name not in self.get_strds():
             log.warning(
                 f"SpaceTimeRasterDataset <{strds_name}> does not exist"
-                " in mapset {self.name} and cannot be deleted.")
+                " in mapset {self.name} and cannot be deleted."
+            )
             return
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
