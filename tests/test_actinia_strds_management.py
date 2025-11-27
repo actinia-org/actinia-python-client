@@ -141,8 +141,13 @@ class TestActiniaSpaceTimeRasterDatasets:
             NEW_MAPSET_NAME
         ].upload_raster(UPLOAD_RASTER_NAME, str(tif_path))
         strds[STRDS_NAME].register_raster_layer(
-            UPLOAD_RASTER_NAME,
-            "2023-01-01 00:00:00",
+            [
+                {
+                    "name": UPLOAD_RASTER_NAME,
+                    "start_time": "2023-01-01 00:00:00",
+                    "end_time": "2023-01-02 00:00:00",
+                },
+            ],
         )
         resp = strds[STRDS_NAME].get_strds_raster_layers()
         assert isinstance(resp, list), "response is not a list"
