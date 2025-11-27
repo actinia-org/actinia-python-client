@@ -130,7 +130,7 @@ class SpaceTimeRasterDataset:
                     possible_status,
                 ),
             )
-            if "Dataset is empty" in resp["stderr"]:
+            if "Dataset is empty" in str(resp["process_log"]):
                 log.info("No raster layer found in STRDS <%s>.", self.name)
                 self.raster_layers = {}
             # All other cases with status 400 should raise an error
