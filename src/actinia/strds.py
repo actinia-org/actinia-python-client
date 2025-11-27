@@ -142,8 +142,8 @@ class SpaceTimeRasterDataset:
 
         return self.raster_layers
 
-    def register_raster_layer(self, raster_list: list[dict]) -> None:
-        """Register a Raster Layer in a SpaceTimeRasterDataset (STRDS).
+    def register_raster_layers(self, raster_list: list[dict]) -> None:
+        """Register Raster Layers in a SpaceTimeRasterDataset (STRDS).
 
         Parameters
         ----------
