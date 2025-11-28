@@ -1,46 +1,55 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#######
-# actinia-python-client is a python client for actinia - an open source REST
-# API for scalable, distributed, high performance processing of geographical
-# data that uses GRASS GIS for computational tasks.
-#
-# Copyright (c) 2022 mundialis GmbH & Co. KG
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
-#######
+
+"""The mapset module provides a Mapset class to interact with mapsets.
+
+actinia-python-client is a python client for actinia - an open source REST
+API for scalable, distributed, high performance processing of geographical
+data that uses GRASS GIS for computational tasks.
+
+Copyright (c) 2022 mundialis GmbH & Co. KG
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
+from __future__ import annotations
 
 __license__ = "GPLv3"
-__author__ = "Anika Weinmann and Corey White"
+__author__ = "Anika Weinmann, Corey White and Stefan Blumentrath"
 __copyright__ = "Copyright 2022, mundialis GmbH & Co. KG"
 __maintainer__ = "Anika Weinmann"
 
 import json
-import os
 from enum import Enum, unique
+from pathlib import Path
+from typing import TYPE_CHECKING, Optional
 
 from actinia.job import Job
+from actinia.raster import Raster
 from actinia.region import Region
 from actinia.resources.logger import log
-from actinia.raster import Raster
-from actinia.utils import set_job_names, request_and_check
+from actinia.strds import SpaceTimeRasterDataset
+from actinia.utils import request_and_check, set_job_names
 from actinia.vector import Vector
+
+if TYPE_CHECKING:
+    from actinia import Actinia
 
 
 @unique
-class MAPSET_TASK(Enum):
+class MapsetTask(Enum):
+    """Enumeration of possible tasks within a mapset."""
+
     INFO = "info"
     LOCK = "lock"
     RASTER_LAYER = "raster_layer"
@@ -51,7 +60,16 @@ class MAPSET_TASK(Enum):
 
 
 class Mapset:
-    def __init__(self, name, location_name, actinia, auth):
+    """The main Mapset object."""
+
+    def __init__(
+        self,
+        name: str,
+        location_name: str,
+        actinia: Actinia,
+        auth: tuple,
+    ) -> None:
+        """Initialize the Mapset object."""
         self.name = name
         self.projection = None
         self.region = None
@@ -62,9 +80,13 @@ class Mapset:
         self.vector_layers = None
         self.strds = None
 
-    def __request_url(actinia_url, location_name, mapset_name=None, task=None):
-        """
-        Provides the url to an Actinia mapset resource.
+    def __request_url(
+        actinia_url: str,  # NOQA: N805
+        location_name: str,
+        mapset_name: str | None = None,
+        task: Enum | None = None,
+    ) -> str:
+        """Provide the url to an Actinia mapset resource.
 
         Parameters
         ----------
@@ -76,7 +98,7 @@ class Mapset:
         mapset_name : str, default=None
             The mapset name
             route: /locations/{location_name}/mapsets/{mapset_name}
-        task : Enum(MAPSET_TASK), default=None
+        task : Enum(MapsetTask), default=None
             The requested task
             (info) route:
                 /locations/{location_name}/mapsets/{mapset_name}/info
@@ -93,40 +115,56 @@ class Mapset:
             (processing_async) route:
                 /locations/{location_name}/mapsets/{mapset_name}/processing_async
 
-        raster_layers : bool
         Returns
         -------
         base_url : str
             Return the url scheme for the mapset request
+
         """
         base_url = f"{actinia_url}/locations/{location_name}/mapsets"
         if mapset_name is not None:
             base_url = f"{base_url}/{mapset_name}"
-            if isinstance(task, MAPSET_TASK):
+            if isinstance(task, MapsetTask):
                 base_url = f"{base_url}/{task.value}"
         return base_url
 
-    def info(self):
-        """Get mapset info"""
+    def info(self) -> dict:
+        """Get mapset info.
+
+        Returns
+        -------
+        info : dict with mapset info
+
+        """
         if self.projection is None or self.region is None:
             proc_res = self.request_info(
-                self.name, self.__location_name, self.__actinia, self.__auth
+                self.name,
+                self.__location_name,
+                self.__actinia,
+                self.__auth,
             )
             self.projection = proc_res["projection"]
             self.region = Region(**proc_res["region"])
         return {"projection": self.projection, "region": self.region}
 
-    def delete(self):
-        """Deletes the mapset"""
+    def delete(self) -> None:
+        """Delete the mapset."""
         self.delete_mapset_request(
-            self.name, self.__location_name, self.__actinia, self.__auth
+            self.name,
+            self.__location_name,
+            self.__actinia,
+            self.__auth,
         )
         del self.__actinia.locations[self.__location_name].mapsets[self.name]
 
     @classmethod
-    def list_mapsets_request(cls, location_name, actinia, auth):
-        """
-        Lists mapsets within a location.
+    def list_mapsets_request(
+        cls,
+        location_name: str,
+        actinia: Actinia,
+        auth: tuple,
+    ) -> dict:
+        """List mapsets within a location.
 
         Parameters
         ----------
@@ -143,26 +181,28 @@ class Mapset:
             A dict of with keys equal to the mapset name and
             values set to the Mapset class instance.
 
-        Raises
-        ------
-        Exception
-            Error string with response status code
-            and text if request fails.
         """
         url = cls.__request_url(actinia.url, location_name)
         mapset_names = request_and_check(
-            "GET", url, **{"auth": auth, "timeout": actinia.timeout}
+            "GET",
+            url,
+            auth=auth,
+            timeout=actinia.timeout,
         )["process_results"]
-        mapsets = {
+        return {
             mname: Mapset(mname, location_name, actinia, auth)
             for mname in mapset_names
         }
-        return mapsets
 
     @classmethod
-    def create_mapset_request(cls, mapset_name, location_name, actinia, auth):
-        """
-        Creates a mapset within a location.
+    def create_mapset_request(
+        cls,
+        mapset_name: str,
+        location_name: str,
+        actinia: Actinia,
+        auth: tuple,
+    ) -> Mapset:
+        """Create a mapset within a location.
 
         Parameters
         ----------
@@ -180,30 +220,30 @@ class Mapset:
         Mapset
             A new mapset instance for the created mapset
 
-        Raises
-        ------
-        Exception
-            Error string with response status code
-            and text if request fails.
         """
         # check if mapset exists
         existing_mapsets = cls.list_mapsets_request(
-            location_name, actinia, auth
+            location_name,
+            actinia,
+            auth,
         )
         if mapset_name in existing_mapsets:
             log.warning(f"Mapset <{mapset_name}> already exists.")
             return existing_mapsets[mapset_name]
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        request_and_check(
-            "POST", url, **{"auth": (auth), "timeout": actinia.timeout}
-        )
+        request_and_check("POST", url, auth=(auth), timeout=actinia.timeout)
         return Mapset(mapset_name, location_name, actinia, auth)
 
     @classmethod
-    def delete_mapset_request(cls, mapset_name, location_name, actinia, auth):
-        """
-        Delete a mapset within a location.
+    def delete_mapset_request(
+        cls,
+        mapset_name: str,
+        location_name: str,
+        actinia: Actinia,
+        auth: tuple,
+    ) -> None:
+        """Delete a mapset within a location.
 
         Parameters
         ----------
@@ -216,36 +256,33 @@ class Mapset:
         auth :
             Actinia authentication
 
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        Exception
-            Error string with response status code
-            and text if request fails.
         """
         # check if mapset exists
         existing_mapsets = cls.list_mapsets_request(
-            location_name, actinia, auth
+            location_name,
+            actinia,
+            auth,
         )
         if mapset_name not in existing_mapsets:
             log.warning(
-                f"Mapset <{mapset_name}> does not exist and cannot be deleted."
+                f"Mapset <{mapset_name}> does not"
+                " exist and cannot be deleted.",
             )
-            return None
+            return
 
         url = cls.__request_url(actinia.url, location_name, mapset_name)
-        request_and_check(
-            "DELETE", url, **{"auth": (auth), "timeout": actinia.timeout}
-        )
-        return None
+        request_and_check("DELETE", url, auth=(auth), timeout=actinia.timeout)
+        return
 
     @classmethod
-    def request_info(cls, mapset_name, location_name, actinia, auth):
-        """
-        Gets detailed info about a mapset.
+    def request_info(
+        cls,
+        mapset_name: str,
+        location_name: str,
+        actinia: Actinia,
+        auth: tuple,
+    ) -> dict:
+        """Get detailed info about a mapset.
 
         Parameters
         ----------
@@ -263,25 +300,22 @@ class Mapset:
         dict
         Returns JSON process results if successful.
 
-        Raises
-        ------
-        Exception
-            Error string with response status code
-            and text if request fails.
         """
         url = cls.__request_url(
-            actinia.url, location_name, mapset_name, MAPSET_TASK.INFO
+            actinia.url,
+            location_name,
+            mapset_name,
+            MapsetTask.INFO,
         )
         return request_and_check(
-            "GET", url, **{"auth": (auth), "timeout": actinia.timeout}
+            "GET",
+            url,
+            auth=(auth),
+            timeout=actinia.timeout,
         )["process_results"]
 
-    def __request_raster_layers(self):
-        """
-        Requests the raster layers in the mapset.
-
-        :return: A list of the raster maps
-        """
+    def __request_raster_layers(self) -> None:
+        """Request the raster layers in the mapset."""
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers"
@@ -289,7 +323,8 @@ class Mapset:
         raster_names = request_and_check(
             "GET",
             url,
-            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
+            auth=self.__auth,
+            timeout=self.__actinia.timeout,
         )["process_results"]
         rasters = {
             mname: Raster(
@@ -303,20 +338,25 @@ class Mapset:
         }
         self.raster_layers = rasters
 
-    def get_raster_layers(self, force=False):
-        """
-        Return raster layers of the mapset
+    def get_raster_layers(self, *, force: bool = False) -> dict:
+        """Return raster layers of the mapset.
+
+        Parameters
+        ----------
+        force : bool
+            Force reloading of raster layers of the mapset.
+
+        Returns
+        -------
+            dict: A dict of the vector maps
+
         """
         if self.raster_layers is None or force is True:
             self.__request_raster_layers()
         return self.raster_layers
 
-    def __request_vector_layers(self):
-        """
-        Requests the vector layers in the mapset.
-
-        :return: A list of the vector maps
-        """
+    def __request_vector_layers(self) -> None:
+        """Request the vector layers in the mapset."""
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers"
@@ -324,7 +364,8 @@ class Mapset:
         vector_names = request_and_check(
             "GET",
             url,
-            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
+            auth=self.__auth,
+            timeout=self.__actinia.timeout,
         )["process_results"]
         vectors = {
             mname: Vector(
@@ -338,21 +379,41 @@ class Mapset:
         }
         self.vector_layers = vectors
 
-    def get_vector_layers(self, force=False):
-        """
-        Return vector layers of the mapset
+    def get_vector_layers(self, *, force: bool = False) -> dict:
+        """Return vector layers of the mapset.
+
+        Parameters
+        ----------
+        force: bool
+            Force update of vector layer dict
+
+        Returns
+        -------
+            dict: A dict of the vector maps
+
         """
         if self.vector_layers is None or force is True:
             self.__request_vector_layers()
         return self.vector_layers
 
-    def upload_raster(self, layer_name, tif_file):
-        """Upload GTiff as a raster layer
-        Parameters:
-            layer_name (string): Name for the raster layer to create
-            tif_file (string): Path of the GTiff file to upload
+    def upload_raster(self, layer_name: str, tif_file: str) -> None:
+        """Upload GTiff as a raster layer.
+
+        Parameters
+        ----------
+        layer_name: string
+            Name for the raster layer to create
+        tif_file: string
+            Path of the GTiff file to upload
+
+        Raises
+        ------
+        RuntimeError:
+            Error string with response status code
+            and text if request fails.
+
         """
-        files = {"file": (tif_file, open(tif_file, "rb"))}
+        files = {"file": (tif_file, Path(tif_file).open("rb"))}  # NOQA: SIM115
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers/{layer_name}"
@@ -360,11 +421,9 @@ class Mapset:
         resp_dict = request_and_check(
             "POST",
             url,
-            **{
-                "auth": self.__auth,
-                "files": files,
-                "timeout": self.__actinia.timeout,
-            },
+            auth=self.__auth,
+            files=files,
+            timeout=self.__actinia.timeout,
         )
         job = Job(
             f"raster_upload_{self.__location_name}_{self.name}_{layer_name}",
@@ -374,7 +433,8 @@ class Mapset:
         )
         job.poll_until_finished()
         if job.status != "finished":
-            raise Exception(f"{job.status}: {job.message}")
+            msg = f"{job.status}: {job.message}"
+            raise RuntimeError(msg)
         if self.raster_layers is None:
             self.get_raster_layers()
         self.raster_layers[layer_name] = Raster(
@@ -385,8 +445,15 @@ class Mapset:
             self.__auth,
         )
 
-    def delete_raster(self, layer_name):
-        """Delete a raster layer"""
+    def delete_raster(self, layer_name: str) -> None:
+        """Delete a raster layer.
+
+        Parameters
+        ----------
+        layer_name: str
+            Name of the raster layer to delete
+
+        """
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/raster_layers/{layer_name}"
@@ -394,7 +461,8 @@ class Mapset:
         request_and_check(
             "DELETE",
             url,
-            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
+            auth=self.__auth,
+            timeout=self.__actinia.timeout,
         )
         if self.raster_layers is None:
             self.get_raster_layers()
@@ -402,15 +470,29 @@ class Mapset:
             del self.raster_layers[layer_name]
         log.info(f"Raster <{layer_name}> successfully deleted")
 
-    def upload_vector(self, layer_name, vector_file):
-        """Upload vector file (GPKG, zipped Shapefile or GeoJSON) as a vector
-        layer.
-        Parameters:
-            layer_name (string): Name for the vector layer to create
-            vector_file (string): Path of the GPKG/zipped Shapefile or GeoJSON
-                                  to upload
+    def upload_vector(self, layer_name: str, vector_file: str) -> None:
+        """Upload vector file (GPKG, zipped Shape, GeoJSON) as a vector layer.
+
+        Parameters
+        ----------
+        layer_name: string
+            Name for the vector layer to create
+        vector_file: string
+            Path of the GPKG/zipped Shapefile or GeoJSON to upload
+
+        Raises
+        ------
+        RuntimeError
+            RuntimeError string with response status code
+            and text if request fails.
+
         """
-        files = {"file": (vector_file, open(vector_file, "rb"))}
+        files = {
+            "file": (
+                vector_file,
+                Path(vector_file).open("rb"),  # NOQA: SIM115
+            ),
+        }
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
@@ -418,11 +500,9 @@ class Mapset:
         resp_dict = request_and_check(
             "POST",
             url,
-            **{
-                "files": files,
-                "auth": self.__auth,
-                "timeout": self.__actinia.timeout,
-            },
+            files=files,
+            auth=self.__auth,
+            timeout=self.__actinia.timeout,
         )
         job = Job(
             f"vector_upload_{self.__location_name}_{self.name}_{layer_name}",
@@ -432,7 +512,8 @@ class Mapset:
         )
         job.poll_until_finished()
         if job.status != "finished":
-            raise Exception(f"{job.status}: {job.message}")
+            msg = f"{job.status}: {job.message}"
+            raise RuntimeError(msg)
         if self.vector_layers is None:
             self.get_vector_layers()
         self.vector_layers[layer_name] = Vector(
@@ -443,8 +524,15 @@ class Mapset:
             self.__auth,
         )
 
-    def delete_vector(self, layer_name):
-        """Delete a vector layer"""
+    def delete_vector(self, layer_name: str) -> None:
+        """Delete a vector layer.
+
+        Parameters
+        ----------
+        layer_name: string
+            Name of the vector layer to delete
+
+        """
         url = (
             f"{self.__actinia.url}/locations/{self.__location_name}/"
             f"mapsets/{self.name}/vector_layers/{layer_name}"
@@ -452,7 +540,8 @@ class Mapset:
         request_and_check(
             "DELETE",
             url,
-            **{"auth": self.__auth, "timeout": self.__actinia.timeout},
+            auth=self.__auth,
+            timeout=self.__actinia.timeout,
         )
         if self.vector_layers is None:
             self.get_vector_layers()
@@ -460,13 +549,170 @@ class Mapset:
             del self.vector_layers[layer_name]
         log.info(f"Vector <{layer_name}> successfully deleted")
 
-    # TODO: * (/locations/{location_name}/mapsets/{mapset_name}/processing
-    #          - POST (persistent, asyncron))
-    # * /locations/{location_name}/mapsets/{mapset_name}/processing_async
-    #          - POST (persistent, asyncron)
-    def create_processing_job(self, pc, name=None):
+    def __request_strds(self) -> None:
+        """Request the SpaceTimeRasterDatasets in the mapset."""
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
+            f"mapsets/{self.name}/strds"
+        )
+        resp = request_and_check("GET", url, auth=self.__auth)
+        strds_names = resp["process_results"]
+        strds = {
+            sname: SpaceTimeRasterDataset(
+                sname,
+                self.__location_name,
+                self.name,
+                self.__actinia,
+                self.__auth,
+            )
+            for sname in strds_names
+        }
+        self.strds = strds
+
+    def get_strds(
+        self,
+        *,
+        force: bool = False,
+    ) -> list[SpaceTimeRasterDataset]:
+        """Return SpaceTimeRasterDatasets of the given mapsets.
+
+        Parameters
+        ----------
+        force: bool
+            Force reload of SpaceTimeRasterDatasets
+
+        Returns
+        -------
+        strds: dict[SpaceTimeRasterDataset: str]
+            A dict with the SpaceTimeRasterDatasets
+
         """
-        Creates a processing job with a given PC.
+        if self.strds is None or force is True:
+            self.__request_strds()
+        return self.strds
+
+    def create_strds(
+        self,
+        strds_name: str,
+        title: str,
+        description: str,
+        temporal_type: str = "absolute",
+        *,
+        overwrite: bool = False,
+    ) -> None:
+        """Return SpaceTimeRasterDatasets of the given mapsets.
+
+        Parameters
+        ----------
+        strds_name: string
+            Name of the STRDS to create
+        title: string
+            Title of the STRDS to create
+        description: string
+            Description of the STRDS to create
+        temporal_type: string
+            Temporal type of the STRDS to create
+        overwrite: bool
+            Allow overwriting of existing SpaceTimeRasterDatasets
+
+        Raises
+        ------
+        ValueError:
+            ValueError for invalid input.
+        RuntimeError:
+            RuntimeError if STRDS already exists and overwrite is False.
+
+        """
+        if temporal_type not in {"absolute", "relative"}:
+            msg = "temporal_type must be 'absolute' or 'relative'."
+            raise ValueError(msg)
+        if self.strds is None:
+            self.__request_strds()
+        if strds_name in self.strds:
+            if not overwrite:
+                msg = f"SpaceTimeRasterDataset <{strds_name}> already exists."
+                raise RuntimeError(msg)
+            else:
+                log.info(f"Overwriting STRDS <{strds_name}>")
+                self.delete_strds(strds_name)
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
+            f"mapsets/{self.name}/strds/{strds_name}"
+        )
+
+        postkwargs = {
+            "headers": self.__actinia.headers,
+            "auth": self.__auth,
+            "timeout": self.__actinia.timeout,
+            "data": json.dumps(
+                {
+                    "title": title,
+                    "description": description,
+                    "temporaltype": temporal_type,
+                },
+            ),
+        }
+        request_and_check("POST", url, **postkwargs)
+
+        # Update STRDS list
+        if self.strds is None:
+            self.get_strds()
+        self.strds[strds_name] = SpaceTimeRasterDataset(
+            strds_name,
+            self.__location_name,
+            self.name,
+            self.__actinia,
+            self.__auth,
+        )
+        log.info(f"SpaceTimeRasterDataset <{strds_name}> successfully created")
+
+    def delete_strds(self, strds_name: str) -> None:
+        """Delete a SpaceTimeRasterDataset (STRDS).
+
+        Parameters
+        ----------
+        strds_name: string
+            Name of the STRDS to delete
+
+        """
+        if strds_name not in self.get_strds():
+            log.warning(
+                f"SpaceTimeRasterDataset <{strds_name}> does not exist"
+                " in mapset {self.name} and cannot be deleted."
+            )
+            return
+        url = (
+            f"{self.__actinia.url}/locations/{self.__location_name}/"
+            f"mapsets/{self.name}/strds/{strds_name}"
+        )
+        request_and_check("DELETE", url, auth=self.__auth)
+        # Update STRDS list
+        del self.strds[strds_name]
+        log.info(f"SpaceTimeRasterDataset <{strds_name}> successfully deleted")
+
+    def create_processing_job(
+        self,
+        pc: str | dict,
+        name: Optional(str) = None,
+    ) -> Job:
+        """Create a processing job with a given processing chain.
+
+        Parameters
+        ----------
+        name: str | None
+            Name of the processing job (optional)
+        pc: str | dict
+            The actinia processing chain
+
+        Returns
+        -------
+        Job
+
+        Raises
+        ------
+        TypeError
+            TypeError if 'pc' is invalid type.
+
         """
         # set name
         orig_name, name = set_job_names(name)
@@ -482,15 +728,15 @@ class Mapset:
             "timeout": self.__actinia.timeout,
         }
         if isinstance(pc, str):
-            if os.path.isfile(pc):
-                with open(pc, "r") as pc_file:
-                    postkwargs["data"] = pc_file.read()
+            if Path(pc).exists():
+                postkwargs["data"] = Path(pc).read_text(encoding="UTF8")
             else:
                 postkwargs["data"] = pc
         elif isinstance(pc, dict):
             postkwargs["data"] = json.dumps(pc)
         else:
-            raise Exception("Given process chain has no valid type.")
+            msg = "Given process chain has no valid type."
+            raise TypeError(msg)
 
         resp = request_and_check("POST", url, **postkwargs)
         # create a job
@@ -499,10 +745,9 @@ class Mapset:
         return job
 
 
-# TODO:
-# * (/locations/{location_name}/mapsets/{mapset_name}/lock - GET, DELETE, POST)
-
-# * /locations/{location_name}/mapsets/{mapset_name}/raster_layers
-#      - DELETE, PUT
-# * /locations/{location_name}/mapsets/{mapset_name}/strds - GET
-# * "/locations/{location_name}/mapsets/{mapset_name}/vector_layers"
+# TODO: # NOQA: FIX002, TD002, TD003
+# * /locations/{location_name}/mapsets/{mapset_name}/processing - POST
+# * /locations/{location_name}/mapsets/{mapset_name}/processing_async - POST
+# * /locations/{location_name}/mapsets/{mapset_name}/lock - GET/DELETE/POST
+# * /locations/{location_name}/mapsets/{mapset_name}/raster_layers - DELETE/PUT
+# * /locations/{location_name}/mapsets/{mapset_name}/vector_layers
