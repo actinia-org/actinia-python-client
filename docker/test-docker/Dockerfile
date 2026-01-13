@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: (c) 2022-2025 by mundialis GmbH & Co. KG
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM mundialis/actinia:2.6.6
+FROM mundialis/actinia:2.13.1
 # TODO change to latest docker image if this is fixed
 # FROM mundialis/actinia:latest
 
