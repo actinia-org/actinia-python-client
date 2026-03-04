@@ -97,10 +97,10 @@ strds_name = "test_strds"
 
 # Create mapset
 mapset_name = "test_strds_mapset"
-locations["ECAD"].create_mapset(mapset_name)
+locations["nc_spm_08"].create_mapset(mapset_name)
 
 # Create new STRDS
-locations["ECAD"]
+locations["nc_spm_08"]
     .mapsets[mapset_name]
     .create_strds(
         strds_name,
@@ -109,23 +109,57 @@ locations["ECAD"]
         "absolute",  # temporal type of the STRDS
     )
 
-# Register raster maps in STRDS
-locations["ECAD"]
+# Create sample raster data
+expression = "\n".join(f"map_{i}={i} * x()" for i in range(2)
+pc = {
+    "list": [
+        {
+            "id": "g_region_1",
+            "module": "g.region",
+            "flags": "p",
+            "inputs": [
+                {
+                    "param": "raster",
+                    "value": "elevation",
+                    },
+                    ],
+            },
+        {
+            "id": "r_mapcalc_1",
+            "module": "r.mapcalc"
+            "inputs": [
+                {
+                    "param": "expression",
+                    "value": expression,
+                    },
+                    ]
+            },
+    ],
+    "version": 1,
+}
+locations["nc_spm_08"]
     .mapsets[mapset_name]
-    strds[strds_name].register_raster_layers(
+    .processing_async(pc)
+
+
+
+# Register raster maps in STRDS
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name].register_raster_layers(
         [
             {
-                "name": "precipitation_yearly_mm_0@PERMANENT",
+                "name": "map_0",
                 "start_time": "1951-01-01 00:00:00",
                 "end_time": "1952-01-01 00:00:00",
             },
             {
-                "name": "precipitation_yearly_mm_1@PERMANENT",
+                "name": "map_1",
                 "start_time": "1952-01-01 00:00:00",
                 "end_time": "1953-01-01 00:00:00",
             },
             {
-                "name": "precipitation_yearly_mm_2@PERMANENT",
+                "name": "map_2",
                 "start_time": "1953-01-01 00:00:00",
                 "end_time": "1954-01-01 00:00:00",
             },
@@ -137,14 +171,14 @@ Get STRDS metadata and list raster maps
 
 ```
 # Get general info
-locations["ECAD"]
+locations["nc_spm_08"]
     .mapsets[mapset_name]
-    strds[strds_name].get_info()
+    .strds[strds_name].get_info()
 
 # Get selected, registered raster maps
-locations["ECAD"]
+locations["nc_spm_08"]
     .mapsets[mapset_name]
-    strds[strds_name].get_strds_raster_layers(
+    .strds[strds_name].get_strds_raster_layers(
         where="start_time >= '1952-01-01 00:00:00'"
     )
 ```
@@ -152,29 +186,41 @@ locations["ECAD"]
 Sample STRDS at point locations
 
 ```
-locations["ECAD"]
+# Define input points
+points = [
+    ["point_1", 1, 2,],
+    ["point_2", 3, 4,],
+    ]
+
+# Run sampling
+locations["nc_spm_08"]
     .mapsets[mapset_name]
-    strds[strds_name].sample_strds(
-        [["id", ,y], ["id",x,y]]
+    .strds[strds_name].sample_strds(
+        points
     )
 ```
 
 Compute univariate statistics for areas over an STRDS
 
 ```
-locations["ECAD"]
-    .mapsets[mapset_name]
-    strds[strds_name].compute_strds_statistics(
+# Define input GeoJSON
+geojson = 
 
+# Compute univariate statistics from STRDS
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name].compute_strds_statistics(
+        geojson
     )
 ```
 
 Render STRDS
 
 ```
-locations["ECAD"]
+locations["nc_spm_08"]
     .mapsets[mapset_name]
-    strds[strds_name].render(
+    .strds[strds_name]
+    .render(
         {
             "n": ,
             "s": ,
@@ -186,10 +232,4 @@ locations["ECAD"]
             "end_time": "1954-01-01 00:00:00",
         }
     )
-```
-
-
-
-```
-# https://actinia.mundialis.de/latest/locations/ECAD/mapsets/PERMANENT/strds/precipitation_1950_2013_yearly_mm
 ```
