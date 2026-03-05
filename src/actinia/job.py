@@ -99,7 +99,10 @@ class Job:
             self.poll(quiet=True, retries=retries)
             if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
-                msg = f"Status of {self.name} job is {self.status}: {self.message}"
+                msg = (
+                    f"Status of {self.name} job is {self.status}: "
+                    f"{self.message}"
+                )
                 if self.status in ["terminated", "error"]:
                     log.error(msg)
                     return 1
@@ -109,12 +112,18 @@ class Job:
             sleep(waiting_time)
             if self.status != status and not quiet:
                 status = self.status
-                msg = f"Status of {self.name} job is {self.status}: {self.message}"
+                msg = (
+                    f"Status of {self.name} job is {self.status}: "
+                    f"{self.message}"
+                )
                 log.info(msg)
 
     def terminate(self):
         """Terminate the current job"""
         kwargs = {"auth": self._Job__auth, "timeout": self.__actinia.timeout}
-        url = f"{self._Job__actinia.url}/resources/{self.user_id}/{self.resource_id}"
+        url = (
+            f"{self._Job__actinia.url}/resources/"
+            f"{self.user_id}/{self.resource_id}"
+        )
         request_and_check("DELETE", url, **kwargs)
         log.info("Termination request for job {self.resource_id} committed.")
