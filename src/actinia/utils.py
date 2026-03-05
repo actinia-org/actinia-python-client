@@ -77,7 +77,8 @@ def request_and_check(method, url, status_code=(200,), retries=0, **kwargs):
         return json.loads(resp.text)
     except json.JSONDecodeError:
         raise RuntimeError(
-            "Invalid value returned. Cannot parse JSON from response:", resp.text
+            "Invalid value returned. Cannot parse JSON from response:",
+            resp.text,
         ) from None
 
 
