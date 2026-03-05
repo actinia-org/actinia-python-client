@@ -51,8 +51,8 @@ def request_and_check(method, url, status_code=(200,), retries=0, **kwargs):
     Returns:
         (dict): returns text of the response as dictionary
 
-    Throws an error if the request does not have the status_code or
-    response content be paresd as JSON.
+    Throws an error if the request does not have the right status_code or
+    the response content cannot be paresd as JSON.
     """
     attempt = 0
     while attempt <= retries:
