@@ -33,7 +33,7 @@ from datetime import datetime
 
 
 def request_and_check(method, url, status_code=(200,), retries=0, **kwargs):
-    """Send a request with given method to a URL and check the status code.
+    """Send a request with the given method to a URL and check the status code.
 
     Parameters:
         method (string): Request method (GET, POST, PUT, DELETE, ...)
