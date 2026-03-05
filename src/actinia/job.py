@@ -43,9 +43,13 @@ class Job:
         for key in actinia_json_dict:
             setattr(self, key, actinia_json_dict[key])
 
-    def poll(self, quiet=False):
+    def poll(self, quiet=False, retries=0):
         """
         Update job by polling.
+
+        Args:
+            quiet: Bool if the method should log process status
+            retries: Integer number of retries in case of ReadTimeout
         """
         if self.status not in ["accepted", "running"]:
             log.warning("The job is not running and can not be updated.")
@@ -56,7 +60,9 @@ class Job:
             "timeout": self.__actinia.timeout,
         }
         url = self.urls["status"]
-        resp = request_and_check("GET", url, status_code=(200, 400), **kwargs)
+        resp = request_and_check(
+            "GET", url, status_code=(200, 400), retries=retries, **kwargs
+        )
 
         if "process_results" not in resp:
             resp["process_results"] = {}
@@ -66,7 +72,7 @@ class Job:
         if not quiet:
             log.info(f"Status of {self.name} job is {self.status}.")
 
-    def poll_until_finished(self, waiting_time=5, quiet=False):
+    def poll_until_finished(self, waiting_time=5, quiet=False, retries=0):
         """
         Polling job until finished or error.
 
@@ -74,11 +80,12 @@ class Job:
             waiting_time: Time to wait in seconds for next poll
             quiet: Bool if the method should log each process status or only
                    changed
+            retries: Integer number of retries in case of ReadTimeout
         """
         status_accepted_running = True
         status = None
         while status_accepted_running:
-            self.poll(quiet=True)
+            self.poll(quiet=True, retries=retries)
             if self.status not in ["accepted", "running"]:
                 status_accepted_running = False
                 msg = (

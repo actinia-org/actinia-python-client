@@ -21,14 +21,16 @@ import requests
 from datetime import datetime
 
 
-def request_and_check(method, url, status_code=(200,), **kwargs):
-    """Function to send a GET request to an URL and check the status code.
+def request_and_check(method, url, status_code=(200,), retries=0, **kwargs):
+    """Send a request with the given method to a URL and check the status code.
 
     Parameters:
         method (string): Request method (GET, POST, PUT, DELETE, ...)
         url (string): URL as string
         status_code (tuple): Tuple of acceptable status codes to check
                              if it is set; default is 200
+        retries (int): Maximal number of retries in case of read timeouts
+            default is 0.
         **kwargs:
             auth (tuple): Tuple of user and password
             timeout (tuple): Tuple of connection timeout and read timeout
@@ -38,15 +40,35 @@ def request_and_check(method, url, status_code=(200,), **kwargs):
     Returns:
         (dict): returns text of the response as dictionary
 
-    Throws an error if the request does not have the status_code
+    Throws an error if the request does not have the right status_code or
+    the response content cannot be paresd as JSON.
     """
-    resp = requests.request(method, url, **kwargs)
-    # Use resp.raise_for_status() ?
-    if resp.status_code == 401:
-        raise Exception("Wrong user or password. Please check your inputs.")
-    elif resp.status_code not in status_code:
-        raise Exception(f"Error {resp.status_code}: {resp.text}")
-    return json.loads(resp.text)
+    attempt = 0
+    while attempt <= retries:
+        attempt += 1
+        resp = requests.request(method, url, **kwargs)
+        try:
+            if resp.status_code not in status_code:
+                resp.raise_for_status()
+        except requests.exceptions.ReadTimeout as e:
+            if attempt >= retries:
+                raise e
+            continue
+        except requests.exceptions.RequestException as e:
+            if resp.status_code == 401:
+                raise Exception(
+                    "Wrong user or password. Please check your inputs."
+                ) from e
+            raise requests.exceptions.RequestException(
+                f"Error {resp.status_code}: {resp.text}", e
+            ) from None
+    try:
+        return json.loads(resp.text)
+    except json.JSONDecodeError:
+        raise RuntimeError(
+            "Invalid value returned. Cannot parse JSON from response:",
+            resp.text,
+        ) from None
 
 
 def set_job_names(name, default_name="unknown_job"):
