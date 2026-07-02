@@ -71,18 +71,165 @@ mapset_name = "test_mapset"
 # mapset creation
 locations["nc_spm_08"].create_mapset(mapset_name)
 
-# upload tif
+# Upload GeoJSON
 vector_layer_name = "test"
 file = "/home/testuser/data/firestations.geojson"
 locations["nc_spm_08"].mapsets[mapset_name].upload_vector(vector_layer_name, file)
 print(locations["nc_spm_08"].mapsets[mapset_name].vector_layers.keys())
 ```
 
-Delete a raster layer
+Delete a vector layer
 ```
 locations["nc_spm_08"].mapsets[mapset_name].delete_vector(vector_layer_name)
 print(locations["nc_spm_08"].mapsets[mapset_name].vector_layers.keys())
 
 # delete mapset
 locations["nc_spm_08"].delete_mapset(mapset_name)
+```
+
+## Space-Time-Raster-Dataset (STRDS) management
+
+Create a new, empty STRDS and register raster maps
+(here the user mapset will be created before)
+
+```
+strds_name = "test_strds"
+
+# Create mapset
+mapset_name = "test_strds_mapset"
+locations["nc_spm_08"].create_mapset(mapset_name)
+
+# Create new STRDS
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .create_strds(
+        strds_name,
+        "Title of the STRDS",
+        "Longer description description of the STRDS",
+        "absolute",  # temporal type of the STRDS
+    )
+
+# Create sample raster data
+expression = "\n".join(f"map_{i}={i} * x()" for i in range(2)
+pc = {
+    "list": [
+        {
+            "id": "g_region_1",
+            "module": "g.region",
+            "flags": "p",
+            "inputs": [
+                {
+                    "param": "raster",
+                    "value": "elevation",
+                    },
+                    ],
+            },
+        {
+            "id": "r_mapcalc_1",
+            "module": "r.mapcalc"
+            "inputs": [
+                {
+                    "param": "expression",
+                    "value": expression,
+                    },
+                    ]
+            },
+    ],
+    "version": 1,
+}
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .processing_async(pc)
+
+
+
+# Register raster maps in STRDS
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name].register_raster_layers(
+        [
+            {
+                "name": "map_0",
+                "start_time": "1951-01-01 00:00:00",
+                "end_time": "1952-01-01 00:00:00",
+            },
+            {
+                "name": "map_1",
+                "start_time": "1952-01-01 00:00:00",
+                "end_time": "1953-01-01 00:00:00",
+            },
+            {
+                "name": "map_2",
+                "start_time": "1953-01-01 00:00:00",
+                "end_time": "1954-01-01 00:00:00",
+            },
+        ],
+    )
+```
+
+Get STRDS metadata and list raster maps
+
+```
+# Get general info
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name].get_info()
+
+# Get selected, registered raster maps
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name].get_strds_raster_layers(
+        where="start_time >= '1952-01-01 00:00:00'"
+    )
+```
+
+Sample STRDS at point locations
+
+```
+# Define input points
+points = [
+    ["point_1", 1, 2,],
+    ["point_2", 3, 4,],
+    ]
+
+# Run sampling
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name].sample_strds(
+        points
+    )
+```
+
+Compute univariate statistics for areas over an STRDS
+
+```
+# Define input GeoJSON
+geojson = 
+
+# Compute univariate statistics from STRDS
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name].compute_strds_statistics(
+        geojson
+    )
+```
+
+Render STRDS
+
+```
+locations["nc_spm_08"]
+    .mapsets[mapset_name]
+    .strds[strds_name]
+    .render(
+        {
+            "n": ,
+            "s": ,
+            "e": ,
+            "w": ,
+            "width": 800,
+            "height": 600,
+            "start_time": "1952-01-01 00:00:00",
+            "end_time": "1954-01-01 00:00:00",
+        }
+    )
 ```
