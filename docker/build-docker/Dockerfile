@@ -3,7 +3,7 @@
 
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt upgrade && apt-get install \
+RUN apt-get update && apt upgrade -y && apt-get install \
     git \
     python3 \
     python3-pip \
