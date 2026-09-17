@@ -7,6 +7,9 @@ on:
     # The branches below must be a subset of the branches above
     branches: [ main ]
 
+# the workflow does not require permissions, but to avoid a code security warning this should be explicitly defined:
+permissions: {}
+
 jobs:
 
   integration-tests:
