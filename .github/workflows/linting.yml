@@ -1,0 +1,24 @@
+name: Linting and code quality check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    uses: mundialis/github-workflows/.github/workflows/linting.yml@main
+    with:
+      # exclude everything except flake8 and black
+      pylint-version: ''
+      ruff-version: ''
+      SUPER_LINTER_FILTER_REGEX_EXCLUDE: '.*'
+    # the workflow requires permissions that need to be granted by the parent job:
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
